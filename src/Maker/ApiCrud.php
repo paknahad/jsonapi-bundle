@@ -20,7 +20,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -252,11 +251,6 @@ final class ApiCrud extends AbstractMaker
         $dependencies->addClassDependency(
             DoctrineBundle::class,
             'orm-pack'
-        );
-
-        $dependencies->addClassDependency(
-            CsrfTokenManager::class,
-            'security-csrf'
         );
     }
 

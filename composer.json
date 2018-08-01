@@ -12,12 +12,13 @@
     ],
     "require": {
         "php": "^7.2",
+        "sensio/framework-extra-bundle": "^5.2",
+        "symfony/orm-pack": "^1.0",
+        "symfony/validator": "^4.1",
+        "symfony/maker-bundle": "^1.0",
         "woohoolabs/yin": "^3.0",
         "woohoolabs/yin-middleware": "^3.0",
         "zendframework/zend-diactoros": "^1.3.0"
-    },
-    "require-dev": {
-        "symfony/maker-bundle": "^1.0"
     },
     "config": {
         "preferred-install": {
