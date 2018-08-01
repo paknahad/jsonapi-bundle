@@ -30,10 +30,5 @@
     },
     "autoload-dev": {
         "psr-4": { "Paknahad\\JsonApiBundle\\Tests\\": "tests/" }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "master"
-        }
     }
 }
