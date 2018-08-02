@@ -1,21 +1,24 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-        <services>
-            <defaults autowire="true" autoconfigure="true" public="false" />
+    <services>
+        <defaults autowire="true" autoconfigure="true" public="false" />
 
-            <service id="jsonapi.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiEvent">
-                <tag name="event_subscriber" />
-            </service>
+        <service id="jsonapi.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiEvent">
+            <tag name="event_subscriber" />
+        </service>
 
-            <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
-                <tag name="maker.command" />
-                <argument type="service" id="maker.doctrine_helper" />
-                <argument type="service" id="filesystem" />
-                <argument>%kernel.project_dir%</argument>
-            </service>
-        </services>
+        <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\PostmanCollectionGenerator">
+            <argument type="service" id="maker.file_manager" />
+        </service>
+
+        <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
+            <tag name="maker.command" />
+            <argument type="service" id="jsonapi.postman_collection_generator" />
+            <argument type="service" id="maker.doctrine_helper" />
+        </service>
+    </services>
 </container>

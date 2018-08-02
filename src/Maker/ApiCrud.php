@@ -5,6 +5,7 @@ namespace Paknahad\JsonApiBundle\Maker;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Paknahad\JsonApiBundle\PostmanCollectionGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -14,12 +15,10 @@ use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Validator;
-use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -27,10 +26,12 @@ use Symfony\Component\Validator\Validation;
  */
 final class ApiCrud extends AbstractMaker
 {
+    private $postmanGenerator;
     private $doctrineHelper;
 
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(PostmanCollectionGenerator $postmanGenerator, DoctrineHelper $doctrineHelper)
     {
+        $this->postmanGenerator = $postmanGenerator;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -45,8 +46,12 @@ final class ApiCrud extends AbstractMaker
     public function configureCommand(Command $command, InputConfiguration $inputConfig)
     {
         $command
-            ->setDescription('Creates CRUD for Doctrine entity class')
-            ->addArgument('entity-class', InputArgument::OPTIONAL, sprintf('The class name of the entity to create CRUD (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm())))
+            ->setDescription('Creates CRUD API for Doctrine entity class')
+            ->addArgument(
+                'entity-class',
+                InputArgument::OPTIONAL,
+                sprintf('The class name of the entity to create API (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm()))
+            )
             ->setHelp(file_get_contents(__DIR__.'/../Resources/help/MakeCrud.txt'))
         ;
 
@@ -228,9 +233,17 @@ final class ApiCrud extends AbstractMaker
 
         $generator->writeChanges();
 
+        $this->postmanGenerator
+            ->generatePostmanCollection($entityClassDetails->getShortName(), $routePath, $fields, $associations);
+
         $this->writeSuccessMessage($io);
 
-        $io->text(sprintf('Next: Check your new CRUD by going to <fg=yellow>%s/</>', Str::asRoutePath($controllerClassDetails->getRelativeNameWithoutSuffix())));
+        $io->text(
+            sprintf(
+                'Next: Use Postman_Collection.json to test your API. You can find that in <fg=yellow>%s</>',
+                PostmanCollectionGenerator::POSTMAN_PATH
+            )
+        );
     }
 
     /**
