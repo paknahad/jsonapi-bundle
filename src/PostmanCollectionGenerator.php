@@ -105,13 +105,13 @@ class PostmanCollectionGenerator
         }
 
         foreach ($associations as $association) {
-            $relationData = ['type' => $this->generateTypeName($association['field_name']), 'id' => '1'];
+            $relationData = ['type' => $this->generateTypeName($association['target_entity_name']), 'id' => '1'];
 
             if (in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
                 $relationData = [$relationData];
             }
 
-            $data['relationships'][$association['field_name']] = $relationData;
+            $data['relationships'][$association['field_name']] = ['data' => $relationData];
         }
 
         return [
