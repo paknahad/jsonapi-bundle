@@ -277,12 +277,15 @@ final class ApiCrud extends AbstractMaker
         $associations = [];
 
         foreach ($associationMappings as $association) {
+            $entityName = array_reverse(explode('\\', $association['targetEntity']))[0];
+
             $associations[] = [
                 'field_name' => $association['fieldName'],
                 'field_name_singular' => Inflector::singularize($association['fieldName']),
                 'type' => $association['type'],
                 'target_entity' => $association['targetEntity'],
-                'target_entity_name' => array_reverse(explode('\\', $association['targetEntity']))[0],
+                'target_entity_name' => $entityName,
+                'target_entity_type' => Str::asTwigVariable(Inflector::pluralize($entityName)),
                 'getter' => 'get' . Str::asCamelCase($association['fieldName']),
                 'setter' => 'set' . Str::asCamelCase($association['fieldName']),
                 'adder' => 'add' . Str::asCamelCase(Inflector::singularize($association['fieldName'])),

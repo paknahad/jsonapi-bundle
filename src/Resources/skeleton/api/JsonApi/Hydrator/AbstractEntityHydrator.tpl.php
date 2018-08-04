@@ -5,8 +5,8 @@ namespace <?= $namespace ?>;
 use <?= $entity_full_class_name ?>;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\Common\Persistence\ObjectManager;
+use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
 use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
-use WoohooLabs\Yin\JsonApi\Hydrator\AbstractHydrator;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
@@ -17,13 +17,6 @@ use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
  */
 abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {
-    protected $objectManager;
-
-    public function __construct(ObjectManager $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -96,6 +89,8 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
             ?>
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, ToManyRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
+                $this->validateRelationType($<?= $association['field_name'] ?>, ['<?= $association['target_entity_type']?>']);
+
                 $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
                     ->createQueryBuilder('<?= substr($association['field_name'], 0, 1) ?>')
                     ->where((new Expr())->in('<?= substr($association['field_name'], 0, 1) ?>.id', $<?= $association['field_name'] ?>->getResourceIdentifierIds()))
@@ -116,6 +111,8 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
             ?>
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, ToOneRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
+                $this->validateRelationType($<?= $association['field_name'] ?>, ['<?= $association['target_entity_type']?>']);
+
                 $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
                     ->find($<?= $association['field_name'] ?>->getResourceIdentifier()->getId());
 
