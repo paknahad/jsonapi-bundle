@@ -26,7 +26,7 @@ class <?= $class_name ?> extends Controller
      */
     public function index(Request $request, <?= $repository_class_name ?> $<?= $repository_var ?>): ResponseInterface
     {
-        $query = $<?= $repository_var ?>->createQueryBuilder('<?= substr($entity_var_name, 0, 1) ?>');
+        $query = $this->generateQuery($<?= $repository_var ?>, $request->get('filter', []));
 
         $paginator = new Paginator($query, $request);
 
