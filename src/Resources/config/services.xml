@@ -7,7 +7,12 @@
     <services>
         <defaults autowire="true" autoconfigure="true" public="false" />
 
-        <service id="jsonapi.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiEvent">
+        <service id="jsonapi.error.handler.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiErrorHandlerEvent">
+            <tag name="event_subscriber" />
+            <argument key="$environment">%kernel.environment%</argument>
+        </service>
+
+        <service id="jsonapi.request.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiEvent">
             <tag name="event_subscriber" />
         </service>
 
