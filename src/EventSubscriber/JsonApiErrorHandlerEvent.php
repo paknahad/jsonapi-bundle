@@ -1,6 +1,7 @@
 <?php
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
+use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -14,6 +15,8 @@ use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Request\Request;
 use WoohooLabs\Yin\JsonApi\Response\Responder;
 use WoohooLabs\Yin\JsonApi\Schema\Error;
+use WoohooLabs\Yin\JsonApi\Schema\ErrorSource;
+use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 use WoohooLabs\Yin\JsonApi\Schema\Link;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
 use WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer;
@@ -39,6 +42,8 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         $psrFactory = new DiactorosFactory();
         $exceptionFactory = new DefaultExceptionFactory();
 
+        $exception = $event->getException();
+
         $request = new Request($psrFactory->createRequest($event->getRequest()), $exceptionFactory);
         $responder = new Responder(
             $request,
@@ -47,14 +52,41 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = $this->environment === 'dev' ? $this->getExceptionMeta($event->getException()) : [];
+        $additionalMeta = $this->environment === 'dev' ? $this->getExceptionMeta($exception) : [];
 
-        $response = $responder->genericError(
-            $this->toErrorDocument($event->getException(), $event->getRequest()->getRequestUri()),
-            [],
-            null,
-            $additionalMeta
-        );
+        if ($exception instanceof InvalidRelationshipValueException) {
+            $errorDocument = new ErrorDocument();
+            $errorDocument->setJsonApi(new JsonApiObject('1.0'));
+
+            foreach ($exception->getValues() as $value) {
+                $error = Error::create();
+                $pointer = '/relationships/' . $exception->getRelation();
+
+                $errorSource = new ErrorSource(
+                    $pointer,
+                    $value
+                );
+
+                $error->setSource($errorSource)
+                    ->setDetail('Invalid value for this relation')
+                    ->setStatus('');
+
+                $errorDocument->addError($error);
+            }
+
+            $response = $responder->genericError(
+                $errorDocument,
+                [],
+                422
+            );
+        } else {
+            $response = $responder->genericError(
+                $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
+                [],
+                null,
+                $additionalMeta
+            );
+        }
 
         $httpFoundationFactory = new HttpFoundationFactory();
 

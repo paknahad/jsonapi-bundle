@@ -97,6 +97,8 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
                     ->getQuery()
                     ->getResult();
 
+                $this->validateRelationValues($association, $<?= $association['field_name'] ?>->getResourceIdentifierIds(), $relationshipName);
+
                 if ($<?= $entity_var_name ?>-><?= $association['getter'] ?>()->count() > 0) {
                     foreach ($<?= $entity_var_name ?>-><?= $association['getter'] ?>() as $<?= $association['field_name_singular'] ?>) {
                         $<?= $entity_var_name ?>-><?= $association['remover'] ?>($<?= $association['field_name_singular'] ?>);
@@ -115,6 +117,10 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
 
                 $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
                     ->find($<?= $association['field_name'] ?>->getResourceIdentifier()->getId());
+
+                if (is_null($association)) {
+                    throw new InvalidRelationshipValueException($relationshipName, [$<?= $association['field_name'] ?>->getResourceIdentifier()->getId()]);
+                }
 
                 $<?= $entity_var_name ?>-><?= $association['setter'] ?>($association);
             },<?php
