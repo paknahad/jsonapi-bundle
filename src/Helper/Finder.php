@@ -1,5 +1,5 @@
 <?php
-namespace Paknahad\JsonApiBundle\Lib;
+namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityNotFoundException;

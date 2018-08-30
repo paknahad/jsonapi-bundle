@@ -1,5 +1,5 @@
 <?php
-namespace Paknahad\JsonApiBundle\Lib;
+namespace Paknahad\JsonApiBundle\Helper;
 
 use IteratorAggregate;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PageBasedPaginationLinkProviderTrait;

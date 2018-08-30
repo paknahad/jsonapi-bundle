@@ -1,5 +1,5 @@
 <?php
-namespace Paknahad\JsonApiBundle\Lib;
+namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
