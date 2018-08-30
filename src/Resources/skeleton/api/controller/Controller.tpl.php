@@ -10,8 +10,8 @@ use <?= $update_hydrator_full_class_name ?>;
 use <?= $transformer_full_class_name ?>;
 use <?= $repository_full_class_name ?>;
 use Paknahad\JsonApiBundle\Controller\Controller;
-use Paknahad\JsonApiBundle\Lib\Paginator;
-use Paknahad\JsonApiBundle\Lib\ResourceCollection;
+use Paknahad\JsonApiBundle\Helper\Paginator;
+use Paknahad\JsonApiBundle\Helper\ResourceCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
@@ -50,6 +50,11 @@ class <?= $class_name ?> extends Controller
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
 
+        /** @var ConstraintViolationList $errors */
+        if ($errors = $this->get('validator')->validate($<?= $entity_var_name ?>)) {
+            return $this->validationErrorResponse($errors);
+        }
+
         $entityManager->persist($<?= $entity_var_name ?>);
         $entityManager->flush();
 
@@ -80,6 +85,11 @@ class <?= $class_name ?> extends Controller
         $entityManager = $this->getDoctrine()->getManager();
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
+
+        /** @var ConstraintViolationList $errors */
+        if ($errors = $this->get('validator')->validate($<?= $entity_var_name ?>)) {
+            return $this->validationErrorResponse($errors);
+        }
 
         $entityManager->flush();
 
