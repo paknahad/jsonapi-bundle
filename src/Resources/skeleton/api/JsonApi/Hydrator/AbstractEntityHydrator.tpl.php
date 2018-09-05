@@ -3,17 +3,31 @@
 namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\Common\Persistence\ObjectManager;
 use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
 use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
-use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
+<?php
+    foreach ($associations as $association) {
+        if (in_array($association['type'], $to_many_types)) {
+            $useManyRelation = true;
+        } else {
+            $useOneRelation = true;
+        }
+    }
+
+    if (isset($useManyRelation)) {
+        echo 'use Doctrine\ORM\Query\Expr;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
+';
+    }
+
+    if (isset($useManyRelation)) {
+        echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;';
+    }
+?>
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
 
 /**
- * Abstract <?= $entity_class_name ?> Hydrator
- * @package App\JsonApi\Hydrator
+ * Abstract <?= $entity_class_name ?> Hydrator.
  */
 abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {

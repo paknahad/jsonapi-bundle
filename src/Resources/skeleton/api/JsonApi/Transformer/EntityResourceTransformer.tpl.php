@@ -4,13 +4,21 @@ namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
-use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToManyRelationship;
-use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToOneRelationship;
+<?php
+foreach ($associations as $association) {
+    if (in_array($association['type'], $to_many_types)) {
+        $useManyRelation = true;
+    } else {
+        $useOneRelation = true;
+    }
+}
+echo isset($useManyRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToManyRelationship;' . PHP_EOL : '';
+echo isset($useOneRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToOneRelationship;' . PHP_EOL : '';
+?>
 use WoohooLabs\Yin\JsonApi\Transformer\AbstractResourceTransformer;
 
 /**
- * <?= $entity_class_name ?> Resource Transformer
- * @package App\Resource
+ * <?= $entity_class_name ?> Resource Transformer.
  */
 class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTransformer
 {
@@ -27,7 +35,7 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTrans
      */
     public function getId($<?= $entity_var_name ?>): string
     {
-        return (string)$<?= $entity_var_name ?>->getId();
+        return (string) $<?= $entity_var_name ?>->getId();
     }
 
     /**

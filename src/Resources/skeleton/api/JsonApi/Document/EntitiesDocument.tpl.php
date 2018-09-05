@@ -7,8 +7,7 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
 
 /**
- * <?= $entity_class_name_plural ?> Document
- * @package App\JsonApi\Document
+ * <?= $entity_class_name_plural ?> Document.
  */
 class <?= $entity_class_name_plural ?>Document extends AbstractCollectionDocument
 {

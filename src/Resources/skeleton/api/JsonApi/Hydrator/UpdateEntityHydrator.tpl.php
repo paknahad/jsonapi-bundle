@@ -5,8 +5,7 @@ namespace <?= $namespace ?>;
 use <?= $entity_full_class_name ?>;
 
 /**
- * Update <?= $entity_class_name ?> Hydrator
- * @package App\JsonApi\Hydrator
+ * Update <?= $entity_class_name ?> Hydrator.
  */
 class Update<?= $entity_class_name ?>Hydrator extends Abstract<?= $entity_class_name ?>Hydrator
 {

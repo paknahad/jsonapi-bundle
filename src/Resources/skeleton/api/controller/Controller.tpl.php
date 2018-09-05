@@ -51,7 +51,8 @@ class <?= $class_name ?> extends Controller
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
 
         /** @var ConstraintViolationList $errors */
-        if ($errors = $this->get('validator')->validate($<?= $entity_var_name ?>)) {
+        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }
 
@@ -87,7 +88,8 @@ class <?= $class_name ?> extends Controller
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
 
         /** @var ConstraintViolationList $errors */
-        if ($errors = $this->get('validator')->validate($<?= $entity_var_name ?>)) {
+        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }
 

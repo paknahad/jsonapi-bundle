@@ -8,8 +8,7 @@ use WoohooLabs\Yin\JsonApi\Schema\Link;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
 
 /**
- * <?= $entity_class_name ?> Document
- * @package App\JsonApi\Document
+ * <?= $entity_class_name ?> Document.
  */
 class <?= $entity_class_name ?>Document extends AbstractSingleResourceDocument
 {
@@ -36,7 +35,7 @@ class <?= $entity_class_name ?>Document extends AbstractSingleResourceDocument
     {
         return Links::createWithoutBaseUri(
             [
-                'self' => new Link('<?= $route_path ?>/' . $this->getResourceId())
+                'self' => new Link('<?= $route_path ?>/'.$this->getResourceId()),
             ]
         );
     }
