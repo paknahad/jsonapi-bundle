@@ -52,7 +52,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = $this->environment === 'dev' ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
 
         if ($exception instanceof InvalidRelationshipValueException) {
             $errorDocument = new ErrorDocument();

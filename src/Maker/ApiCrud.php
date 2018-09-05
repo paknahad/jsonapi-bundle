@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
+use Symfony\Bundle\MakerBundle\Doctrine\EntityDetails;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -88,7 +89,8 @@ final class ApiCrud extends AbstractMaker
 
         $repositoryVars = [];
 
-        if (null !== $entityDoctrineDetails->getRepositoryClass()) {
+        if ($entityMetadata) {
+            $entityDoctrineDetails = new EntityDetails($entityMetadata);
             $repositoryClassDetails = $generator->createClassNameDetails(
                 '\\'.$entityDoctrineDetails->getRepositoryClass(),
                 'Repository\\',
