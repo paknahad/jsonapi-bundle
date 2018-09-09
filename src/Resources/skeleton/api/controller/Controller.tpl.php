@@ -13,6 +13,7 @@ use Paknahad\JsonApiBundle\Controller\Controller;
 use Paknahad\JsonApiBundle\Helper\Paginator;
 use Paknahad\JsonApiBundle\Helper\ResourceCollection;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
 
