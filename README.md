@@ -96,11 +96,11 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 
 ## Features
 
-1. ####Pagination 
+1. Pagination 
     ```
     http://example.com/books?page[number]=5&page[size]=30
     ```
-2. ####Relationships
+2. Relationships
     ```
     http://example.com/books?include=authors
     ```
@@ -108,7 +108,8 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     http://example.com/books?include=authors.phones,publishers
     ```
-3. ####Search
+3. Search
+
     This request will return all the books that author's name begin with ``hamid``
     ```
     http://example.com/books?filter[authors.name]=hamid%
@@ -117,7 +118,8 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
     ```
-4. ####Validation
+4. Validation
+
     Error on validating associations
     ```json
     {
@@ -152,7 +154,8 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
         ]
     }
     ```
-5. ####Error handler
+5. Error handler
+
     All errors such as:
     - Internal server error (500)
     - Not found (404)
