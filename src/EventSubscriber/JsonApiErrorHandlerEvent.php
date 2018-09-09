@@ -60,7 +60,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
             foreach ($exception->getValues() as $value) {
                 $error = Error::create();
-                $pointer = '/relationships/' . $exception->getRelation();
+                $pointer = '/data/relationships/' . $exception->getRelation();
 
                 $errorSource = new ErrorSource(
                     $pointer,
