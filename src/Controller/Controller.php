@@ -62,7 +62,7 @@ class Controller extends Base
 
             $errorSource = new ErrorSource(
                 $pointer,
-                $fieldError->getInvalidValue()
+                $fieldError->getInvalidValue() ?? 'Invalid Value'
             );
 
             $error->setSource($errorSource)
