@@ -16,13 +16,20 @@
             <tag name="event_subscriber" />
         </service>
 
-        <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\PostmanCollectionGenerator">
+        <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator">
             <argument type="service" id="maker.file_manager" />
+            <argument>%kernel.project_dir%</argument>
+        </service>
+
+        <service id="jsonapi.swagger_collection_generator" class="Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator">
+            <argument type="service" id="maker.file_manager" />
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
             <tag name="maker.command" />
             <argument type="service" id="jsonapi.postman_collection_generator" />
+            <argument type="service" id="jsonapi.swagger_collection_generator" />
             <argument type="service" id="maker.doctrine_helper" />
         </service>
     </services>

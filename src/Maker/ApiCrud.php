@@ -5,7 +5,8 @@ namespace Paknahad\JsonApiBundle\Maker;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\PostmanCollectionGenerator;
+use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
+use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
@@ -28,11 +29,13 @@ use Symfony\Component\Validator\Validation;
 final class ApiCrud extends AbstractMaker
 {
     private $postmanGenerator;
+    private $swaggerGenerator;
     private $doctrineHelper;
 
-    public function __construct(PostmanCollectionGenerator $postmanGenerator, DoctrineHelper $doctrineHelper)
+    public function __construct(PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, DoctrineHelper $doctrineHelper)
     {
         $this->postmanGenerator = $postmanGenerator;
+        $this->swaggerGenerator = $swaggerGenerator;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -141,7 +144,6 @@ final class ApiCrud extends AbstractMaker
 
         $routeName = Str::asRouteName($entityVarPlural);
         $routePath = Str::asRoutePath($entityVarPlural);
-
         $skeletonPath = __DIR__ . '/../Resources/skeleton/';
 
         $generator->generateClass(
@@ -235,8 +237,9 @@ final class ApiCrud extends AbstractMaker
 
         $generator->writeChanges();
 
-        $this->postmanGenerator
-            ->generatePostmanCollection($entityClassDetails->getShortName(), $routePath, $fields, $associations);
+        $this->postmanGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
+
+        $this->swaggerGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
 
         $this->writeSuccessMessage($io);
 
