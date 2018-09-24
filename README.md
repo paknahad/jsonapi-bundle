@@ -13,7 +13,7 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 
 2. Install the [maker bundle][4]
     ```
-    composer require symfony/maker-bundle --dev
+    composer require symfony/maker-bundle phootwork/collection --dev
     ```
 
 3. Install the bundle
@@ -89,9 +89,10 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     bin/console make:api
     ```
-3. You can find the generated "collection" for [postman][5] in the following path and then test the API:
+3. You can find the generated "collections" for [postman][5] and [swagger][6] in the following path and then test the API:
     ```
-    postman/api_collection.json
+    collection/postman.json
+    collection/swagger.yaml
     ```
 
 ## Features
@@ -221,3 +222,4 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 [3]: https://github.com/woohoolabs/yin
 [4]: https://symfony.com/doc/current/bundles/SymfonyMakerBundle/index.html
 [5]: https://www.getpostman.com/
+[6]: https://swagger.io/
