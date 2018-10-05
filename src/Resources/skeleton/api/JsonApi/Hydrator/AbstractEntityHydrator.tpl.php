@@ -2,7 +2,7 @@
 
 namespace <?= $namespace ?>;
 
-use <?= $entity_full_class_name ?>;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
 use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 <?php
@@ -81,15 +81,11 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     /**
      * {@inheritdoc}
      */
-    protected function setId($<?= $entity_var_name ?>, string $id): ? array
+    protected function setId($<?= $entity_var_name ?>, string $id): void
     {
-        if ($id) {
-            $<?= $entity_var_name ?>['id'] = $id;
-
-            return $<?= $entity_var_name ?>;
+        if ($id && $<?= $entity_var_name ?>->getId() !== intval($id)) {
+            throw new NotFoundHttpException('both ids in url & body bust be same');
         }
-
-        return null;
     }
 
     /**
