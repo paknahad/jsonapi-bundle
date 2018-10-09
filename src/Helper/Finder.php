@@ -2,11 +2,12 @@
 namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpFoundation\Request;
 
 class Finder implements FinderInterface
 {
+
     protected $entityManager;
     protected $query;
     protected $request;
@@ -73,8 +74,6 @@ class Finder implements FinderInterface
      * @param string $fieldName
      *
      * @return array
-     * 
-     * @throws InvalidFieldNameException
      */
     protected function getFieldMetaData(string $fieldName): ?array
     {
@@ -96,7 +95,7 @@ class Finder implements FinderInterface
         }
         
         if (!isset($this->fields[$entity][$finalField])) {
-            return NULL;
+            throw new EntityNotFoundException();
         }
 
         $fieldMetaData = $this->fields[$entity][$finalField];
