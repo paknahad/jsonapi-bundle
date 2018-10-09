@@ -29,13 +29,13 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
                     'body' => in_array($name, ['add', 'edit']) ?
                         $this->generateBody($entityName, $action['method'], $classMetadata) : '',
                     'url' => [
-                        'raw' => '{{host}}' . $route . (in_array($name, ['add', 'list']) ? '/' : '/1'),
+                        'raw' => '{{host}}/' . $route . in_array($name, ['add', 'list']) ? '/' : '/1',
                         'host' => [
                             '{{host}}'
                         ],
                         'path' => [
                             $route,
-                            in_array($name, ['add', 'list']) ? '' : '1'
+                            ''
                         ],
                     ]
                 ]

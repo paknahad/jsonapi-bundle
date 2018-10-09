@@ -2,9 +2,7 @@
 
 namespace <?= $namespace ?>;
 
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use <?= $entity_full_class_name ?>;
-use Paknahad\JsonApiBundle\Hydrator\ValidatorTrait;
 use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
 use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 <?php
@@ -33,8 +31,6 @@ use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
  */
 abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {
-    use ValidatorTrait;
-
     /**
      * {@inheritdoc}
      */
@@ -80,17 +76,20 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
      */
     protected function validateRequest(RequestInterface $request): void
     {
-        $this->validateFields($this->objectManager->getClassMetadata(<?= $entity_class_name ?>::class), $request);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function setId($<?= $entity_var_name ?>, string $id): void
+    protected function setId($<?= $entity_var_name ?>, string $id): ? array
     {
-        if ($id && $<?= $entity_var_name ?>->getId() !== intval($id)) {
-            throw new NotFoundHttpException('both ids in url & body bust be same');
+        if ($id) {
+            $<?= $entity_var_name ?>['id'] = $id;
+
+            return $<?= $entity_var_name ?>;
         }
+
+        return null;
     }
 
     /**

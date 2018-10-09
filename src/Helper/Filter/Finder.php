@@ -1,40 +1,44 @@
 <?php
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\Request;
 
-class Finder
+class Finder implements FinderInterface
 {
-    const ROOT_ALIAS = 'r';
-
     protected $entityManager;
     protected $query;
+    protected $request;
     protected $rootEntity;
-    protected $filters;
     protected $fields;
     protected $relations = [];
 
-    public function __construct(ServiceEntityRepository $repository, array $filters)
-    {
-        $this->query = $repository->createQueryBuilder(self::ROOT_ALIAS);
-        $this->entityManager = $this->query->getEntityManager();
-        $this->filters = $filters;
-
-        $this->rootEntity = $this->query->getRootEntities()[0];
-
-        $this->setAvailableFields($this->rootEntity);
+    /**
+     * {@inheritdoc}
+     */
+    public function setRequest(Request $request) {
+        $this->request = $request;
     }
 
     /**
-     * @return QueryBuilder
-     *
-     * @throws EntityNotFoundException
+     * {@inheritdoc}
      */
-    public function getFilteredQuery(): QueryBuilder
+    public function setQuery(QueryBuilder $query) {
+        $this->query = $query;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function filterQuery()
     {
-        foreach ($this->filters as $field => $value) {
+        $this->entityManager = $this->query->getEntityManager();
+        $this->rootEntity = $this->query->getRootEntities()[0];
+        $this->setAvailableFields($this->rootEntity);
+
+        $filters = $this->request->get('filter', []);
+        foreach ($filters as $field => $value) {
             $this->setCondition($field, $value);
         }
 
@@ -43,19 +47,19 @@ class Finder
                 $this->query->join(sprintf('%s.%s', $sourceEntityAlias, $relation), $destinationEntityAlias);
             }
         }
-
-        return $this->query;
     }
 
     /**
      * @param string $field
      * @param string $value
-     *
-     * @throws EntityNotFoundException
      */
     protected function setCondition(string $field, string $value): void
     {
         $fieldMetaData = $this->getFieldMetaData($field);
+
+        if (empty($fieldMetaData)) {
+            return;
+        }
 
         $this->query->andWhere(sprintf(
             '%s %s %s',
@@ -70,9 +74,9 @@ class Finder
      *
      * @return array
      * 
-     * @throws EntityNotFoundException
+     * @throws InvalidFieldNameException
      */
-    protected function getFieldMetaData(string $fieldName): array
+    protected function getFieldMetaData(string $fieldName): ?array
     {
         $explodedField = array_reverse(explode('.', $fieldName));
 
@@ -92,7 +96,7 @@ class Finder
         }
         
         if (!isset($this->fields[$entity][$finalField])) {
-            throw new EntityNotFoundException();
+            return NULL;
         }
 
         $fieldMetaData = $this->fields[$entity][$finalField];
@@ -113,7 +117,7 @@ class Finder
     {
         return sprintf(
             '%s.%s',
-            $fieldMetadata['relation_alias'] ?? self::ROOT_ALIAS,
+            $fieldMetadata['relation_alias'] ?? FinderCollection::ROOT_ALIAS,
             $fieldMetadata['fieldName']
         );
     }
@@ -174,7 +178,7 @@ class Finder
         static $iterator = 1;
 
         if (is_null($alias)) {
-            $alias = self::ROOT_ALIAS;
+            $alias = FinderCollection::ROOT_ALIAS;
         }
 
         if (! isset($this->relations[$alias][$relation])) {

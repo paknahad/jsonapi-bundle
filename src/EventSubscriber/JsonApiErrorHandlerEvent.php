@@ -1,7 +1,6 @@
 <?php
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
-use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
@@ -55,9 +54,28 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
         $additionalMeta = in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
 
-        if ($exception instanceof InvalidRelationshipValueException || $exception instanceof InvalidAttributeException) {
+        if ($exception instanceof InvalidRelationshipValueException) {
+            $errorDocument = new ErrorDocument();
+            $errorDocument->setJsonApi(new JsonApiObject('1.0'));
+
+            foreach ($exception->getValues() as $value) {
+                $error = Error::create();
+                $pointer = '/data/relationships/' . $exception->getRelation();
+
+                $errorSource = new ErrorSource(
+                    $pointer,
+                    $value
+                );
+
+                $error->setSource($errorSource)
+                    ->setDetail('Invalid value for this relation')
+                    ->setStatus('');
+
+                $errorDocument->addError($error);
+            }
+
             $response = $responder->genericError(
-                $this->generateValidationErrorDocument($exception),
+                $errorDocument,
                 [],
                 422
             );
@@ -122,42 +140,5 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         );
 
         return $errorDocument;
-    }
-
-    protected function generateValidationErrorDocument(\Exception $exception): ErrorDocument
-    {
-        $errorDocument = new ErrorDocument();
-        $errorDocument->setJsonApi(new JsonApiObject('1.0'));
-
-        if ($exception instanceof InvalidAttributeException) {
-            $error = $this->generateValidationError(true, $exception->getAttribute(), $exception->getValue());
-        } elseif ($exception instanceof InvalidRelationshipValueException) {
-            foreach ($exception->getValues() as $value) {
-                $error = $this->generateValidationError(false, $exception->getRelation(), $value);
-            }
-        }
-
-        return $errorDocument->addError($error);
-    }
-
-    protected function generateValidationError(bool $isAttribute, string $name, string $value): Error
-    {
-        $error = Error::create();
-        $pointer = sprintf(
-            '/data/%s/%s',
-            $isAttribute ? 'attributes' : 'relationships',
-            $name
-        );
-
-        $errorSource = new ErrorSource(
-            $pointer,
-            $value
-        );
-
-        $error->setSource($errorSource)
-            ->setDetail('Invalid value')
-            ->setStatus('');
-
-        return $error;
     }
 }

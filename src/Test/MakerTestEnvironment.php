@@ -322,7 +322,7 @@ final class MakerTestEnvironment
         $this->processReplacements($replacements, $this->flexPath);
 
         // fetch the packages needed for testing
-        MakerTestProcess::create('composer require symfony/psr-http-message-bridge woohoolabs/yin zendframework/zend-diactoros phpunit symfony/maker-bundle', $this->flexPath)
+        MakerTestProcess::create('composer require symfony/psr-http-message-bridge woohoolabs/yin woohoolabs/yin-middleware zendframework/zend-diactoros phpunit symfony/maker-bundle', $this->flexPath)
             ->run();
 
         MakerTestProcess::create('php bin/console cache:clear --no-warmup', $this->flexPath)
