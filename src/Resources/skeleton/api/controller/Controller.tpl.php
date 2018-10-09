@@ -27,7 +27,7 @@ class <?= $class_name ?> extends Controller
      */
     public function index(Request $request, <?= $repository_class_name ?> $<?= $repository_var ?>): ResponseInterface
     {
-        $query = $this->generateQuery($<?= $repository_var ?>, $request->get('filter', []));
+        $query = $this->generateQuery($<?= $repository_var ?>, $request);
 
         $paginator = new Paginator($query, $request);
 
