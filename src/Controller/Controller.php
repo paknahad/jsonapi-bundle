@@ -2,11 +2,12 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\QueryBuilder;
-use Paknahad\JsonApiBundle\Helper\Finder;
+use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as Base;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use WoohooLabs\Yin\JsonApi\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\JsonApi;
@@ -17,6 +18,21 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 class Controller extends Base
 {
     private static $jsonApi;
+
+    /**
+     * @var \Paknahad\JsonApiBundle\Helper\Filter\FinderCollection
+     */
+    protected $finderCollection;
+
+    /**
+     * Controller constructor.
+     *
+     * @param \Paknahad\JsonApiBundle\Helper\Filter\FinderCollection $finderCollection
+     */
+    public function __construct(FinderCollection $finderCollection)
+    {
+        $this->finderCollection = $finderCollection;
+    }
 
     /**
      * @return JsonApi
@@ -33,17 +49,15 @@ class Controller extends Base
     /**
      * Creates a QueryBuilder by EntityRepository and applies requested filters on that
      *
-     * @param ServiceEntityRepository $repository
-     * @param array                   $filters
+     * @param ServiceEntityRepositoryInterface          $repository
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return QueryBuilder
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
-    protected function generateQuery(ServiceEntityRepository $repository, array $filters): QueryBuilder
+    protected function generateQuery(ServiceEntityRepositoryInterface $repository, Request $request): QueryBuilder
     {
-        $finder = new Finder($repository, $filters);
-
-        return $finder->getFilteredQuery();
+        return $this->finderCollection->getFilteredQuery($repository, $request);
     }
 
     /**
