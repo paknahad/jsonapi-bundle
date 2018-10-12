@@ -145,6 +145,8 @@ Example:
 </service>
 ```
 
+Each Finder must implement the `Paknahad\JsonApiBundle\Helper\Filter\FinderInterface` interface.
+
 ### Validation
 
 Error on validating associations
