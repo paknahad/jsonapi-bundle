@@ -111,6 +111,14 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
 3. Search
 
+    As the [JSON API specification][2] does not [specify exactly how filtering should work][10] different methods of 
+    filtering can be used. Each method is supplied with a Finder service. Each registered Finder will be able to append 
+    conditions to the search query. If you register multiple Finders they are all active at the same time. This enables
+    your API to support multiple filtering methods.
+
+    ### Basic Finder.
+    A basic Finder is included in this library offering simple filtering capabilities:  
+    
     This request will return all the books that author's name begin with ``hamid``
     ```
     http://example.com/books?filter[authors.name]=hamid%
@@ -119,6 +127,24 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
     ```
+
+    ### Other Finders
+    Currently the following Finders are available via other bundles:
+    
+    - [mnugter/jsonapi-rql-finder-bundle][7] - [RQL][8] based Finder
+    - [paknahad/query_parser][9] - More complex filtering
+
+    ## Creating a custom Finder
+    A Finder can be registered via a service tag in the services definition. The tag `paknahad.json_api.finder` must be
+    added to the service for the Finder to be resigered.
+
+    Example:
+    ```
+    <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
+        <tag name="paknahad.json_api.finder" />
+    </service>
+    ```
+
 4. Validation
 
     Error on validating associations
@@ -223,3 +249,7 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 [4]: https://symfony.com/doc/current/bundles/SymfonyMakerBundle/index.html
 [5]: https://www.getpostman.com/
 [6]: https://swagger.io/
+[7]: https://github.com/mnugter/jsonapi-rql-finder-bundle
+[8]: https://github.com/persvr/rql
+[9]: https://github.com/paknahad/query_parser
+[10]: http://jsonapi.org/recommendations/#filtering
