@@ -4,6 +4,7 @@ namespace Paknahad\JsonApiBundle\Helper\Filter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\Request;
 
 class Finder implements FinderInterface
 {
