@@ -97,125 +97,154 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 
 ## Features
 
-1. Pagination 
-    ```
-    http://example.com/books?page[number]=5&page[size]=30
-    ```
-2. Relationships
-    ```
-    http://example.com/books?include=authors
-    ```
-    multiple relationships
-    ```
-    http://example.com/books?include=authors.phones,publishers
-    ```
-3. Search
+### Pagination 
+```
+http://example.com/books?page[number]=5&page[size]=30
+```
+### Relationships
+```
+http://example.com/books?include=authors
+```
+multiple relationships
+```
+http://example.com/books?include=authors.phones,publishers
+```
+### Search
 
-    This request will return all the books that author's name begin with ``hamid``
-    ```
-    http://example.com/books?filter[authors.name]=hamid%
-    ```
-    Below line has additional condition: books which have "php" in their title.
-    ```
-    http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
-    ```
-4. Validation
+As the [JSON API specification][2] does not [specify exactly how filtering should work][10] different methods of 
+filtering can be used. Each method is supplied with a Finder service. Each registered Finder will be able to append 
+conditions to the search query. If you register multiple Finders they are all active at the same time. This enables
+your API to support multiple filtering methods.
 
-    Error on validating associations
-    ```json
-    {
-        "jsonapi": {
-            "version": "1.0"
-        },
-        "errors": [
+#### Basic Finder.
+A basic Finder is included in this library offering simple filtering capabilities:  
+
+This request will return all the books that author's name begin with ``hamid``
+```
+http://example.com/books?filter[authors.name]=hamid%
+```
+Below line has additional condition: books which have "php" in their title.
+```
+http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
+```
+
+#### Other Finders
+Currently the following Finders are available via other bundles:
+
+- [mnugter/jsonapi-rql-finder-bundle][7] - [RQL][8] based Finder
+- [paknahad/query_parser][9] - More complex filtering
+
+#### Creating a custom Finder
+A Finder can be registered via a service tag in the services definition. The tag `paknahad.json_api.finder` must be
+added to the service for the Finder to be resigered.
+
+Example:
+```
+<service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
+    <tag name="paknahad.json_api.finder" />
+</service>
+```
+
+Each Finder must implement the `Paknahad\JsonApiBundle\Helper\Filter\FinderInterface` interface.
+
+### Validation
+
+Error on validating associations
+```json
+{
+    "jsonapi": {
+        "version": "1.0"
+    },
+    "errors": [
+        {
+            "detail": "Invalid value for this relation",
+            "source": {
+                "pointer": "/data/relationships/authors",
+                "parameter": "1"
+            }
+        }
+    ]
+}
+```
+Validate attributes if you have defined validators on entities.
+```json
+{
+    "jsonapi": {
+        "version": "1.0"
+    },
+    "errors": [
+        {
+            "detail": "This value is too short. It should have 3 characters or more.",
+            "source": {
+                "pointer": "/data/attributes/name",
+                "parameter": "h"
+            }
+        }
+    ]
+}
+```
+
+### Error handler
+
+All errors such as:
+- Internal server error (500)
+- Not found (404)
+- Access denied (403)
+
+has responses like this:
+```json
+{
+    "meta": {
+        "code": 0,
+        "message": "No route found for \"GET /book\"",
+        "file": "/var/www/vendor/symfony/http-kernel/EventListener/RouterListener.php",
+        "line": 139,
+        "trace": [
             {
-                "detail": "Invalid value for this relation",
-                "source": {
-                    "pointer": "/data/relationships/authors",
-                    "parameter": "1"
-                }
+                "file": "/var/www/vendor/symfony/event-dispatcher/EventDispatcher.php",
+                "line": 212,
+                "function": "onKernelRequest"
+            },
+            {
+                "file": "/var/www/vendor/symfony/event-dispatcher/EventDispatcher.php",
+                "line": 44,
+                "function": "doDispatch"
+            },
+            {
+                "file": "/var/www/vendor/symfony/http-kernel/HttpKernel.php",
+                "line": 125,
+                "function": "dispatch"
+            },
+            {
+                "file": "/var/www/vendor/symfony/http-kernel/HttpKernel.php",
+                "line": 66,
+                "function": "handleRaw"
+            },
+            {
+                "file": "/var/www/vendor/symfony/http-kernel/Kernel.php",
+                "line": 188,
+                "function": "handle"
+            },
+            {
+                "file": "/var/www/public/index.php",
+                "line": 37,
+                "function": "handle"
             }
         ]
-    }
-    ```
-    Validate attributes if you have defined validators on entities.
-    ```json
-    {
-        "jsonapi": {
-            "version": "1.0"
-        },
-        "errors": [
-            {
-                "detail": "This value is too short. It should have 3 characters or more.",
-                "source": {
-                    "pointer": "/data/attributes/name",
-                    "parameter": "h"
-                }
-            }
-        ]
-    }
-    ```
-5. Error handler
-
-    All errors such as:
-    - Internal server error (500)
-    - Not found (404)
-    - Access denied (403)
-    
-    has responses like this:
-    ```json
-    {
-        "meta": {
-            "code": 0,
-            "message": "No route found for \"GET /book\"",
-            "file": "/var/www/vendor/symfony/http-kernel/EventListener/RouterListener.php",
-            "line": 139,
-            "trace": [
-                {
-                    "file": "/var/www/vendor/symfony/event-dispatcher/EventDispatcher.php",
-                    "line": 212,
-                    "function": "onKernelRequest"
-                },
-                {
-                    "file": "/var/www/vendor/symfony/event-dispatcher/EventDispatcher.php",
-                    "line": 44,
-                    "function": "doDispatch"
-                },
-                {
-                    "file": "/var/www/vendor/symfony/http-kernel/HttpKernel.php",
-                    "line": 125,
-                    "function": "dispatch"
-                },
-                {
-                    "file": "/var/www/vendor/symfony/http-kernel/HttpKernel.php",
-                    "line": 66,
-                    "function": "handleRaw"
-                },
-                {
-                    "file": "/var/www/vendor/symfony/http-kernel/Kernel.php",
-                    "line": 188,
-                    "function": "handle"
-                },
-                {
-                    "file": "/var/www/public/index.php",
-                    "line": 37,
-                    "function": "handle"
-                }
-            ]
-        },
-        "links": {
-            "self": "/book"
-        },
-        "errors": [
-            {
-                "status": "404",
-                "code": "NO_ROUTE_FOUND_FOR_\"GET_/BOOK\"",
-                "title": "No route found for \"GET /book\""
-            }
-        ]
-    }
-    ```
-    NOTICE: the "meta" field gets filled just on development environment.
+    },
+    "links": {
+        "self": "/book"
+    },
+    "errors": [
+        {
+            "status": "404",
+            "code": "NO_ROUTE_FOUND_FOR_\"GET_/BOOK\"",
+            "title": "No route found for \"GET /book\""
+        }
+    ]
+}
+```
+NOTICE: the "meta" field gets filled just on development environment.
 
 [1]: https://symfony.com/
 [2]: http://jsonapi.org/
@@ -223,3 +252,7 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 [4]: https://symfony.com/doc/current/bundles/SymfonyMakerBundle/index.html
 [5]: https://www.getpostman.com/
 [6]: https://swagger.io/
+[7]: https://github.com/mnugter/jsonapi-rql-finder-bundle
+[8]: https://github.com/persvr/rql
+[9]: https://github.com/paknahad/query_parser
+[10]: http://jsonapi.org/recommendations/#filtering
