@@ -7,15 +7,18 @@ use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\DateTimeValidator;
-use Symfony\Component\Validator\Constraints\DateValidator;
 use Symfony\Component\Validator\Exception\ValidatorException;
+use Symfony\Component\Validator\Validation;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ValidatorTrait
 {
+    /** @var ValidatorInterface */
+    private $validator;
+
     /**
      * @param  ToOneRelationship|ToManyRelationship $relation
      * @param  array                                $validTypes
@@ -73,6 +76,8 @@ trait ValidatorTrait
      */
     protected function validateFields(ClassMetadata $metadata, RequestInterface $request, bool $validExistance = true): void
     {
+        $this->validator = Validation::createValidator();
+
         try {
             foreach ($request->getResourceAttributes() as $field => $value) {
                 if ($validExistance && ! $metadata->hasField($field)) {
@@ -95,9 +100,7 @@ trait ValidatorTrait
      */
     private function validateDateTime($dateTime): void
     {
-        $validator = new DateTimeValidator();
-
-        $validator->validate($dateTime, new DateTime());
+        $this->validator->validate($dateTime, new DateTime());
     }
 
     /**
@@ -105,9 +108,7 @@ trait ValidatorTrait
      */
     private function validateDate($date): void
     {
-        $validator = new DateValidator();
-
-        $validator->validate($date, new Date());
+        $this->validator->validate($date, new Date());
     }
 
     /**
