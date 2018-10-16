@@ -67,7 +67,7 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTrans
             ?>
 
             '<?= $field['name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>) {
-                return $<?= $entity_var_name ?>-><?= $field['getter'] ?>();
+                return <?=\Paknahad\JsonApiBundle\Transformer::ResourceTransform($entity_var_name, $field)?>;
             },<?php
         }
         ?>
