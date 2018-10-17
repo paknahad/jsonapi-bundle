@@ -7,6 +7,8 @@ use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints\DateTimeValidator;
+use Symfony\Component\Validator\Constraints\DateValidator;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
@@ -100,7 +102,7 @@ trait ValidatorTrait
      */
     private function validateDateTime($dateTime): void
     {
-        $this->validator->validate($dateTime, new DateTime());
+        $this->validator->validate($dateTime, new DateTime(), new DateTimeValidator());
     }
 
     /**
@@ -108,7 +110,7 @@ trait ValidatorTrait
      */
     private function validateDate($date): void
     {
-        $this->validator->validate($date, new Date());
+        $this->validator->validate($date, new Date(), new DateValidator());
     }
 
     /**
