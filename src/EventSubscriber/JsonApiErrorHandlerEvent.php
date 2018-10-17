@@ -65,7 +65,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             $response = $responder->genericError(
                 $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
                 [],
-                null,
+                $exception->getCode(),
                 $additionalMeta
             );
         }
