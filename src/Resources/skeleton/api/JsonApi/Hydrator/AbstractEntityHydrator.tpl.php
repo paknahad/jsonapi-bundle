@@ -22,8 +22,15 @@ use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 ';
     }
 
-    if (isset($useManyRelation)) {
-        echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;';
+    if (isset($useOneRelation)) {
+        echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
+use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+';
+    }
+
+    if (isset($useManyRelation) || isset($useOneRelation)) {
+        echo 'use ' . $entity_full_class_name . ';
+';
     }
 ?>
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
