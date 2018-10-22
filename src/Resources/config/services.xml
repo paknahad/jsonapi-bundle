@@ -33,14 +33,26 @@
             <argument type="service" id="maker.doctrine_helper" />
         </service>
 
+        <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
+            <tag name="paknahad.json_api.finder" />
+        </service>
+
         <service id="jsonapi.filter_handler" class="Paknahad\JsonApiBundle\Helper\Filter\Filter\FinderHandler" />
 
         <service id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection">
             <argument type="tagged" tag="paknahad.json_api.finder" />
         </service>
 
-        <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
-            <tag name="paknahad.json_api.finder" />
+        <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
+
+        <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
+
+        <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
+            <argument type="service" id="request_stack"/>
+            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection" />
+            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Paginator" />
+            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Sorter" />
         </service>
+
     </services>
 </container>

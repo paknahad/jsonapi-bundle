@@ -8,8 +8,10 @@ use Doctrine\ORM\EntityNotFoundException;
 use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Symfony\Component\Finder\Finder;
 
-class FieldHandler
+class FieldManager
 {
+    const ROOT_ALIAS = 'r';
+
     /**
      * Added fields.
      *
@@ -112,7 +114,7 @@ class FieldHandler
 
         return sprintf(
             '%s.%s',
-            $this->fields[$fieldName]['relation_alias'] ?? FinderCollection::ROOT_ALIAS,
+            $this->fields[$fieldName]['relation_alias'] ?? FieldManager::ROOT_ALIAS,
             $this->fields[$fieldName]['field']
         );
     }
@@ -194,7 +196,7 @@ class FieldHandler
             return $this->relations[$entity];
         }
 
-        $alias = FinderCollection::ROOT_ALIAS;
+        $alias = FieldManager::ROOT_ALIAS;
         if ($entity !== $this->getRootEntity()) {
             $alias = 'r__' . $iterator++;
         }
@@ -202,13 +204,13 @@ class FieldHandler
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
 
         $this->relations[$entity] = [
-            'entity' => $associations[$entity]['fieldName'],
-            'entityClass' => $associations[$entity]['targetEntity'],
+            'entity' => $associations[$entity]['fieldName'] ?? null,
+            'entityClass' => $associations[$entity]['targetEntity'] ?? $entity,
             'sourceEntity' => $sourceEntity,
             'alias' => $alias,
         ];
 
-        return $associations[$entity]['targetEntity'];
+        return $associations[$entity]['targetEntity'] ?? $entity;
     }
 
     /**
