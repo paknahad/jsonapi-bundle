@@ -1,20 +1,12 @@
 <?php
 namespace Paknahad\JsonApiBundle\Helper\Filter;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\QueryBuilder;
 use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class Finder implements FinderInterface
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
     /**
      * @var QueryBuilder
      */
@@ -47,31 +39,19 @@ class Finder implements FinderInterface
     /**
      * {@inheritdoc}
      */
+    public function setFieldManager(FieldManager $fieldManager): void
+    {
+        $this->fieldManager = $fieldManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function filterQuery()
     {
-        $this->entityManager = $this->query->getEntityManager();
-        $this->fieldManager = new FieldManager();
-        $this->fieldManager->setEntityManager($this->entityManager);
-
-        $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
-
         $filters = $this->request->get('filter', []);
         foreach ($filters as $field => $value) {
             $this->setCondition($field, $value);
-        }
-
-        $relations = $this->fieldManager->getRelations();
-        foreach ($relations as $entity => $relation) {
-            if ($entity === $this->fieldManager->getRootEntity()) {
-                continue;
-            }
-
-            $sourceAlias = FieldManager::ROOT_ALIAS;
-            if ($relations[$relation['entity']]['sourceEntity'] != $this->fieldManager->getRootEntity()) {
-                $sourceAlias = $relations[$relation['entity']]['alias'];
-            }
-
-           $this->query->join(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
         }
     }
 
@@ -101,7 +81,6 @@ class Finder implements FinderInterface
     {
         if (strtolower($value) === 'null') {
             $value = null;
-
             return 'IS NULL';
         }
 

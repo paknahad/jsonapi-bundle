@@ -25,11 +25,7 @@ class Paginator
      */
     private $size;
 
-    /**
-     * @param QueryBuilder $query
-     * @param Request $request
-     */
-    public function handleQuery(QueryBuilder $query, Request $request) {
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager) {
         $page = $request->get('page', []);
         $this->page = isset($page['number']) ? intval($page['number']) : 1;
         $this->size = isset($page['size']) ? intval($page['size']) : 100;
