@@ -46,12 +46,14 @@
         <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
 
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
+        <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
 
         <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
             <argument type="service" id="request_stack"/>
             <argument type="service" id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection" />
             <argument type="service" id="Paknahad\JsonApiBundle\Helper\Paginator" />
             <argument type="service" id="Paknahad\JsonApiBundle\Helper\Sorter" />
+            <argument type="service" id="Paknahad\JsonApiBundle\Helper\FieldManager" />
         </service>
 
     </services>

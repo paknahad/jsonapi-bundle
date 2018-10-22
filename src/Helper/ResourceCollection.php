@@ -50,6 +50,11 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected $sorter;
 
     /**
+     * @var FieldManager
+     */
+    protected $fieldManager;
+
+    /**
      * ResourceCollection constructor.
      *
      * @param RequestStack $requestStack
@@ -61,13 +66,15 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         RequestStack $requestStack,
         FinderCollection $finderCollection,
         Paginator $paginator,
-        Sorter $sorter
+        Sorter $sorter,
+        FieldManager $fieldManager
     )
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->finderCollection = $finderCollection;
         $this->paginator = $paginator;
         $this->sorter = $sorter;
+        $this->fieldManager = $fieldManager;
     }
 
     /**
@@ -103,13 +110,25 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         return $this->query;
     }
 
+    /**
+     * Process the index request.
+     *
+     * Handles filtering, sorting, relations and pagination.
+     *
+     * @throws \Doctrine\ORM\EntityNotFoundException
+     */
     public function handleIndexRequest() {
         $this->query = $this->generateQuery();
 
-        $this->finderCollection->handleQuery($this->query, $this->request);
-        $this->paginator->handleQuery($this->query, $this->request);
-        $this->sorter->handleQuery($this->query, $this->request);
+        $entityManager = $this->query->getEntityManager();
+        $this->fieldManager->setEntityManager($entityManager);
+        $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
 
+        $this->finderCollection->handleQuery($this->query, $this->request, $this->fieldManager);
+        $this->paginator->handleQuery($this->query, $this->request, $this->fieldManager);
+        $this->sorter->handleQuery($this->query, $this->request, $this->fieldManager);
+
+        $this->addRelationsToQuery();
     }
 
     /**
@@ -122,6 +141,25 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected function generateQuery(): QueryBuilder
     {
         return $this->repository->createQueryBuilder(FieldManager::ROOT_ALIAS);
+    }
+
+    /**
+     * Add required relations to the query based on the registered fields.
+     */
+    protected function addRelationsToQuery() {
+        $relations = $this->fieldManager->getRelations();
+        foreach ($relations as $entity => $relation) {
+            if ($entity === $this->fieldManager->getRootEntity()) {
+                continue;
+            }
+
+            $sourceAlias = FieldManager::ROOT_ALIAS;
+            if ($relations[$relation['entity']]['sourceEntity'] != $this->fieldManager->getRootEntity()) {
+                $sourceAlias = $relations[$relation['entity']]['alias'];
+            }
+
+            $this->query->join(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
+        }
     }
 
     /**

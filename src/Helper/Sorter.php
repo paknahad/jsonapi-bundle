@@ -11,10 +11,7 @@ class Sorter
      */
     protected $sorting;
 
-    /**
-     * @param QueryBuilder $query
-     */
-    public function handleQuery(QueryBuilder $query, Request $request) {
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager) {
         $this->sorting = $request->get('sort', []);
     }
 

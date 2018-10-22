@@ -18,16 +18,11 @@ class FinderCollection {
         $this->handlers = $handlers;
     }
 
-    /**
-     * Creates a QueryBuilder by EntityRepository and makes all registered Finders handle filtering.
-     *
-     * @param QueryBuilder $query
-     * @param Request $request
-     */
-    public function handleQuery(QueryBuilder $query, Request $request): void {
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager): void {
         foreach ($this->handlers as $handler) {
             $handler->setRequest($request);
             $handler->setQuery($query);
+            $handler->setFieldManager($fieldManager);
 
             $handler->filterQuery();
         }
