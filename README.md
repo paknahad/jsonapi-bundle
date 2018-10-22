@@ -101,6 +101,13 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 ```
 http://example.com/books?page[number]=5&page[size]=30
 ```
+
+### Sorting 
+- Ascending on name field: `http://example.com/books?sort=name`
+- Decending on name field: `http://example.com/books?sort=-name`
+- Multiple fields: `http://example.com/books?sort=city,-name`
+- Field on a relation: `http://example.com/books?sort=author.name`
+
 ### Relationships
 ```
 http://example.com/books?include=authors
@@ -109,6 +116,7 @@ multiple relationships
 ```
 http://example.com/books?include=authors.phones,publishers
 ```
+
 ### Search
 
 As the [JSON API specification][2] does not [specify exactly how filtering should work][10] different methods of 
