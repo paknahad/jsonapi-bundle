@@ -8,6 +8,14 @@ use Doctrine\ORM\EntityNotFoundException;
 use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Class FieldManager.
+ *
+ * Use the fieldmanager to register fields required for the query and get metadata on the field for use in the query.
+ *
+ * Automatically handles required relations based on the field format: entity.field. Relations can be chained by
+ * entity.entity.field.
+ */
 class FieldManager
 {
     const ROOT_ALIAS = 'r';

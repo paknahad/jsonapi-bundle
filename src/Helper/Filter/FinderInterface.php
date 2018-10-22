@@ -3,6 +3,7 @@
 namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\ORM\QueryBuilder;
+use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 interface FinderInterface
@@ -10,19 +11,26 @@ interface FinderInterface
     /**
      * Set request object.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      */
     public function setRequest(Request $request);
 
     /**
-     * Set service entity repository and configure the finder based on the passed repository.
+     * Set the QueryBuilder for the finder.
      *
-     * @param \Doctrine\ORM\QueryBuilder $query
+     * @param QueryBuilder $query
      */
     public function setQuery(QueryBuilder $query);
 
     /**
-     * @throws EntityNotFoundException
+     * Set the fieldmanager.
+     *
+     * @param FieldManager $fieldManager
+     */
+    public function setFieldManager(FieldManager $fieldManager);
+
+    /**
+     * Filters the query based on the registered Finders.
      */
     public function filterQuery();
 }
