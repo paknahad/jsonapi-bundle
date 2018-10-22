@@ -4,7 +4,6 @@ namespace Paknahad\JsonApiBundle\Controller;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\QueryBuilder;
-use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as Base;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,21 +19,6 @@ class Controller extends Base
     private static $jsonApi;
 
     /**
-     * @var \Paknahad\JsonApiBundle\Helper\Filter\FinderCollection
-     */
-    protected $finderCollection;
-
-    /**
-     * Controller constructor.
-     *
-     * @param \Paknahad\JsonApiBundle\Helper\Filter\FinderCollection $finderCollection
-     */
-    public function __construct(FinderCollection $finderCollection)
-    {
-        $this->finderCollection = $finderCollection;
-    }
-
-    /**
      * @return JsonApi
      */
     protected function jsonApi(): JsonApi
@@ -44,20 +28,6 @@ class Controller extends Base
         }
 
         return self::$jsonApi;
-    }
-
-    /**
-     * Creates a QueryBuilder by EntityRepository and applies requested filters on that
-     *
-     * @param ServiceEntityRepositoryInterface          $repository
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     *
-     * @return QueryBuilder
-     * @throws \Doctrine\ORM\EntityNotFoundException
-     */
-    protected function generateQuery(ServiceEntityRepositoryInterface $repository, Request $request): QueryBuilder
-    {
-        return $this->finderCollection->getFilteredQuery($repository, $request);
     }
 
     /**

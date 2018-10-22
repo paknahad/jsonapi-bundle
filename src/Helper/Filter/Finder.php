@@ -4,9 +4,8 @@ namespace Paknahad\JsonApiBundle\Helper\Filter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
-use Doctrine\ORM\Query\FilterCollection;
 use Doctrine\ORM\QueryBuilder;
-use Paknahad\JsonApiBundle\Helper\FieldHandler;
+use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class Finder implements FinderInterface
@@ -27,9 +26,9 @@ class Finder implements FinderInterface
     protected $request;
 
     /**
-     * @var FieldHandler
+     * @var FieldManager
      */
-    protected $fieldHandler;
+    protected $fieldManager;
 
     /**
      * {@inheritdoc}
@@ -51,24 +50,24 @@ class Finder implements FinderInterface
     public function filterQuery()
     {
         $this->entityManager = $this->query->getEntityManager();
-        $this->fieldHandler = new FieldHandler();
-        $this->fieldHandler->setEntityManager($this->entityManager);
+        $this->fieldManager = new FieldManager();
+        $this->fieldManager->setEntityManager($this->entityManager);
 
-        $this->fieldHandler->setRootEntity($this->query->getRootEntities()[0]);
+        $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
 
         $filters = $this->request->get('filter', []);
         foreach ($filters as $field => $value) {
             $this->setCondition($field, $value);
         }
 
-        $relations = $this->fieldHandler->getRelations();
+        $relations = $this->fieldManager->getRelations();
         foreach ($relations as $entity => $relation) {
-            if ($entity === $this->fieldHandler->getRootEntity()) {
+            if ($entity === $this->fieldManager->getRootEntity()) {
                 continue;
             }
 
-            $sourceAlias = FinderCollection::ROOT_ALIAS;
-            if ($relations[$relation['entity']]['sourceEntity'] != $this->fieldHandler->getRootEntity()) {
+            $sourceAlias = FieldManager::ROOT_ALIAS;
+            if ($relations[$relation['entity']]['sourceEntity'] != $this->fieldManager->getRootEntity()) {
                 $sourceAlias = $relations[$relation['entity']]['alias'];
             }
 
@@ -82,11 +81,11 @@ class Finder implements FinderInterface
      */
     protected function setCondition(string $field, string $value): void
     {
-        $fieldMetaData = $this->fieldHandler->addField($field);
+        $fieldMetaData = $this->fieldManager->addField($field);
 
         $this->query->andWhere(sprintf(
             '%s %s %s',
-            $this->fieldHandler->getQueryFieldName($field),
+            $this->fieldManager->getQueryFieldName($field),
             $this->getOperator($fieldMetaData, $value),
             $this->setValue($value)
         ));

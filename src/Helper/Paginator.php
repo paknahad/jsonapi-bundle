@@ -2,17 +2,34 @@
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Tools\Pagination\Paginator as BasePaginator;
+use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class Paginator
+ */
 class Paginator
 {
-    private $paginator;
+    /**
+     * @var \Doctrine\ORM\Tools\Pagination\Paginator
+     */
+    private $doctrinePaginator;
+
+    /**
+     * @var int
+     */
     private $page;
+
+    /**
+     * @var int
+     */
     private $size;
 
-    public function __construct(QueryBuilder $query, Request $request)
-    {
+    /**
+     * @param QueryBuilder $query
+     * @param Request $request
+     */
+    public function handleQuery(QueryBuilder $query, Request $request) {
         $page = $request->get('page', []);
         $this->page = isset($page['number']) ? intval($page['number']) : 1;
         $this->size = isset($page['size']) ? intval($page['size']) : 100;
@@ -20,7 +37,8 @@ class Paginator
         $query->setFirstResult(($this->page - 1) * $this->size);
         $query->setMaxResults($this->size);
 
-        $this->paginator = new BasePaginator($query, true);
+        $this->doctrinePaginator = new BasePaginator($query, true);
+
     }
 
     public function getPage()
@@ -35,11 +53,11 @@ class Paginator
 
     public function getCount()
     {
-        return $this->paginator->count();
+        return $this->doctrinePaginator->count();
     }
 
-    public function getPagination()
+    public function getDoctrinePaginator()
     {
-        return $this->paginator;
+        return $this->doctrinePaginator;
     }
 }
