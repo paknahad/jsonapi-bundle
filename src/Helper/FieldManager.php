@@ -95,10 +95,19 @@ class FieldManager
         $this->rootEntity = $rootEntity;
     }
 
-
+    /**
+     * Add a field to the fieldmanager.
+     *
+     * @param $fieldName
+     *
+     * @return array
+     *   Field information with relation alias.
+     *
+     * @throws EntityNotFoundException
+     */
     public function addField($fieldName) {
         if (!empty($this->fields[$fieldName])) {
-            return;
+            return $this->fields[$fieldName];
         }
 
         $this->fields[$fieldName] = $this->parseField($fieldName);
@@ -201,7 +210,7 @@ class FieldManager
         static $iterator = 1;
 
         if (isset($this->relations[$entity])) {
-            return $this->relations[$entity];
+            return $this->relations[$entity]['entityClass'];
         }
 
         $alias = FieldManager::ROOT_ALIAS;
@@ -218,7 +227,7 @@ class FieldManager
             'alias' => $alias,
         ];
 
-        return $associations[$entity]['targetEntity'] ?? $entity;
+        return $this->relations[$entity]['entityClass'];
     }
 
     /**
