@@ -7,6 +7,7 @@ use IteratorAggregate;
 use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PageBasedPaginationLinkProviderTrait;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PaginationLinkProviderInterface;
 
@@ -125,10 +126,13 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
 
         $this->finderCollection->handleQuery($this->query, $this->request, $this->fieldManager);
-        $this->paginator->handleQuery($this->query, $this->request, $this->fieldManager);
         $this->sorter->handleQuery($this->query, $this->request, $this->fieldManager);
 
         $this->addRelationsToQuery();
+
+        // Paginator as the last handler because of how it handles the QueryBuilder any change after this on the
+        // QueryBuilder is not included in the final query.
+        $this->paginator->handleQuery($this->query, $this->request, $this->fieldManager);
     }
 
     /**
@@ -163,9 +167,31 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     }
 
     /**
+     * Gets the Paginator.
+     *
+     * @return Paginator
+     *   The Paginator.
+     */
+    public function getPaginator(): Paginator
+    {
+        return $this->paginator;
+    }
+
+    /**
+     * Gets the FieldManager.
+     *
+     * @return FieldManager
+     *   The FieldManager.
+     */
+    public function getFieldManager(): FieldManager
+    {
+        return $this->fieldManager;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): DoctrinePaginator
     {
         return $this->paginator->getDoctrinePaginator();
     }
