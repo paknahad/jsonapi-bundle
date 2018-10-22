@@ -4,11 +4,10 @@ namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Doctrine\ORM\QueryBuilder;
+use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class FinderCollection {
-    const ROOT_ALIAS = 'r';
-
     /**
      * @var FinderInterface[]
      */
@@ -22,22 +21,15 @@ class FinderCollection {
     /**
      * Creates a QueryBuilder by EntityRepository and makes all registered Finders handle filtering.
      *
-     * @param ServiceEntityRepositoryInterface          $repository
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     *
-     * @return QueryBuilder
-     * @throws \Doctrine\ORM\EntityNotFoundException
+     * @param QueryBuilder $query
+     * @param Request $request
      */
-    public function getFilteredQuery(ServiceEntityRepositoryInterface $repository, Request $request): QueryBuilder {
-        $queryBuilder = $repository->createQueryBuilder(self::ROOT_ALIAS);
-
+    public function handleQuery(QueryBuilder $query, Request $request): void {
         foreach ($this->handlers as $handler) {
             $handler->setRequest($request);
-            $handler->setQuery($queryBuilder);
+            $handler->setQuery($query);
 
             $handler->filterQuery();
         }
-
-        return $queryBuilder;
     }
 }
