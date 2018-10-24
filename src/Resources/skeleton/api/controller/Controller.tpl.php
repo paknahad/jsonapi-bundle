@@ -26,7 +26,7 @@ class <?= $class_name ?> extends Controller
      */
     public function index(<?= $repository_class_name ?> $<?= $repository_var ?>, ResourceCollection $resourceCollection): ResponseInterface
     {
-        $resourceCollection->setRepository($officeRepository);
+        $resourceCollection->setRepository($<?= $repository_var ?>);
 
         $resourceCollection->handleIndexRequest();
 
