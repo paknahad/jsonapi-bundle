@@ -5,6 +5,9 @@ use Doctrine\ORM\QueryBuilder;
 use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class Finder
+ */
 class Finder implements FinderInterface
 {
     /**
@@ -25,14 +28,16 @@ class Finder implements FinderInterface
     /**
      * {@inheritdoc}
      */
-    public function setRequest(Request $request) {
+    public function setRequest(Request $request): void
+    {
         $this->request = $request;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setQuery(QueryBuilder $query) {
+    public function setQuery(QueryBuilder $query): void
+    {
         $this->query = $query;
     }
 
@@ -47,7 +52,7 @@ class Finder implements FinderInterface
     /**
      * {@inheritdoc}
      */
-    public function filterQuery()
+    public function filterQuery(): void
     {
         $filters = $this->request->get('filter', []);
         foreach ($filters as $field => $value) {
@@ -58,6 +63,8 @@ class Finder implements FinderInterface
     /**
      * @param string $field
      * @param string $value
+     *
+     * @throws \Doctrine\ORM\EntityNotFoundException
      */
     protected function setCondition(string $field, string $value): void
     {
@@ -72,8 +79,8 @@ class Finder implements FinderInterface
     }
 
     /**
-     * @param array  $fieldMetadata
-     * @param string $value
+     * @param array       $fieldMetadata
+     * @param string|null $value
      *
      * @return string
      */
@@ -81,10 +88,11 @@ class Finder implements FinderInterface
     {
         if (strtolower($value) === 'null') {
             $value = null;
+
             return 'IS NULL';
         }
 
-        if ($fieldMetadata['metadata']['type'] == 'string' && strpos($value, '%') !== false) {
+        if ($fieldMetadata['metadata']['type'] === 'string' && strpos($value, '%') !== false) {
             return 'LIKE';
         }
 
@@ -102,11 +110,11 @@ class Finder implements FinderInterface
     {
         static $iterator = 1;
 
-        if (is_null($value)) {
+        if (null === $value) {
             return '';
         }
 
-        $paramName = ':P' . $iterator++;
+        $paramName = ':P'.$iterator++;
 
         $this->query->setParameter($paramName, $value);
 

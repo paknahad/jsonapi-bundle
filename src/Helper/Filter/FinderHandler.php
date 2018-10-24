@@ -9,6 +9,9 @@ class FinderHandler
 {
     private $finders;
 
+    /**
+     * FinderHandler constructor.
+     */
     public function __construct()
     {
         $this->finders = [];

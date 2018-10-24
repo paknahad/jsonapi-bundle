@@ -1,12 +1,8 @@
 <?php
 namespace Paknahad\JsonApiBundle\Helper;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
-use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
-use Symfony\Component\Finder\Finder;
 
 /**
  * Class FieldManager.
@@ -18,7 +14,7 @@ use Symfony\Component\Finder\Finder;
  */
 class FieldManager
 {
-    const ROOT_ALIAS = 'r';
+    public const ROOT_ALIAS = 'r';
 
     /**
      * Added fields.
@@ -96,16 +92,27 @@ class FieldManager
     }
 
     /**
-     * Add a field to the fieldmanager.
+     * Get relations based on the added fields.
      *
-     * @param $fieldName
+     * @return array
+     */
+    public function getRelations(): array
+    {
+        return $this->relations;
+    }
+
+    /**
+     * Add a field to the Fieldmanager.
+     *
+     * @param string $fieldName
      *
      * @return array
      *   Field information with relation alias.
      *
      * @throws EntityNotFoundException
      */
-    public function addField($fieldName) {
+    public function addField($fieldName): array
+    {
         if (!empty($this->fields[$fieldName])) {
             return $this->fields[$fieldName];
         }
@@ -122,7 +129,9 @@ class FieldManager
     }
 
     /**
-     * @param string $fieldMetadata
+     * Get field name with table alias prefixed for use in a query.
+     *
+     * @param string $fieldName
      *
      * @return string
      */
@@ -131,7 +140,7 @@ class FieldManager
 
         return sprintf(
             '%s.%s',
-            $this->fields[$fieldName]['relation_alias'] ?? FieldManager::ROOT_ALIAS,
+            $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
             $this->fields[$fieldName]['field']
         );
     }
@@ -139,22 +148,24 @@ class FieldManager
     /**
      * Get the field data for the requested field.
      *
-     * @param $fieldName
+     * @param string $fieldName
      *
      * @return array|null
      */
-    public function getField($fieldName) {
+    public function getField($fieldName): ?array
+    {
         return $this->fields[$fieldName] ?? null;
     }
 
     /**
      * Parse field string into a separate field and entity.
      *
-     * @param $fieldName
+     * @param string $fieldName
      *
      * @return array
      */
-    protected function parseField($fieldName) {
+    protected function parseField($fieldName): array
+    {
         $explodedField = explode('.', $fieldName);
         $finalField = array_pop($explodedField);
         $entity = !empty($explodedField) ? array_shift($explodedField) : $this->getRootEntity();
@@ -167,12 +178,16 @@ class FieldManager
     }
 
     /**
+     * Get field metadata.
+     *
      * @param string $entity
      * @param string $fieldName
      *
      * @return array
+     *
+     * @throws EntityNotFoundException
      */
-    protected function getFieldMetaData(string $entity, string $fieldName): ?array
+    protected function getFieldMetaData(string $entity, string $fieldName): array
     {
         if (!isset($this->entityFieldMetaData[$entity])) {
             $entityClass = $this->relations[$entity]['entityClass'];
@@ -180,13 +195,18 @@ class FieldManager
         }
 
         if (!isset($this->entityFieldMetaData[$entity][$fieldName])) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(sprintf('No entity found for entity %s and field %s', $entity, $fieldName));
         }
 
         return $this->entityFieldMetaData[$entity][$fieldName];
     }
 
-    protected function setRelations(string $fieldName)
+    /**
+     * Set relations for the passed field name.
+     *
+     * @param string $fieldName
+     */
+    protected function setRelations(string $fieldName): void
     {
         $this->fields[$fieldName];
 
@@ -201,7 +221,8 @@ class FieldManager
     /**
      * Set relation & return the class for the relation.
      *
-     * @param string $relation
+     * @param string      $entity
+     * @param string|null $sourceEntity
      *
      * @return string
      */
@@ -213,9 +234,9 @@ class FieldManager
             return $this->relations[$entity]['entityClass'];
         }
 
-        $alias = FieldManager::ROOT_ALIAS;
+        $alias = self::ROOT_ALIAS;
         if ($entity !== $this->getRootEntity()) {
-            $alias = 'r__' . $iterator++;
+            $alias = 'r__'.$iterator++;
         }
 
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
@@ -229,15 +250,4 @@ class FieldManager
 
         return $this->relations[$entity]['entityClass'];
     }
-
-    /**
-     * Get relations based on the added fields.
-     *
-     * @return array
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
 }

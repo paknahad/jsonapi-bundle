@@ -1,7 +1,7 @@
 <?php
 namespace Paknahad\JsonApiBundle\Helper;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use IteratorAggregate;
 use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
@@ -13,8 +13,6 @@ use WoohooLabs\Yin\JsonApi\Schema\Pagination\PaginationLinkProviderInterface;
 
 /**
  * Resource Collection
- *
- * @package Paknahad\Lib
  */
 class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInterface
 {
@@ -26,7 +24,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected $query;
 
     /**
-     * @var ServiceEntityRepositoryInterface
+     * @var EntityRepository
      */
     protected $repository;
 
@@ -58,18 +56,13 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * ResourceCollection constructor.
      *
-     * @param RequestStack $requestStack
+     * @param RequestStack     $requestStack
      * @param FinderCollection $finderCollection
-     * @param Paginator $paginator
-     * @param Sorter $sorter
+     * @param Paginator        $paginator
+     * @param Sorter           $sorter
+     * @param FieldManager     $fieldManager
      */
-    public function __construct(
-        RequestStack $requestStack,
-        FinderCollection $finderCollection,
-        Paginator $paginator,
-        Sorter $sorter,
-        FieldManager $fieldManager
-    )
+    public function __construct(RequestStack $requestStack, FinderCollection $finderCollection, Paginator $paginator, Sorter $sorter, FieldManager $fieldManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->finderCollection = $finderCollection;
@@ -81,10 +74,10 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the Repository.
      *
-     * @return ServiceEntityRepositoryInterface
+     * @return EntityRepository
      *   The Repository.
      */
-    public function getRepository(): ServiceEntityRepositoryInterface
+    public function getRepository(): EntityRepository
     {
         return $this->repository;
     }
@@ -92,10 +85,10 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Sets the Repository.
      *
-     * @param ServiceEntityRepositoryInterface $repository
+     * @param EntityRepository $repository
      *   The Repository.
      */
-    public function setRepository(ServiceEntityRepositoryInterface $repository): void
+    public function setRepository(EntityRepository $repository): void
     {
         $this->repository = $repository;
     }
@@ -118,7 +111,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
      *
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
-    public function handleIndexRequest() {
+    public function handleIndexRequest()
+    {
         $this->query = $this->generateQuery();
 
         $entityManager = $this->query->getEntityManager();
@@ -133,37 +127,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         // Paginator as the last handler because of how it handles the QueryBuilder any change after this on the
         // QueryBuilder is not included in the final query.
         $this->paginator->handleQuery($this->query, $this->request, $this->fieldManager);
-    }
-
-    /**
-     * Creates a QueryBuilder by EntityRepository and applies requested filters on that
-     *
-     * @return QueryBuilder
-     *
-     * @throws \Doctrine\ORM\EntityNotFoundException
-     */
-    protected function generateQuery(): QueryBuilder
-    {
-        return $this->repository->createQueryBuilder(FieldManager::ROOT_ALIAS);
-    }
-
-    /**
-     * Add required relations to the query based on the registered fields.
-     */
-    protected function addRelationsToQuery() {
-        $relations = $this->fieldManager->getRelations();
-        foreach ($relations as $entity => $relation) {
-            if ($entity === $this->fieldManager->getRootEntity()) {
-                continue;
-            }
-
-            $sourceAlias = FieldManager::ROOT_ALIAS;
-            if ($relations[$relation['entity']]['sourceEntity'] != $this->fieldManager->getRootEntity()) {
-                $sourceAlias = $relations[$relation['entity']]['alias'];
-            }
-
-            $this->query->join(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
-        }
     }
 
     /**
@@ -196,18 +159,57 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         return $this->paginator->getDoctrinePaginator();
     }
 
+    /**
+     * @return int
+     */
     public function getTotalItems(): int
     {
         return $this->paginator->getCount();
     }
 
+    /**
+     * @return int
+     */
     public function getPage(): int
     {
         return $this->paginator->getPage();
     }
 
+    /**
+     * @return int
+     */
     public function getSize(): int
     {
         return $this->paginator->getSize();
+    }
+
+    /**
+     * Creates a QueryBuilder by EntityRepository and applies requested filters on that
+     *
+     * @return QueryBuilder
+     */
+    protected function generateQuery(): QueryBuilder
+    {
+        return $this->repository->createQueryBuilder(FieldManager::ROOT_ALIAS);
+    }
+
+    /**
+     * Add required relations to the query based on the registered fields.
+     */
+    protected function addRelationsToQuery()
+    {
+        $relations = $this->fieldManager->getRelations();
+        foreach ($relations as $entity => $relation) {
+            if ($entity === $this->fieldManager->getRootEntity()) {
+                continue;
+            }
+
+            $sourceAlias = FieldManager::ROOT_ALIAS;
+            if ($relations[$relation['entity']]['sourceEntity'] !== $this->fieldManager->getRootEntity()) {
+                $sourceAlias = $relations[$relation['entity']]['alias'];
+            }
+
+            $this->query->join(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
+        }
     }
 }
