@@ -25,7 +25,13 @@ class Paginator
      */
     private $size;
 
-    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager) {
+    /**
+     * @param QueryBuilder $query
+     * @param Request      $request
+     * @param FieldManager $fieldManager
+     */
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
+    {
         $page = $request->get('page', []);
         $this->page = isset($page['number']) ? intval($page['number']) : 1;
         $this->size = isset($page['size']) ? intval($page['size']) : 100;
@@ -34,25 +40,36 @@ class Paginator
         $query->setMaxResults($this->size);
 
         $this->doctrinePaginator = new BasePaginator($query, true);
-
     }
 
-    public function getPage()
+    /**
+     * @return int
+     */
+    public function getPage(): int
     {
         return $this->page;
     }
 
-    public function getSize()
+    /**
+     * @return int
+     */
+    public function getSize(): int
     {
         return $this->size;
     }
 
-    public function getCount()
+    /**
+     * @return int
+     */
+    public function getCount(): int
     {
         return $this->doctrinePaginator->count();
     }
 
-    public function getDoctrinePaginator()
+    /**
+     * @return BasePaginator|null
+     */
+    public function getDoctrinePaginator(): ?BasePaginator
     {
         return $this->doctrinePaginator;
     }
