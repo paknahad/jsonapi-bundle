@@ -1,6 +1,6 @@
 <?= "<?php\n" ?>
 
-namespace App\Security\Voter;
+namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
 use Paknahad\JsonApiBundle\Security\AbstractVoter;
@@ -8,11 +8,17 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class <?= $entity_class_name ?>Voter extends AbstractVoter
 {
+    /**
+     * @inheritdoc
+     */
     protected function supports($attribute, $subject): bool
     {
-        return in_array($attribute, ['list', 'create', 'view', 'edit', 'delete']) && $subject instanceof <?= $entity_class_name ?>;
+        return in_array($attribute, ['list', 'create', 'view', 'update', 'delete']) && $subject instanceof <?= $entity_class_name ?>;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         /*
@@ -25,19 +31,16 @@ class <?= $entity_class_name ?>Voter extends AbstractVoter
 
         switch ($attribute) {
             case 'list':
-                // logic to determine if the user can EDIT
+            case 'view':
+                // logic to determine if the user can VIEW
                 // return true or false
                 return true;
             case 'create':
                 // logic to determine if the user can CREATE
                 // return true or false
                 return true;
-            case 'view':
-                // logic to determine if the user can VIEW
-                // return true or false
-                return true;
-            case 'edit':
-                // logic to determine if the user can EDIT
+            case 'update':
+                // logic to determine if the user can UPDATE
                 // return true or false
                 return true;
             case 'delete':
@@ -49,14 +52,19 @@ class <?= $entity_class_name ?>Voter extends AbstractVoter
         return false;
     }
 
-    protected function voteOnInputFields(string $attribute, $subject, TokenInterface $token, array $fields): array
+    /**
+     * @inheritdoc
+     */
+    public function voteOnInputFields(string $attribute, $subject, TokenInterface $token, array $fields): array
     {
         $acceptableFields = [
 <?php
 foreach ($fields as $field) {
+    if (isset($field['id']) && $field['id']) {
+        continue;
+    }
 ?>
             '<?= $field['name'] ?>',
-
 <?php
 }
 ?>
@@ -67,14 +75,19 @@ foreach ($fields as $field) {
         return array_intersect_key($fields, array_flip($acceptableFields));
     }
 
-    protected function voteOnOutputFields(string $attribute, $subject, TokenInterface $token, array $fields): array
+    /**
+     * @inheritdoc
+     */
+    public function voteOnOutputFields($subject, TokenInterface $token, array $fields): array
     {
         $acceptableFields = [
 <?php
 foreach ($fields as $field) {
+    if (isset($field['id']) && $field['id']) {
+        continue;
+    }
 ?>
             '<?= $field['name'] ?>',
-
 <?php
 }
 ?>
@@ -85,14 +98,16 @@ foreach ($fields as $field) {
         return array_intersect_key($fields, array_flip($acceptableFields));
     }
 
-    protected function voteOnInputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array
+    /**
+     * @inheritdoc
+     */
+    public function voteOnInputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array
     {
         $acceptableRelations = [
 <?php
 foreach ($associations as $association) {
 ?>
             '<?= $association['field_name'] ?>',
-
 <?php
 }
 ?>
@@ -103,14 +118,16 @@ foreach ($associations as $association) {
         return array_intersect_key($relations, array_flip($acceptableRelations));
     }
 
-    protected function voteOnOutputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array
+    /**
+     * @inheritdoc
+     */
+    public function voteOnOutputRelations($subject, TokenInterface $token, array $relations): array
     {
         $acceptableRelations = [
 <?php
 foreach ($associations as $association) {
 ?>
             '<?= $association['field_name'] ?>',
-
 <?php
 }
 ?>

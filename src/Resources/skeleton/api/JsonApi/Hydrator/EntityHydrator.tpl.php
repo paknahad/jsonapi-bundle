@@ -31,9 +31,9 @@ use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
 
 /**
- * Abstract <?= $entity_class_name ?> Hydrator.
+ * <?= $entity_class_name ?> Hydrator.
  */
-abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
+class <?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {
     use ValidatorTrait;
 
@@ -72,14 +72,6 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     /**
      * {@inheritdoc}
      */
-    protected function getAttributeHydrator($<?= $entity_var_name ?>): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function validateRequest(RequestInterface $request): void
     {
         $this->validateFields($this->objectManager->getClassMetadata(<?= $entity_class_name ?>::class), $request);
@@ -98,9 +90,32 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     /**
      * {@inheritdoc}
      */
+    protected function getAttributeHydrator($<?= $entity_var_name ?>): array
+    {
+        $fields = [<?php
+        foreach ($fields as $field) {
+            if (isset($field['id']) && $field['id']) {
+                continue;
+            }
+            ?>
+
+            '<?= $field['name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, $attribute, $data, $attributeName) {
+                $<?= $entity_var_name ?>-><?= $field['setter'] ?>(<?=\Paknahad\JsonApiBundle\Transformer::Hydrator($field['type'])?>);
+            },<?php
+        }
+        ?>
+
+        ];
+
+        return $this->filterAttributes($fields, $<?= $entity_var_name ?>);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getRelationshipHydrator($<?= $entity_var_name ?>): array
     {
-        return [<?php
+        $relations = [<?php
     foreach ($associations as $association) {
         if (in_array($association['type'], $to_many_types)) {
             ?>
@@ -146,5 +161,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     ?>
 
         ];
+
+        return $this->filterRelations($relations, $<?= $entity_var_name ?>);
     }
 }

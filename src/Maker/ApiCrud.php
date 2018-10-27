@@ -132,13 +132,17 @@ final class ApiCrud extends AbstractMaker
             'ResourceTransformer'
         );
 
-        foreach (['abstract', 'create', 'update'] as $key) {
-            $hydratorClassDetails[$key] = $generator->createClassNameDetails(
-                ucfirst($key) . $entityVarSingular,
-                sprintf('JsonApi\\Hydrator\\%s', $entityClassDetails->getShortName()),
-                'Hydrator'
-            );
-        }
+        $voterClassDetails = $generator->createClassNameDetails(
+            $entityVarSingular,
+            'Security\\',
+            'Voter'
+        );
+
+        $hydratorClassDetails = $generator->createClassNameDetails(
+            $entityVarSingular,
+            'JsonApi\\Hydrator\\',
+            'Hydrator'
+        );
 
         $entityTypeVarPlural = Str::asTwigVariable($entityVarPlural);
 
@@ -164,10 +168,8 @@ final class ApiCrud extends AbstractMaker
                     'document_class_name' => $documentClassDetails->getShortName(),
                     'documents_full_class_name' => $documentsClassDetails->getFullname(),
                     'documents_class_name' => $documentsClassDetails->getShortName(),
-                    'create_hydrator_full_class_name' => $hydratorClassDetails['create']->getFullname(),
-                    'create_hydrator_class_name' => $hydratorClassDetails['create']->getShortName(),
-                    'update_hydrator_full_class_name' => $hydratorClassDetails['update']->getFullname(),
-                    'update_hydrator_class_name' => $hydratorClassDetails['update']->getShortName(),
+                    'hydrator_full_class_name' => $hydratorClassDetails->getFullname(),
+                    'hydrator_class_name' => $hydratorClassDetails->getShortName(),
                     'transformer_full_class_name' => $transformerClassDetails->getFullname(),
                     'transformer_class_name' => $transformerClassDetails->getShortName(),
                 ],
@@ -217,23 +219,33 @@ final class ApiCrud extends AbstractMaker
             ]
         );
 
-        foreach (['abstract', 'create', 'update'] as $key) {
-            $generator->generateClass(
-                $hydratorClassDetails[$key]->getFullName(),
-                $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
-                [
-                    'route_path' => $routePath,
-                    'entity_class_name' => $entityClassDetails->getShortName(),
-                    'entity_var_name' => lcfirst($entityVarSingular),
-                    'entity_full_class_name' => $entityClassDetails->getFullName(),
-                    'entity_type_var_plural' => $entityTypeVarPlural,
-                    'namespace' => $hydratorClassDetails[$key]->getFullName(),
-                    'fields' => $fields,
-                    'associations' => $associations,
-                    'to_many_types' => $toMayTypes
-                ]
-            );
-        }
+        $generator->generateClass(
+            $hydratorClassDetails->getFullName(),
+            $skeletonPath . 'api/JsonApi/Hydrator/EntityHydrator.tpl.php',
+            [
+                'route_path' => $routePath,
+                'entity_class_name' => $entityClassDetails->getShortName(),
+                'entity_var_name' => lcfirst($entityVarSingular),
+                'entity_full_class_name' => $entityClassDetails->getFullName(),
+                'entity_type_var_plural' => $entityTypeVarPlural,
+                'namespace' => $hydratorClassDetails->getFullName(),
+                'fields' => $fields,
+                'associations' => $associations,
+                'to_many_types' => $toMayTypes
+            ]
+        );
+
+        $generator->generateClass(
+            $voterClassDetails->getFullName(),
+            $skeletonPath . 'api/security/voter.tpl.php',
+            [
+                'entity_class_name' => $entityClassDetails->getShortName(),
+                'entity_full_class_name' => $entityClassDetails->getFullName(),
+                'namespace' => $voterClassDetails->getFullName(),
+                'fields' => $fields,
+                'associations' => $associations,
+            ]
+        );
 
         $generator->writeChanges();
 

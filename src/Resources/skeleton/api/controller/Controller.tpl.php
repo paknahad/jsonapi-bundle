@@ -5,15 +5,15 @@ namespace <?= $namespace ?>;
 use <?= $entity_full_class_name ?>;
 use <?= $document_full_class_name ?>;
 use <?= $documents_full_class_name ?>;
-use <?= $create_hydrator_full_class_name ?>;
-use <?= $update_hydrator_full_class_name ?>;
+use <?= $hydrator_full_class_name ?>;
 use <?= $transformer_full_class_name ?>;
 use <?= $repository_full_class_name ?>;
 use Paknahad\JsonApiBundle\Controller\Controller;
 use Paknahad\JsonApiBundle\Helper\ResourceCollection;
-use Symfony\Component\HttpFoundation\Request;
+use Paknahad\JsonApiBundle\Helper\InputOutputManager;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -30,8 +30,10 @@ class <?= $class_name ?> extends Controller
 
         $resourceCollection->handleIndexRequest();
 
+        $this->denyAccessUnlessGranted('list', new <?= $entity_class_name ?>());
+
         return $this->jsonApi()->respond()->ok(
-            new <?= $documents_class_name ?>(new <?= $transformer_class_name ?>()),
+            new <?= $documents_class_name ?>(InputOutputManager::makeTransformer(<?= $transformer_class_name ?>::class)),
             $resourceCollection
         );
     }
@@ -39,14 +41,16 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
      */
-    public function new(): ResponseInterface
+    public function new(ValidatorInterface $validator): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate($this->inputOutputManager->makeHydrator('create', <?= $hydrator_class_name ?>::class), new <?= $entity_class_name ?>());
+
+        $this->denyAccessUnlessGranted('create', $<?= $entity_var_name ?>);
 
         /** @var ConstraintViolationList $errors */
-        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }
@@ -55,7 +59,7 @@ class <?= $class_name ?> extends Controller
         $entityManager->flush();
 
         return $this->jsonApi()->respond()->ok(
-            new <?= $document_class_name ?>(new <?= $transformer_class_name ?>()),
+            new <?= $document_class_name ?>(InputOutputManager::makeTransformer(<?= $transformer_class_name ?>::class)),
             $<?= $entity_var_name ?>
 
         );
@@ -66,8 +70,10 @@ class <?= $class_name ?> extends Controller
      */
     public function show(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
     {
+        $this->denyAccessUnlessGranted('view', $<?= $entity_var_name ?>);
+
         return $this->jsonApi()->respond()->ok(
-            new <?= $document_class_name ?>(new <?= $transformer_class_name ?>()),
+            new <?= $document_class_name ?>(InputOutputManager::makeTransformer(<?= $transformer_class_name ?>::class)),
             $<?= $entity_var_name ?>
 
         );
@@ -76,14 +82,16 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
+    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate($this->inputOutputManager->makeHydrator('update', <?= $hydrator_class_name ?>::class), $<?= $entity_var_name ?>);
+
+        $this->denyAccessUnlessGranted('update', $<?= $entity_var_name ?>);
 
         /** @var ConstraintViolationList $errors */
-        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }
@@ -91,7 +99,7 @@ class <?= $class_name ?> extends Controller
         $entityManager->flush();
 
         return $this->jsonApi()->respond()->ok(
-            new <?= $document_class_name ?>(new <?= $transformer_class_name ?>()),
+            new <?= $document_class_name ?>(InputOutputManager::makeTransformer(<?= $transformer_class_name ?>::class)),
             $<?= $entity_var_name ?>
 
         );
@@ -100,8 +108,10 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_delete", methods="DELETE")
      */
-    public function delete(Request $request, <?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
+    public function delete(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
     {
+        $this->denyAccessUnlessGranted('delete', $<?= $entity_var_name ?>);
+
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($<?= $entity_var_name?>);
         $entityManager->flush();

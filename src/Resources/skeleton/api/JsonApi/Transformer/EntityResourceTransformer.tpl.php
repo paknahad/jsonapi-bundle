@@ -11,11 +11,13 @@ foreach ($associations as $association) {
     } else {
         $useOneRelation = true;
     }
+    echo 'use ' . $association['target_entity'] . ';' . PHP_EOL;
 }
 echo isset($useManyRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToManyRelationship;' . PHP_EOL : '';
 echo isset($useOneRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToOneRelationship;' . PHP_EOL : '';
 ?>
-use WoohooLabs\Yin\JsonApi\Transformer\AbstractResourceTransformer;
+use Paknahad\JsonApiBundle\ResourceTransformer\AbstractResourceTransformer;
+use Paknahad\JsonApiBundle\Helper\InputOutputManager;
 
 /**
  * <?= $entity_class_name ?> Resource Transformer.
@@ -59,7 +61,7 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTrans
      */
     public function getAttributes($<?= $entity_var_name ?>): array
     {
-        return [<?php
+        $fields = [<?php
         foreach ($fields as $field) {
             if (isset($field['id']) && $field['id']) {
                 continue;
@@ -73,6 +75,8 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTrans
         ?>
 
         ];
+
+        return $this->filterAttributes($fields, $<?= $entity_var_name ?>);
     }
 
     /**
@@ -88,23 +92,25 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTrans
      */
     public function getRelationships($<?= $entity_var_name ?>): array
     {
-        return [<?php
+        $relations = [<?php
     foreach ($associations as $association) {
         if (in_array($association['type'], $to_many_types)) {?>
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>) {
                 return ToManyRelationship::create()
-                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), new <?= $association['target_entity_name'] ?>ResourceTransformer());
+                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), InputOutputManager::makeTransformer(<?= $association['target_entity_name'] ?>ResourceTransformer::class));
             },<?php
         } else {?>
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>) {
                 return ToOneRelationship::create()
-                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), new <?= $association['target_entity_name'] ?>ResourceTransformer());
+                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), InputOutputManager::makeTransformer(<?= $association['target_entity_name'] ?>ResourceTransformer::class));
             },<?php
         }
     }?>
 
         ];
+
+        return $this->filterRelations($relations, $<?= $entity_var_name ?>);
     }
 }
