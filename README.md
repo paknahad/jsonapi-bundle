@@ -192,6 +192,11 @@ Validate attributes if you have defined validators on entities.
 }
 ```
 
+### Security
+This bundle generates a [voter][11] for each controller for checking permissions.
+
+After making APIs you can find voters in ``src/Security``
+
 ### Error handler
 
 All errors such as:
@@ -264,3 +269,4 @@ NOTICE: the "meta" field gets filled just on development environment.
 [8]: https://github.com/persvr/rql
 [9]: https://github.com/paknahad/query_parser
 [10]: http://jsonapi.org/recommendations/#filtering
+[11]: https://symfony.com/doc/current/security/voters.html
