@@ -56,5 +56,10 @@
             <argument type="service" id="Paknahad\JsonApiBundle\Helper\FieldManager" />
         </service>
 
+        <service id="Paknahad\JsonApiBundle\Helper\InputOutputManager" class="Paknahad\JsonApiBundle\Helper\InputOutputManager">
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+            <argument type="service" id="security.token_storage"/>
+        </service>
+
     </services>
 </container>

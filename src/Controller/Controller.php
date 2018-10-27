@@ -2,6 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
+use Paknahad\JsonApiBundle\Helper\InputOutputManager;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -11,9 +12,17 @@ use WoohooLabs\Yin\JsonApi\Schema\Error;
 use WoohooLabs\Yin\JsonApi\Schema\ErrorSource;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 
-class Controller extends AbstractController
+abstract class Controller extends AbstractController
 {
     private static $jsonApi;
+
+    /** @var InputOutputManager */
+    protected $inputOutputManager;
+
+    public function __construct(InputOutputManager $inputOutputManager)
+    {
+        $this->inputOutputManager = $inputOutputManager;
+    }
 
     /**
      * @return JsonApi

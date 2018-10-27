@@ -14,17 +14,16 @@ abstract class AbstractVoter extends Voter
      *
      * @return array
      */
-    abstract protected function voteOnInputFields(string $attribute, $subject, TokenInterface $token, array $fields): array;
+    abstract public function voteOnInputFields(string $attribute, $subject, TokenInterface $token, array $fields): array;
 
     /**
-     * @param string         $attribute
      * @param mixed          $subject
      * @param TokenInterface $token
      * @param array          $fields
      *
      * @return array
      */
-    abstract protected function voteOnOutputFields(string $attribute, $subject, TokenInterface $token, array $fields): array;
+    abstract public function voteOnOutputFields($subject, TokenInterface $token, array $fields): array;
 
     /**
      * @param string         $attribute
@@ -34,15 +33,14 @@ abstract class AbstractVoter extends Voter
      *
      * @return array
      */
-    abstract protected function voteOnInputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array;
+    abstract public function voteOnInputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array;
 
     /**
-     * @param string         $attribute
      * @param mixed          $subject
      * @param TokenInterface $token
      * @param array          $relations
      *
      * @return array
      */
-    abstract protected function voteOnOutputRelations(string $attribute, $subject, TokenInterface $token, array $relations): array;
+    abstract public function voteOnOutputRelations($subject, TokenInterface $token, array $relations): array;
 }
