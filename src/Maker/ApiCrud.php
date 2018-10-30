@@ -7,7 +7,8 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Paknahad\JsonApiBundle\JsonApiStr;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -282,7 +283,7 @@ final class ApiCrud extends AbstractMaker
         $associations = [];
 
         foreach ($associationMappings as $association) {
-            $entityName = array_reverse(explode('\\', $association['targetEntity']))[0];
+            $entityName = JsonApiStr::getClassShortName($association['targetEntity']);
 
             $associations[] = [
                 'field_name' => $association['fieldName'],

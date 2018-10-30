@@ -119,7 +119,7 @@ http://example.com/books?include=authors.phones,publishers
 
 ### Search
 
-As the [JSON API specification][2] does not [specify exactly how filtering should work][10] different methods of 
+As the [JSON API specification][2] does not [specify exactly how filtering should work][9] different methods of 
 filtering can be used. Each method is supplied with a Finder service. Each registered Finder will be able to append 
 conditions to the search query. If you register multiple Finders they are all active at the same time. This enables
 your API to support multiple filtering methods.
@@ -140,7 +140,6 @@ http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
 Currently the following Finders are available via other bundles:
 
 - [mnugter/jsonapi-rql-finder-bundle][7] - [RQL][8] based Finder
-- [paknahad/query_parser][9] - More complex filtering
 
 #### Creating a custom Finder
 A Finder can be registered via a service tag in the services definition. The tag `paknahad.json_api.finder` must be
@@ -262,5 +261,4 @@ NOTICE: the "meta" field gets filled just on development environment.
 [6]: https://swagger.io/
 [7]: https://github.com/mnugter/jsonapi-rql-finder-bundle
 [8]: https://github.com/persvr/rql
-[9]: https://github.com/paknahad/query_parser
-[10]: http://jsonapi.org/recommendations/#filtering
+[9]: http://jsonapi.org/recommendations/#filtering
