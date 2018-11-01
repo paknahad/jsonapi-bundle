@@ -209,7 +209,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
                 $sourceAlias = $relations[$relation['entity']]['alias'];
             }
 
-            $this->query->join(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
+            $this->query->leftJoin(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
         }
     }
 }
