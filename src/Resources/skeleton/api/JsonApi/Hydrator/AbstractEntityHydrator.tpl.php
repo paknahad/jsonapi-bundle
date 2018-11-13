@@ -27,11 +27,6 @@ use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 ';
     }
-
-    if (isset($useManyRelation) || isset($useOneRelation)) {
-        echo 'use ' . $entity_full_class_name . ';
-';
-    }
 ?>
 use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
 
