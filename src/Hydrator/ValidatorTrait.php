@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\DateTimeValidator;
 use Symfony\Component\Validator\Constraints\DateValidator;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
@@ -80,37 +81,41 @@ trait ValidatorTrait
     {
         $this->validator = Validation::createValidator();
 
-        try {
-            foreach ($request->getResourceAttributes() as $field => $value) {
-                if ($validExistance && ! $metadata->hasField($field)) {
-                    throw new ValidatorException('This attribute dose not exist');
-                }
+        foreach ($request->getResourceAttributes() as $field => $value) {
+            if ($validExistance && ! $metadata->hasField($field)) {
+                throw new ValidatorException('This attribute dose not exist');
+            }
 
-                $validator = $this->getValidator($metadata->getTypeOfField($field));
+            $validator = $this->getValidator($metadata->getTypeOfField($field));
 
-                if (!is_null($validator)) {
-                    $this->{$validator}($value);
+            if (!is_null($validator)) {
+                /** @var ConstraintViolationListInterface $validation */
+                $validation = $this->{$validator}($value);
+                if ($validation->count() > 0) {
+                    throw new InvalidAttributeException($field, $value, $validation->get(0)->getMessage(), 422);
                 }
             }
-        } catch (ValidatorException $exception) {
-            throw new InvalidAttributeException($field, $value, $exception->getMessage(), 422, $exception);
         }
     }
 
     /**
      * @param string $dateTime
+     *
+     * @return ConstraintViolationListInterface
      */
-    private function validateDateTime($dateTime): void
+    private function validateDateTime($dateTime): ConstraintViolationListInterface
     {
-        $this->validator->validate($dateTime, new DateTime(), new DateTimeValidator());
+        return $this->validator->validate($dateTime, new DateTime());
     }
 
     /**
      * @param string $date
+     *
+     * @return ConstraintViolationListInterface
      */
-    private function validateDate($date): void
+    private function validateDate($date): ConstraintViolationListInterface
     {
-        $this->validator->validate($date, new Date(), new DateValidator());
+        return $this->validator->validate($date, new Date());
     }
 
     /**
