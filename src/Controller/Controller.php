@@ -2,11 +2,8 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
-use Doctrine\ORM\QueryBuilder;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as Base;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\ConstraintViolationList;
 use WoohooLabs\Yin\JsonApi\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\JsonApi;
@@ -14,7 +11,7 @@ use WoohooLabs\Yin\JsonApi\Schema\Error;
 use WoohooLabs\Yin\JsonApi\Schema\ErrorSource;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 
-class Controller extends Base
+class Controller extends AbstractController
 {
     private static $jsonApi;
 
