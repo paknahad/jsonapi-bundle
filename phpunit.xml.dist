@@ -9,7 +9,7 @@
 >
     <php>
         <ini name="error_reporting" value="-1" />
-        <env name="TEST_DATABASE_DSN" value="mysql://db_user:db_password@127.0.0.1:3306/db_name" />
+        <env name="TEST_DATABASE_DSN" value="mysql://root:@127.0.0.1:3306/json_api" />
     </php>
 
     <testsuites>
