@@ -283,7 +283,7 @@ final class ApiCrud extends AbstractMaker
         $associations = [];
 
         foreach ($associationMappings as $association) {
-            $entityName = JsonApiStr::getClassShortName($association['targetEntity']);
+            $entityName = Str::getShortClassName($association['targetEntity']);
 
             $associations[] = [
                 'field_name' => $association['fieldName'],

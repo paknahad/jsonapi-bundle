@@ -90,7 +90,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
      */
     protected function setId($<?= $entity_var_name ?>, string $id): void
     {
-        if ($id && $<?= $entity_var_name ?>->getId() !== intval($id)) {
+        if ($id && $<?= $entity_var_name ?>->getId() !== (int) $id) {
             throw new NotFoundHttpException('both ids in url & body bust be same');
         }
     }
