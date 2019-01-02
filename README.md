@@ -1,3 +1,8 @@
+[![Latest Stable Version](https://poser.pugx.org/paknahad/jsonapi-bundle/version)](https://packagist.org/packages/paknahad/jsonapi-bundle)
+[![Build Status](https://travis-ci.org/paknahad/jsonapi-bundle.svg?branch=master)](https://travis-ci.org/paknahad/jsonapi-bundle)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
+[![Total Downloads](https://poser.pugx.org/paknahad/jsonapi-bundle/downloads)](https://packagist.org/packages/paknahad/jsonapi-bundle)
+
 JsonApiBundle For Symfony
 =========================
 
@@ -141,6 +146,8 @@ Currently the following Finders are available via other bundles:
 
 - [mnugter/jsonapi-rql-finder-bundle][7] - [RQL][8] based Finder
 
+- [paknahad-jsonapi-querifier-bundle][10] - [Querifier][11] based Finder
+
 #### Creating a custom Finder
 A Finder can be registered via a service tag in the services definition. The tag `paknahad.json_api.finder` must be
 added to the service for the Finder to be resigered.
@@ -262,3 +269,5 @@ NOTICE: the "meta" field gets filled just on development environment.
 [7]: https://github.com/mnugter/jsonapi-rql-finder-bundle
 [8]: https://github.com/persvr/rql
 [9]: http://jsonapi.org/recommendations/#filtering
+[10]: https://github.com/paknahad/jsonapi-querifier-bundle
+[11]: https://github.com/paknahad/querifier
