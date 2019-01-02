@@ -23,10 +23,10 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.8",
         "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^3.4|^4.0",
-        "symfony/process": "^3.4|^4.0",
+        "symfony/phpunit-bridge": "^4.0",
+        "symfony/process": "^4.0",
         "phootwork/collection" : "~1",
-        "symfony/yaml": "^3.4|^4.0"
+        "symfony/yaml": "^4.0"
     },
     "config": {
         "preferred-install": {
