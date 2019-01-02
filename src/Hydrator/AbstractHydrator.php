@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Hydrator;
 
 use WoohooLabs\Yin\JsonApi\Hydrator\AbstractHydrator as BaseHydrator;

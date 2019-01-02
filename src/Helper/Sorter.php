@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;

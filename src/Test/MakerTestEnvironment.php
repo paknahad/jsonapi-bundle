@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Test;
 
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;

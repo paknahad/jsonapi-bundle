@@ -1,11 +1,12 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
 class Attribute extends AttributeAbstract
 {
     public function isPrimaryKey(): bool
     {
-        return $this->metadata->has('id') && boolval($this->get('id'));
+        return $this->metadata->has('id') && (bool) ($this->get('id'));
     }
 
     public function toArray()
@@ -20,14 +21,14 @@ class Attribute extends AttributeAbstract
         switch ($this->get('type')) {
             case 'json':
                 return [
-                    'type' => 'object'
+                    'type' => 'object',
                 ];
 
             case 'float':
             case 'decimal':
                 return [
                     'type' => 'number',
-                    'format' => $this->get('type')
+                    'format' => $this->get('type'),
                 ];
 
             case 'smallint':
@@ -35,14 +36,14 @@ class Attribute extends AttributeAbstract
             case 'integer':
                 return [
                     'type' => 'integer',
-                    'format' => ($this->get('type') === 'bigint') ? 'int64' : 'int32'
+                    'format' => ('bigint' === $this->get('type')) ? 'int64' : 'int32',
                 ];
 
             case 'date':
             case 'date_immutable':
                 return [
                     'type' => 'string',
-                    'format' => 'date'
+                    'format' => 'date',
                 ];
 
             case 'datetime':
@@ -51,12 +52,12 @@ class Attribute extends AttributeAbstract
             case 'datetimetz_immutable':
                 return [
                     'type' => 'string',
-                    'format' => 'date-time'
+                    'format' => 'date-time',
                 ];
 
             default:
                 return [
-                    'type' => $this->get('type')
+                    'type' => $this->get('type'),
                 ];
         }
     }

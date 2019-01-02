@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
 use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
@@ -35,7 +36,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 
@@ -54,7 +55,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = \in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
 
         if ($exception instanceof InvalidRelationshipValueException || $exception instanceof InvalidAttributeException) {
             $response = $responder->genericError(
@@ -83,7 +84,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             $trace[] = [
                 'file' => $item['file'] ?? $item['class'],
                 'line' => $item['line'] ?? 'undefined',
-                'function' => $item['function'] ?? 'undefined'
+                'function' => $item['function'] ?? 'undefined',
             ];
         }
 
@@ -92,7 +93,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
-            'trace' => $trace
+            'trace' => $trace,
         ];
     }
 
@@ -118,7 +119,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         )->addError(
             Error::create()
                 /* ex. 500 */
-                ->setStatus((string)$statusCode)
+                ->setStatus((string) $statusCode)
                 /* ex. INTERNAL_SERVER_ERROR */
                 ->setCode(preg_replace('/\s+/', '_', strtoupper($title)))
                 /* ex. Internal Server Error */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
@@ -50,8 +51,8 @@ class FieldManager
     /**
      * Gets the EntityManager.
      *
-     * @return EntityManager
-     *   The EntityManager.
+     * @return entityManager
+     *                       The EntityManager
      */
     public function getEntityManager(): EntityManager
     {
@@ -61,8 +62,8 @@ class FieldManager
     /**
      * Sets the EntityManager.
      *
-     * @param EntityManager $entityManager
-     *   The EntityManager.
+     * @param entityManager $entityManager
+     *                                     The EntityManager
      */
     public function setEntityManager(EntityManager $entityManager): void
     {
@@ -73,7 +74,7 @@ class FieldManager
      * Gets the RootEntity.
      *
      * @return string
-     *   The RootEntity.
+     *                The RootEntity
      */
     public function getRootEntity(): string
     {
@@ -84,7 +85,7 @@ class FieldManager
      * Sets the RootEntity.
      *
      * @param string $rootEntity
-     *   The RootEntity.
+     *                           The RootEntity
      */
     public function setRootEntity(string $rootEntity): void
     {
@@ -107,7 +108,7 @@ class FieldManager
      * @param string $fieldName
      *
      * @return array
-     *   Field information with relation alias.
+     *               Field information with relation alias
      *
      * @throws EntityNotFoundException
      */
@@ -137,7 +138,6 @@ class FieldManager
      */
     public function getQueryFieldName(string $fieldName): string
     {
-
         return sprintf(
             '%s.%s',
             $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
@@ -171,9 +171,9 @@ class FieldManager
         $entity = !empty($explodedField) ? array_shift($explodedField) : $this->getRootEntity();
 
         return [
-            'field'       => $finalField,
+            'field' => $finalField,
             'entity-path' => $explodedField,
-            'entity'      => $entity,
+            'entity' => $entity,
         ];
     }
 

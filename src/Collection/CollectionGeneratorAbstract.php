@@ -1,10 +1,9 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection;
 
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Symfony\Bundle\MakerBundle\FileManager;
-use Symfony\Bundle\MakerBundle\Str;
 
 abstract class CollectionGeneratorAbstract
 {
@@ -22,7 +21,7 @@ abstract class CollectionGeneratorAbstract
         self::ADD_ACTION => ['title' => 'Add %s', 'method' => 'POST'],
         self::EDIT_ACTION => ['title' => 'Edit %s', 'method' => 'PATCH'],
         self::DELETE_ACTION => ['title' => 'Delete %s', 'method' => 'DELETE'],
-        self::VIEW_ACTION => ['title' => 'Get %s', 'method' => 'GET']
+        self::VIEW_ACTION => ['title' => 'Get %s', 'method' => 'GET'],
     ];
 
     public function __construct(FileManager $fileManager, string $rootDirectory)

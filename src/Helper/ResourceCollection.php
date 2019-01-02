@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityRepository;
@@ -12,7 +13,7 @@ use WoohooLabs\Yin\JsonApi\Schema\Pagination\PageBasedPaginationLinkProviderTrai
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PaginationLinkProviderInterface;
 
 /**
- * Resource Collection
+ * Resource Collection.
  */
 class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInterface
 {
@@ -74,8 +75,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the Repository.
      *
-     * @return EntityRepository
-     *   The Repository.
+     * @return entityRepository
+     *                          The Repository
      */
     public function getRepository(): EntityRepository
     {
@@ -85,8 +86,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Sets the Repository.
      *
-     * @param EntityRepository $repository
-     *   The Repository.
+     * @param entityRepository $repository
+     *                                     The Repository
      */
     public function setRepository(EntityRepository $repository): void
     {
@@ -96,8 +97,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the Query.
      *
-     * @return QueryBuilder
-     *   The Query.
+     * @return queryBuilder
+     *                      The Query
      */
     public function getQuery(): QueryBuilder
     {
@@ -132,8 +133,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the Paginator.
      *
-     * @return Paginator
-     *   The Paginator.
+     * @return paginator
+     *                   The Paginator
      */
     public function getPaginator(): Paginator
     {
@@ -143,8 +144,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the FieldManager.
      *
-     * @return FieldManager
-     *   The FieldManager.
+     * @return fieldManager
+     *                      The FieldManager
      */
     public function getFieldManager(): FieldManager
     {
@@ -184,7 +185,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     }
 
     /**
-     * Creates a QueryBuilder by EntityRepository and applies requested filters on that
+     * Creates a QueryBuilder by EntityRepository and applies requested filters on that.
      *
      * @return QueryBuilder
      */

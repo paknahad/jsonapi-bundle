@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle;
 
 class Transformer
@@ -12,7 +13,7 @@ class Transformer
             case 'datetime_immutable':
             case 'datetimetz':
             case 'datetimetz_immutable':
-                return 'new \DateTime(' . $fieldName . ')';
+                return 'new \DateTime('.$fieldName.')';
         }
 
         return $fieldName;

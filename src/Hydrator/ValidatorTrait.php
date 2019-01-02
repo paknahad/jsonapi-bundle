@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Hydrator;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -7,8 +8,6 @@ use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\DateTimeValidator;
-use Symfony\Component\Validator\Constraints\DateValidator;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
@@ -23,21 +22,21 @@ trait ValidatorTrait
     private $validator;
 
     /**
-     * @param  ToOneRelationship|ToManyRelationship $relation
-     * @param  array                                $validTypes
+     * @param ToOneRelationship|ToManyRelationship $relation
+     * @param array                                $validTypes
      *
      * @throws \Exception | ValidatorException
      */
     protected function validateRelationType($relation, array $validTypes): void
     {
         if ($relation instanceof ToOneRelationship) {
-            if (!in_array($relation->getResourceIdentifier()->getType(), $validTypes, true)) {
-                throw new ValidatorException('Invalid type: ' . $relation->getResourceIdentifier()->getType());
+            if (!\in_array($relation->getResourceIdentifier()->getType(), $validTypes, true)) {
+                throw new ValidatorException('Invalid type: '.$relation->getResourceIdentifier()->getType());
             }
         } elseif ($relation instanceof ToManyRelationship) {
             foreach (array_unique($relation->getResourceIdentifierTypes()) as $type) {
-                if (!in_array($type, $validTypes, true)) {
-                    throw new ValidatorException('Invalid type: ' . $type);
+                if (!\in_array($type, $validTypes, true)) {
+                    throw new ValidatorException('Invalid type: '.$type);
                 }
             }
         } else {
@@ -54,7 +53,7 @@ trait ValidatorTrait
      */
     protected function validateRelationValues(array $availableEntities, array $requestedIds, string $relationshipName): void
     {
-        if (count($availableEntities) === count($requestedIds)) {
+        if (\count($availableEntities) === \count($requestedIds)) {
             return;
         }
 
@@ -70,7 +69,7 @@ trait ValidatorTrait
     }
 
     /**
-     * Validate all fields
+     * Validate all fields.
      *
      * @param ClassMetadata    $metadata
      * @param RequestInterface $request
@@ -82,13 +81,13 @@ trait ValidatorTrait
         $this->validator = Validation::createValidator();
 
         foreach ($request->getResourceAttributes() as $field => $value) {
-            if ($validExistance && ! $metadata->hasField($field)) {
+            if ($validExistance && !$metadata->hasField($field)) {
                 throw new ValidatorException('This attribute dose not exist');
             }
 
             $validator = $this->getValidator($metadata->getTypeOfField($field));
 
-            if (!is_null($validator)) {
+            if (null !== $validator) {
                 /** @var ConstraintViolationListInterface $validation */
                 $validation = $this->{$validator}($value);
                 if ($validation->count() > 0) {

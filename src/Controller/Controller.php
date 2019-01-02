@@ -20,7 +20,7 @@ class Controller extends AbstractController
      */
     protected function jsonApi(): JsonApi
     {
-        if (! self::$jsonApi) {
+        if (!self::$jsonApi) {
             self::$jsonApi = $this->container->get('request_stack')->getCurrentRequest()->get('JsonApi');
         }
 
@@ -39,7 +39,7 @@ class Controller extends AbstractController
 
         foreach ($errors as $fieldError) {
             $error = Error::create();
-            $pointer = '/data/attributes/' . $fieldError->getPropertyPath();
+            $pointer = '/data/attributes/'.$fieldError->getPropertyPath();
 
             $errorSource = new ErrorSource(
                 $pointer,

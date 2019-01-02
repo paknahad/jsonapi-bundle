@@ -7,7 +7,7 @@ use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Interface FinderInterface
+ * Interface FinderInterface.
  */
 interface FinderInterface
 {
