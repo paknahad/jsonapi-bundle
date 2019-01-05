@@ -2,9 +2,7 @@
 
 namespace Paknahad\JsonApiBundle;
 
-use Paknahad\JsonApiBundle\DependencyInjection\Compiler\FinderHandlerPass;
 use Paknahad\JsonApiBundle\DependencyInjection\JsonApiExtension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**

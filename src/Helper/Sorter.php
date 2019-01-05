@@ -43,7 +43,7 @@ class Sorter
     {
         $sorting = [];
 
-        $fields = \explode(',', $sort);
+        $fields = explode(',', $sort);
         foreach ($fields as $field) {
             $sorting[] = $this->parseField($field);
         }
@@ -69,7 +69,7 @@ class Sorter
             return $data;
         }
 
-        $data['field'] = \ltrim($field, '-');
+        $data['field'] = ltrim($field, '-');
         $data['direction'] = 'DESC';
 
         return $data;

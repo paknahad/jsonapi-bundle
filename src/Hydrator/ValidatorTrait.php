@@ -120,7 +120,7 @@ trait ValidatorTrait
     /**
      * @param string $type
      *
-     * @return null|string
+     * @return string|null
      */
     private function getValidator(string $type): ?string
     {
