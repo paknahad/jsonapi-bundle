@@ -19,6 +19,7 @@ cache:
 env:
   global:
     - SYMFONY_PHPUNIT_DIR=.phpunit
+    - APP_ENV=test
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -29,3 +30,4 @@ install:
 
 script:
   - ./vendor/bin/simple-phpunit
+  - ./vendor/bin/php-cs-fixer fix --dry-run --diff
