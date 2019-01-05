@@ -26,6 +26,7 @@
         "symfony/phpunit-bridge": "^4.0",
         "symfony/process": "^4.0",
         "phootwork/collection" : "~1",
+        "opis/json-schema": "^1.0",
         "symfony/yaml": "^4.0"
     },
     "config": {

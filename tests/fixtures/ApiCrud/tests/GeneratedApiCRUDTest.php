@@ -2,9 +2,9 @@
 
 namespace App\Tests;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Paknahad\JsonApiBundle\Test\JsonApiTestCase;
 
-class GeneratedApiCRUDTest extends WebTestCase
+class GeneratedApiCRUDTest extends JsonApiTestCase
 {
     /** @dataProvider provideAuthor */
     public function testNewAuthorAction($author)
@@ -24,6 +24,7 @@ class GeneratedApiCRUDTest extends WebTestCase
             '{"data": {"type": "authors","attributes": {"name": "'.$author.'"}}}'
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/'.$id.'"},"data":{"type":"authors","id":"'.$id.'","attributes":{"name":"'.$author.'"},"relationships":{"books":{"data":[]}}}}',
             $client->getResponse()->getContent()
@@ -65,6 +66,7 @@ class GeneratedApiCRUDTest extends WebTestCase
             }'
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/books\/'.$id.'"},"data":{"type":"books","id":"'.$id.'","attributes":{"title":"'.$book.'"},"relationships":{"authors":{"data":[{"type":"authors","id":"'.$authorId.'"}]}}}}',
             $client->getResponse()->getContent()
@@ -84,6 +86,7 @@ class GeneratedApiCRUDTest extends WebTestCase
             '{"data": {"type": "authors","id":"2","attributes": {"name": "Mr Aldous Huxley"}}}'
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}}}',
             $client->getResponse()->getContent()
@@ -99,6 +102,7 @@ class GeneratedApiCRUDTest extends WebTestCase
             '/authors/2?include=books'
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
+        $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}},"included":[{"type":"books","id":"3","attributes":{"title":"Brave New World"},"relationships":{"authors":{"data":[{"type":"authors","id":"2"}]}}}]}',
             $client->getResponse()->getContent()
