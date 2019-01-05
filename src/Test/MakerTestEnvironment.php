@@ -288,12 +288,30 @@ final class MakerTestEnvironment
 
         $rootPath = str_replace('\\', '\\\\', realpath(__DIR__.'/../..'));
 
+        // fetch a few packages needed for testing
+        MakerTestProcess::create(
+            'composer require symfony/psr-http-message-bridge \
+                woohoolabs/yin \
+                phpunit \
+                symfony/maker-bundle \
+                symfony/process \
+                phootwork/collection \
+                sensio/framework-extra-bundle \
+                opis/json-schema \
+                zendframework/zend-diactoros "^1.3.0" \
+                --prefer-dist --no-progress --no-suggest',
+            $this->flexPath
+        )->run();
+
+        MakerTestProcess::create('php bin/console cache:clear --no-warmup', $this->flexPath)
+            ->run();
+
         // processes any changes needed to the Flex project
         $replacements = [
             [
                 'filename' => 'config/bundles.php',
-                'find' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],",
-                'replace' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
+                'find' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],",
+                'replace' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
             ],
             [
                 // ugly way to autoload Maker & any other vendor libs needed in the command
@@ -308,23 +326,6 @@ final class MakerTestEnvironment
             ],
         ];
         $this->processReplacements($replacements, $this->flexPath);
-
-        // fetch a few packages needed for testing
-        MakerTestProcess::create(
-            'composer require symfony/psr-http-message-bridge \
-                woohoolabs/yin \
-                phpunit \
-                symfony/maker-bundle \
-                symfony/process \
-                phootwork/collection \
-                sensio/framework-extra-bundle \
-                zendframework/zend-diactoros "^1.3.0" \
-                --prefer-dist --no-progress --no-suggest',
-            $this->flexPath
-        )->run();
-
-        MakerTestProcess::create('php bin/console cache:clear --no-warmup', $this->flexPath)
-            ->run();
     }
 
     private function processReplacements(array $replacements, $rootDir)
