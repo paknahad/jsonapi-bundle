@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
@@ -42,7 +43,7 @@ class Sorter
     {
         $sorting = [];
 
-        $fields = \explode(',', $sort);
+        $fields = explode(',', $sort);
         foreach ($fields as $field) {
             $sorting[] = $this->parseField($field);
         }

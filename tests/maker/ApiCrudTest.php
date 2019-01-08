@@ -34,27 +34,49 @@ class ApiCrudTest extends MakerTestCase
 
     public function getCommandTests()
     {
-        yield 'crud_basic' => [
+        yield 'crud_author' => [
             MakerTestDetails::createTest(
                     $this->getMakerInstance('make_api'),
                     [
                         // entity class name
-                        'SweetFood',
+                        'Author'
+                    ]
+                )
+                ->setFixtureFilesPath(__DIR__.'/../fixtures/ApiCrud')
+                ->assert(function (string $output, string $directory) {
+                    $this->assertContains('created: src/Controller/AuthorController.php', $output);
+                    $this->assertContains('created: src/JsonApi/Document/Author/AuthorDocument.php', $output);
+                    $this->assertContains('created: src/JsonApi/Document/Author/AuthorsDocument.php', $output);
+                    $this->assertContains('created: src/JsonApi/Transformer/AuthorResourceTransformer.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Author/AbstractAuthorHydrator.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Author/CreateAuthorHydrator.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Author/UpdateAuthorHydrator.php', $output);
+                    $this->assertContains('created: collections/postman.json', $output);
+                    $this->assertContains('created: collections/swagger.yaml', $output);
+                })
+        ];
+
+        yield 'crud_book' => [
+            MakerTestDetails::createTest(
+                    $this->getMakerInstance('make_api'),
+                    [
+                        // entity class name
+                        'Book'
                     ]
                 )
                 ->setFixtureFilesPath(__DIR__.'/../fixtures/ApiCrud')
                 // need for crud web tests
                 ->configureDatabase()
                 ->assert(function (string $output, string $directory) {
-                    $this->assertContains('created: src/Controller/SweetFoodController.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/SweetFood/SweetFoodDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/SweetFood/SweetFoodsDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Transformer/SweetFoodResourceTransformer.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/SweetFood/AbstractSweetFoodHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/SweetFood/CreateSweetFoodHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/SweetFood/UpdateSweetFoodHydrator.php', $output);
-                    $this->assertContains('created: collections/postman.json', $output);
-                    $this->assertContains('created: collections/swagger.yaml', $output);
+                    $this->assertContains('created: src/Controller/BookController.php', $output);
+                    $this->assertContains('created: src/JsonApi/Document/Book/BookDocument.php', $output);
+                    $this->assertContains('created: src/JsonApi/Document/Book/BooksDocument.php', $output);
+                    $this->assertContains('created: src/JsonApi/Transformer/BookResourceTransformer.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Book/AbstractBookHydrator.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Book/CreateBookHydrator.php', $output);
+                    $this->assertContains('created: src/JsonApi/Hydrator/Book/UpdateBookHydrator.php', $output);
+                    $this->assertContains('updated: collections/postman.json', $output);
+                    $this->assertContains('updated: collections/swagger.yaml', $output);
                 })
         ];
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection\Swagger;
 
 use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Request;
@@ -7,7 +8,7 @@ use Paknahad\JsonApiBundle\JsonApiStr;
 
 class Paths
 {
-    static public function buildPaths(array $actions, string $entityName, string $route, Attributes $attributes): array
+    public static function buildPaths(array $actions, string $entityName, string $route, Attributes $attributes): array
     {
         $paths = [];
 
@@ -17,26 +18,26 @@ class Paths
             $paths[$path][strtolower($action['method'])] = [
                 'tags' => [JsonApiStr::entityNameToType($entityName)],
                 'summary' => $action['title'],
-                'operationId' => $name . ucfirst($entityName),
+                'operationId' => $name.ucfirst($entityName),
                 'produces' => ['application/json'],
                 'parameters' => (new Request($entityName, $attributes, $name, $route))->toArray(),
                 'responses' => [
                     '200' => [
                         'description' => 'successful operation',
-                        'schema' => (new Response($entityName, $attributes, $name, $route))->toArray()
-                    ]
-                ]
+                        'schema' => (new Response($entityName, $attributes, $name, $route))->toArray(),
+                    ],
+                ],
             ];
         }
 
         return $paths;
     }
 
-    static private function generateUrl($baseRoute, $actionName, $entityName)
+    private static function generateUrl($baseRoute, $actionName, $entityName)
     {
-        return $baseRoute . '/' .
+        return $baseRoute.'/'.
             (
-                in_array($actionName, ['edit', 'delete', 'view']) ?
+                \in_array($actionName, ['edit', 'delete', 'view']) ?
                     JsonApiStr::genEntityIdName($entityName, true) : ''
             );
     }

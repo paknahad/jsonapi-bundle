@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\ORM\QueryBuilder;
@@ -6,7 +7,7 @@ use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class Finder
+ * Class Finder.
  */
 class Finder implements FinderInterface
 {
@@ -86,13 +87,13 @@ class Finder implements FinderInterface
      */
     protected function getOperator(array $fieldMetadata, string &$value): string
     {
-        if (strtolower($value) === 'null') {
+        if ('null' === strtolower($value)) {
             $value = null;
 
             return 'IS NULL';
         }
 
-        if ($fieldMetadata['metadata']['type'] === 'string' && strpos($value, '%') !== false) {
+        if ('string' === $fieldMetadata['metadata']['type'] && false !== strpos($value, '%')) {
             return 'LIKE';
         }
 
@@ -100,7 +101,7 @@ class Finder implements FinderInterface
     }
 
     /**
-     * Set value & return that parameter name
+     * Set value & return that parameter name.
      *
      * @param mixed $value
      *

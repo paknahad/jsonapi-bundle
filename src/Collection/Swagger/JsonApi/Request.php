@@ -1,6 +1,6 @@
 <?php
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
+namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
 use Paknahad\JsonApiBundle\Collection\CollectionGeneratorAbstract;
 use Paknahad\JsonApiBundle\JsonApiStr;
@@ -9,7 +9,7 @@ class Request extends DataAbstract
 {
     private function hasBody()
     {
-        return in_array(
+        return \in_array(
             $this->actionName,
             [
                 CollectionGeneratorAbstract::ADD_ACTION,
@@ -20,7 +20,7 @@ class Request extends DataAbstract
 
     private function hasPathParam()
     {
-        return in_array(
+        return \in_array(
             $this->actionName,
             [
                 CollectionGeneratorAbstract::VIEW_ACTION,
@@ -39,14 +39,14 @@ class Request extends DataAbstract
         return [
             'in' => 'body',
             'name' => 'body',
-            'description' => $this->actionName . ucfirst($this->entityName),
+            'description' => $this->actionName.ucfirst($this->entityName),
             'required' => true,
             'schema' => [
                 'type' => 'object',
                 'properties' => [
-                    'data' => $this->genJsonApiDataBody($this->actionName === CollectionGeneratorAbstract::EDIT_ACTION),
-                ]
-            ]
+                    'data' => $this->genJsonApiDataBody(CollectionGeneratorAbstract::EDIT_ACTION === $this->actionName),
+                ],
+            ],
         ];
     }
 
@@ -61,7 +61,7 @@ class Request extends DataAbstract
             'in' => 'path',
             'required' => true,
             'type' => 'integer',
-            'format' => 'int64'
+            'format' => 'int64',
         ];
     }
 

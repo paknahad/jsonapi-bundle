@@ -7,7 +7,7 @@ use Paknahad\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class FinderCollection
+ * Class FinderCollection.
  */
 class FinderCollection
 {

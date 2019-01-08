@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection\Swagger;
 
 use phootwork\collection\ArrayList;
@@ -50,7 +51,7 @@ class Swagger implements Arrayable
         $result = $collection->toArray();
 
         foreach ($result as $key => &$content) {
-            if (is_object($content)) {
+            if (\is_object($content)) {
                 $content = self::mapToArray($content);
             }
         }

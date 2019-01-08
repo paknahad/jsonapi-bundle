@@ -7,7 +7,7 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -118,12 +118,12 @@ final class ApiCrud extends AbstractMaker
 
         $documentClassDetails = $generator->createClassNameDetails(
             $entityVarSingular,
-            'JsonApi\\Document\\' . $entityClassDetails->getShortName(),
+            'JsonApi\\Document\\'.$entityClassDetails->getShortName(),
             'Document'
         );
         $documentsClassDetails = $generator->createClassNameDetails(
             $entityVarPlural,
-            'JsonApi\\Document\\' . $entityClassDetails->getShortName(),
+            'JsonApi\\Document\\'.$entityClassDetails->getShortName(),
             'Document'
         );
         $transformerClassDetails = $generator->createClassNameDetails(
@@ -134,7 +134,7 @@ final class ApiCrud extends AbstractMaker
 
         foreach (['abstract', 'create', 'update'] as $key) {
             $hydratorClassDetails[$key] = $generator->createClassNameDetails(
-                ucfirst($key) . $entityVarSingular,
+                ucfirst($key).$entityVarSingular,
                 sprintf('JsonApi\\Hydrator\\%s', $entityClassDetails->getShortName()),
                 'Hydrator'
             );
@@ -144,11 +144,11 @@ final class ApiCrud extends AbstractMaker
 
         $routeName = Str::asRouteName($entityVarPlural);
         $routePath = Str::asRoutePath($entityVarPlural);
-        $skeletonPath = __DIR__ . '/../Resources/skeleton/';
+        $skeletonPath = __DIR__.'/../Resources/skeleton/';
 
         $generator->generateClass(
             $controllerClassDetails->getFullName(),
-            $skeletonPath . 'api/controller/Controller.tpl.php',
+            $skeletonPath.'api/controller/Controller.tpl.php',
             array_merge(
                 [
                     'entity_full_class_name' => $entityClassDetails->getFullName(),
@@ -177,33 +177,33 @@ final class ApiCrud extends AbstractMaker
 
         $generator->generateClass(
             $documentClassDetails->getFullName(),
-            $skeletonPath . 'api/JsonApi/Document/EntityDocument.tpl.php',
+            $skeletonPath.'api/JsonApi/Document/EntityDocument.tpl.php',
             [
                 'route_path' => $routePath,
                 'entity_class_name' => $entityClassDetails->getShortName(),
-                'namespace' => $documentClassDetails->getFullName()
+                'namespace' => $documentClassDetails->getFullName(),
             ]
         );
 
         $generator->generateClass(
             $documentsClassDetails->getFullName(),
-            $skeletonPath . 'api/JsonApi/Document/EntitiesDocument.tpl.php',
+            $skeletonPath.'api/JsonApi/Document/EntitiesDocument.tpl.php',
             [
                 'route_path' => $routePath,
                 'entity_class_name' => $entityClassDetails->getShortName(),
                 'entity_class_name_plural' => $entityVarPlural,
-                'namespace' => $documentsClassDetails->getFullName()
+                'namespace' => $documentsClassDetails->getFullName(),
             ]
         );
 
         $toMayTypes = [
             ClassMetadataInfo::TO_MANY,
             ClassMetadataInfo::MANY_TO_MANY,
-            ClassMetadataInfo::ONE_TO_MANY
+            ClassMetadataInfo::ONE_TO_MANY,
         ];
         $generator->generateClass(
             $transformerClassDetails->getFullName(),
-            $skeletonPath . 'api/JsonApi/Transformer/EntityResourceTransformer.tpl.php',
+            $skeletonPath.'api/JsonApi/Transformer/EntityResourceTransformer.tpl.php',
             [
                 'route_path' => $routePath,
                 'entity_full_class_name' => $entityClassDetails->getFullName(),
@@ -213,14 +213,14 @@ final class ApiCrud extends AbstractMaker
                 'namespace' => $transformerClassDetails->getFullName(),
                 'fields' => $fields,
                 'associations' => $associations,
-                'to_many_types' => $toMayTypes
+                'to_many_types' => $toMayTypes,
             ]
         );
 
         foreach (['abstract', 'create', 'update'] as $key) {
             $generator->generateClass(
                 $hydratorClassDetails[$key]->getFullName(),
-                $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
+                $skeletonPath.sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
                 [
                     'route_path' => $routePath,
                     'entity_class_name' => $entityClassDetails->getShortName(),
@@ -230,7 +230,7 @@ final class ApiCrud extends AbstractMaker
                     'namespace' => $hydratorClassDetails[$key]->getFullName(),
                     'fields' => $fields,
                     'associations' => $associations,
-                    'to_many_types' => $toMayTypes
+                    'to_many_types' => $toMayTypes,
                 ]
             );
         }
@@ -282,7 +282,7 @@ final class ApiCrud extends AbstractMaker
         $associations = [];
 
         foreach ($associationMappings as $association) {
-            $entityName = array_reverse(explode('\\', $association['targetEntity']))[0];
+            $entityName = Str::getShortClassName($association['targetEntity']);
 
             $associations[] = [
                 'field_name' => $association['fieldName'],
@@ -291,10 +291,10 @@ final class ApiCrud extends AbstractMaker
                 'target_entity' => $association['targetEntity'],
                 'target_entity_name' => $entityName,
                 'target_entity_type' => Str::asTwigVariable(Inflector::pluralize($entityName)),
-                'getter' => 'get' . Str::asCamelCase($association['fieldName']),
-                'setter' => 'set' . Str::asCamelCase($association['fieldName']),
-                'adder' => 'add' . Str::asCamelCase(Inflector::singularize($association['fieldName'])),
-                'remover' => 'remove' . Str::asCamelCase(Inflector::singularize($association['fieldName']))
+                'getter' => 'get'.Str::asCamelCase($association['fieldName']),
+                'setter' => 'set'.Str::asCamelCase($association['fieldName']),
+                'adder' => 'add'.Str::asCamelCase(Inflector::singularize($association['fieldName'])),
+                'remover' => 'remove'.Str::asCamelCase(Inflector::singularize($association['fieldName'])),
             ];
         }
 
@@ -317,8 +317,8 @@ final class ApiCrud extends AbstractMaker
                 'type' => $field['type'],
                 'unique' => $field['unique'],
                 'nullable' => $field['nullable'],
-                'getter' => 'get' . Str::asCamelCase($field['fieldName']),
-                'setter' => 'set' . Str::asCamelCase($field['fieldName']),
+                'getter' => 'get'.Str::asCamelCase($field['fieldName']),
+                'setter' => 'set'.Str::asCamelCase($field['fieldName']),
             ];
         }
 

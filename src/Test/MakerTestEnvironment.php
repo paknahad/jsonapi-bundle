@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Test;
 
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
@@ -20,8 +21,6 @@ final class MakerTestEnvironment
     private $flexPath;
 
     private $path;
-
-    private $snapshotFile;
 
     /**
      * @var MakerTestProcess
@@ -45,8 +44,6 @@ final class MakerTestEnvironment
         $this->flexPath = $this->cachePath.'/flex_project';
 
         $this->path = $this->cachePath.\DIRECTORY_SEPARATOR.$testDetails->getUniqueCacheDirectoryName();
-
-        $this->snapshotFile = $this->path.\DIRECTORY_SEPARATOR.basename($this->path).'.json';
     }
 
     public static function create(MakerTestDetails $testDetails): self
@@ -57,6 +54,56 @@ final class MakerTestEnvironment
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    private function changeRootNamespaceIfNeeded()
+    {
+        if ('App' === ($rootNamespace = $this->testDetails->getRootNamespace())) {
+            return;
+        }
+
+        $replacements = [
+            [
+                'filename' => 'composer.json',
+                'find' => '"App\\\\": "src/"',
+                'replace' => '"'.$rootNamespace.'\\\\": "src/"',
+            ],
+            [
+                'filename' => 'src/Kernel.php',
+                'find' => 'namespace App',
+                'replace' => 'namespace '.$rootNamespace,
+            ],
+            [
+                'filename' => 'bin/console',
+                'find' => 'use App\\Kernel',
+                'replace' => 'use '.$rootNamespace.'\\Kernel',
+            ],
+            [
+                'filename' => 'public/index.php',
+                'find' => 'use App\\Kernel',
+                'replace' => 'use '.$rootNamespace.'\\Kernel',
+            ],
+            [
+                'filename' => 'config/services.yaml',
+                'find' => 'App\\',
+                'replace' => $rootNamespace.'\\',
+            ],
+            [
+                'filename' => 'phpunit.xml.dist',
+                'find' => '<env name="KERNEL_CLASS" value="App\\Kernel" />',
+                'replace' => '<env name="KERNEL_CLASS" value="'.$rootNamespace.'\\Kernel" />',
+            ],
+        ];
+
+        if ($this->fs->exists($this->path.'/config/packages/doctrine.yaml')) {
+            $replacements[] = [
+                'filename' => 'config/packages/doctrine.yaml',
+                'find' => 'App',
+                'replace' => $rootNamespace,
+            ];
+        }
+
+        $this->processReplacements($replacements, $this->path);
     }
 
     public function prepare()
@@ -70,21 +117,21 @@ final class MakerTestEnvironment
                 $this->fs->mirror($this->flexPath, $this->path);
 
                 // install any missing dependencies
-                if ($dependencies = $this->testDetails->getDependencies()) {
+                $dependencies = $this->determineMissingDependencies();
+                if ($dependencies) {
                     MakerTestProcess::create(sprintf('composer require %s', implode(' ', $dependencies)), $this->path)
                         ->run();
                 }
 
-                $this->createSnapshot(true);
+                $this->changeRootNamespaceIfNeeded();
+
+                file_put_contents($this->path.'/.gitignore', "var/cache/\nvendor/\n");
             } catch (ProcessFailedException $e) {
                 $this->fs->remove($this->path);
 
                 throw $e;
             }
         }
-
-        MakerTestProcess::create('composer dump-autoload', $this->path)
-            ->run();
 
         if (null !== $this->testDetails->getFixtureFilesPath()) {
             // move fixture files into directory
@@ -105,25 +152,20 @@ final class MakerTestEnvironment
         if ($ignoredFiles = $this->testDetails->getFilesToDelete()) {
             foreach ($ignoredFiles as $file) {
                 if (file_exists($this->path.'/'.$file)) {
-                    $this->fs->rename($this->path.'/'.$file, $this->path.'/'.$file.'.deleted');
+                    $this->fs->remove($this->path.'/'.$file);
                 }
             }
         }
 
-        foreach ($this->testDetails->getFilesToRevert() as $file) {
-            if (!file_exists($this->path.'/'.$file)) {
-                throw new \Exception(sprintf('Cannot find "%s"', $file));
-            }
-
-            $this->fs->copy($this->path.'/'.$file, $this->path.'/'.$file.'.original');
-        }
+        MakerTestProcess::create('composer dump-autoload', $this->path)
+            ->run();
     }
 
     private function preMake()
     {
         foreach ($this->testDetails->getPreMakeCommands() as $preCommand) {
             MakerTestProcess::create($preCommand, $this->path)
-                            ->run();
+                ->run();
         }
     }
 
@@ -131,8 +173,8 @@ final class MakerTestEnvironment
     {
         $this->preMake();
 
-        MakerTestProcess::create('php bin/console cache:clear --no-ansi', $this->path)
-                        ->run();
+        // Lets remove cache
+        $this->fs->remove($this->path.'/var/cache');
 
         // We don't need ansi coloring in tests!
         $testProcess = MakerTestProcess::create(
@@ -189,26 +231,23 @@ final class MakerTestEnvironment
     public function runPhpCSFixer(string $file)
     {
         return MakerTestProcess::create(sprintf('php vendor/bin/php-cs-fixer --config=%s fix --dry-run --diff %s', __DIR__.'/../Resources/test/.php_cs.test', $this->path.'/'.$file), $this->rootPath)
-                               ->run(true);
+            ->run(true);
     }
 
     public function runTwigCSLint(string $file)
     {
         return MakerTestProcess::create(sprintf('php vendor/bin/twigcs lint %s', $this->path.'/'.$file), $this->rootPath)
-                               ->run(true);
+            ->run(true);
     }
 
     public function runInternalTests()
     {
-        MakerTestProcess::create('php bin/console cache:clear', $this->path)
-                        ->run();
-
         $finder = new Finder();
         $finder->in($this->path.'/tests')->files();
         if ($finder->count() > 0) {
             // execute the tests that were moved into the project!
             return MakerTestProcess::create(sprintf('php %s', $this->rootPath.'/vendor/bin/simple-phpunit'), $this->path)
-                                   ->run(true);
+                ->run(true);
         }
 
         return null;
@@ -238,81 +277,48 @@ final class MakerTestEnvironment
 
         foreach ($this->testDetails->getPostMakeCommands() as $postCommand) {
             MakerTestProcess::create($postCommand, $this->path)
-                            ->run();
+                ->run();
         }
-    }
-
-    public function reset()
-    {
-        foreach ($this->testDetails->getFilesToRevert() as $file) {
-            if (!file_exists($this->path.'/'.$file.'.original')) {
-                throw new \Exception(sprintf('Cannot find original file for "%s"', $file));
-            }
-
-            $this->fs->rename($this->path.'/'.$file.'.original', $this->path.'/'.$file, true);
-        }
-
-        $cleanSnapshot = json_decode(file_get_contents($this->snapshotFile));
-        $currentSnapshot = $this->createSnapshot();
-
-        $diff = array_diff($currentSnapshot, $cleanSnapshot);
-
-        if (\count($diff)) {
-            $this->fs->remove($diff);
-        }
-
-        if ($ignoredFiles = $this->testDetails->getFilesToDelete()) {
-            foreach ($ignoredFiles as $file) {
-                if (file_exists($this->path.'/'.$file.'.deleted')) {
-                    $this->fs->rename($this->path.'/'.$file.'.deleted', $this->path.'/'.$file);
-                }
-            }
-        }
-
-        // no need to revert post make replacements: if something was replaced
-        // "post make", then it was a generated file, which will be deleted anyways
-        $this->revertReplacements($this->testDetails->getReplacements(), $this->path);
-    }
-
-    private function createSnapshot($save = false): array
-    {
-        $snapshot = [];
-        $finder = new Finder();
-        $finder->files()->in($this->path)->exclude(['vendor', 'var/cache', 'var/log']);
-        if ($finder->count() > 0) {
-            foreach ($finder as $file) {
-                $snapshot[] = $file->getPathname();
-            }
-            $snapshot[] = $this->snapshotFile;
-
-            if ($save) {
-                $this->fs->dumpFile($this->snapshotFile, json_encode($snapshot));
-            }
-        }
-
-        return $snapshot;
     }
 
     private function buildFlexSkeleton()
     {
-        MakerTestProcess::create('composer create-project symfony/skeleton flex_project', $this->cachePath)
-                        ->run();
+        MakerTestProcess::create('composer create-project symfony/skeleton flex_project --prefer-dist --no-progress', $this->cachePath)
+            ->run();
 
         $rootPath = str_replace('\\', '\\\\', realpath(__DIR__.'/../..'));
+
+        // fetch a few packages needed for testing
+        MakerTestProcess::create(
+            'composer require symfony/psr-http-message-bridge \
+                woohoolabs/yin \
+                phpunit \
+                symfony/maker-bundle \
+                symfony/process \
+                phootwork/collection \
+                sensio/framework-extra-bundle \
+                opis/json-schema \
+                zendframework/zend-diactoros "^1.3.0" \
+                --prefer-dist --no-progress --no-suggest',
+            $this->flexPath
+        )->run();
+
+        MakerTestProcess::create('php bin/console cache:clear --no-warmup', $this->flexPath)
+            ->run();
 
         // processes any changes needed to the Flex project
         $replacements = [
             [
                 'filename' => 'config/bundles.php',
-                'find' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],",
-                'replace' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
+                'find' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],",
+                'replace' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
             ],
             [
                 // ugly way to autoload Maker & any other vendor libs needed in the command
                 'filename' => 'composer.json',
-                'find' => '"App\\\": "src/"',
+                'find' => '"App\\\Tests\\\": "tests/"',
                 'replace' => sprintf(
-                    '"App\\\": "src/",'."\n".'            "Paknahad\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
+                    '"App\\\Tests\\\": "tests/",'."\n".'            "Paknahad\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
                     // escape \ for Windows
                     $rootPath,
                     $rootPath
@@ -320,26 +326,6 @@ final class MakerTestEnvironment
             ],
         ];
         $this->processReplacements($replacements, $this->flexPath);
-
-        // fetch the packages needed for testing
-        MakerTestProcess::create('composer require symfony/psr-http-message-bridge woohoolabs/yin zendframework/zend-diactoros phpunit symfony/maker-bundle', $this->flexPath)
-            ->run();
-
-        MakerTestProcess::create('php bin/console cache:clear --no-warmup', $this->flexPath)
-                        ->run();
-    }
-
-    private function revertReplacements(array $replacements, $rootDir)
-    {
-        foreach ($replacements as $replacement) {
-            $path = $rootDir.'/'.$replacement['filename'];
-            $contents = file_get_contents($path);
-            if (false === strpos($contents, $replacement['replace'])) {
-                continue;
-            }
-
-            file_put_contents($path, str_replace($replacement['replace'], $replacement['find'], $contents));
-        }
     }
 
     private function processReplacements(array $replacements, $rootDir)
@@ -353,10 +339,42 @@ final class MakerTestEnvironment
 
             $contents = file_get_contents($path);
             if (false === strpos($contents, $replacement['find'])) {
-                throw new \Exception(sprintf('Could not find "%s" inside "%s"', $replacement['find'], $replacement['filename']));
+//                throw new \Exception(sprintf('Could not find "%s" inside "%s"', $replacement['find'], $replacement['filename']));
             }
 
             file_put_contents($path, str_replace($replacement['find'], $replacement['replace'], $contents));
         }
+    }
+
+    /**
+     * Executes the DependencyBuilder for the Maker command inside the
+     * actual project, so we know exactly what dependencies we need or
+     * don't need.
+     */
+    private function determineMissingDependencies(): array
+    {
+        $depBuilder = $this->testDetails->getDependencyBuilder();
+        file_put_contents($this->path.'/dep_builder', serialize($depBuilder));
+        file_put_contents($this->path.'/dep_runner.php', '<?php
+
+require __DIR__."/vendor/autoload.php";
+$depBuilder = unserialize(file_get_contents("dep_builder"));
+$missingDependencies = array_merge(
+    $depBuilder->getMissingDependencies(),
+    $depBuilder->getMissingDevDependencies()
+);
+echo json_encode($missingDependencies);
+        ');
+
+        $process = MakerTestProcess::create('php dep_runner.php', $this->path)->run();
+        $data = json_decode($process->getOutput(), true);
+        if (null === $data) {
+            throw new \Exception('Could not determine dependencies');
+        }
+
+        unlink($this->path.'/dep_builder');
+        unlink($this->path.'/dep_runner.php');
+
+        return array_merge($data, $this->testDetails->getExtraDependencies());
     }
 }

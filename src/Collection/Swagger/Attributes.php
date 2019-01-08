@@ -9,10 +9,10 @@ use phootwork\collection\Map;
 
 class Attributes
 {
-	/** @var Map */
+    /** @var Map */
     private $fields;
 
-	/** @var Map */
+    /** @var Map */
     private $relations;
 
     private function __construct()
@@ -21,9 +21,9 @@ class Attributes
         $this->relations = new Map();
     }
 
-    static public function parse(ClassMetadata $classMetadata): self
+    public static function parse(ClassMetadata $classMetadata): self
     {
-        $attributes = new Attributes();
+        $attributes = new self();
 
         foreach ($classMetadata->fieldMappings as $field) {
             $attributes->addField(new Attribute($field));
@@ -57,7 +57,7 @@ class Attributes
 
         return [
             'type' => 'object',
-            'properties' => $result
+            'properties' => $result,
         ];
     }
 
@@ -67,7 +67,7 @@ class Attributes
         $this->relations->each(function (string $key, Relation $relation) use (&$result) {
             $result[$relation->generateName()] = [
                 'type' => 'object',
-                'properties' => $relation->toArray()
+                'properties' => $relation->toArray(),
             ];
         });
 

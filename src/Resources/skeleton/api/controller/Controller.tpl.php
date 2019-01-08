@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("<?= $route_path ?>")
@@ -39,14 +40,14 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
      */
-    public function new(): ResponseInterface
+    public function new(ValidatorInterface $validator): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
 
         /** @var ConstraintViolationList $errors */
-        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }
@@ -76,14 +77,14 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
+    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
 
         /** @var ConstraintViolationList $errors */
-        $errors = $this->get('validator')->validate($<?= $entity_var_name ?>);
+        $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
         }

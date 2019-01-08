@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
@@ -6,7 +7,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator as BasePaginator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class Paginator
+ * Class Paginator.
  */
 class Paginator
 {
@@ -33,8 +34,8 @@ class Paginator
     public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
     {
         $page = $request->get('page', []);
-        $this->page = isset($page['number']) ? intval($page['number']) : 1;
-        $this->size = isset($page['size']) ? intval($page['size']) : 100;
+        $this->page = isset($page['number']) ? (int) ($page['number']) : 1;
+        $this->size = isset($page['size']) ? (int) ($page['size']) : 100;
 
         $query->setFirstResult(($this->page - 1) * $this->size);
         $query->setMaxResults($this->size);

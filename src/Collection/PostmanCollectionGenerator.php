@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
@@ -10,7 +11,13 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
     const POSTMAN_PATH = 'collections/postman.json';
 
     /**
-     * Generate Postman Collection
+     * Generate Postman Collection.
+     *
+     * @param ClassMetadata $classMetadata
+     * @param string        $entityName
+     * @param string        $route
+     *
+     * @return string
      */
     public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): string
     {
@@ -23,29 +30,29 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
                     'header' => [
                         [
                             'key' => 'Content-Type',
-                            'value' => 'application/json'
-                        ]
+                            'value' => 'application/json',
+                        ],
                     ],
-                    'body' => in_array($name, ['add', 'edit']) ?
+                    'body' => \in_array($name, ['add', 'edit']) ?
                         $this->generateBody($entityName, $action['method'], $classMetadata) : '',
                     'url' => [
-                        'raw' => '{{host}}' . $route . (in_array($name, ['add', 'list']) ? '/' : '/1'),
+                        'raw' => '{{host}}'.$route.(\in_array($name, ['add', 'list']) ? '/' : '/1'),
                         'host' => [
-                            '{{host}}'
+                            '{{host}}',
                         ],
                         'path' => [
                             $route,
-                            in_array($name, ['add', 'list']) ? '' : '1'
+                            \in_array($name, ['add', 'list']) ? '' : '1',
                         ],
-                    ]
-                ]
+                    ],
+                ],
             ];
         }
 
         $directory = [
             'name' => $entityName,
             'description' => '',
-            'item' => $requests
+            'item' => $requests,
         ];
 
         $collection = $this->LoadOldCollection();
@@ -60,10 +67,10 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
     private function generateBody(string $entityName, string $method, ClassMetadata $classMetadata): array
     {
         $data = [
-            'type' => JsonApiStr::entityNameToType($entityName)
+            'type' => JsonApiStr::entityNameToType($entityName),
         ];
 
-        if ($method == 'PATCH') {
+        if ('PATCH' == $method) {
             $data['id'] = '1';
         }
 
@@ -72,7 +79,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 
         return [
             'mode' => 'raw',
-            'raw' => json_encode(['data' => $data], JSON_PRETTY_PRINT)
+            'raw' => json_encode(['data' => $data], JSON_PRETTY_PRINT),
         ];
     }
 
@@ -98,7 +105,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         foreach ($associations as $association) {
             $relationData = ['type' => JsonApiStr::entityNameToType($association['targetEntity']), 'id' => '1'];
 
-            if (in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
+            if (\in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
                 $relationData = [$relationData];
             }
 
@@ -119,9 +126,9 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
             $collection = [
                 'info' => [
                     'name' => 'json_api',
-                    'schema' => 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json'
+                    'schema' => 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
                 ],
-                'item' => []
+                'item' => [],
             ];
         }
 

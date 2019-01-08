@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
 use Symfony\Component\HttpFoundation\Response;

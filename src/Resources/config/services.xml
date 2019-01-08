@@ -37,8 +37,6 @@
             <tag name="paknahad.json_api.finder" />
         </service>
 
-        <service id="jsonapi.filter_handler" class="Paknahad\JsonApiBundle\Helper\Filter\Filter\FinderHandler" />
-
         <service id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection">
             <argument type="tagged" tag="paknahad.json_api.finder" />
         </service>

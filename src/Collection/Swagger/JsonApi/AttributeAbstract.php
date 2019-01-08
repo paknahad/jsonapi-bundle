@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
 use gossi\swagger\Schema;
@@ -24,7 +25,7 @@ abstract class AttributeAbstract
     {
         return new Schema([
             'type' => 'object',
-            'properties' => $this->toArray()
+            'properties' => $this->toArray(),
         ]);
     }
 }

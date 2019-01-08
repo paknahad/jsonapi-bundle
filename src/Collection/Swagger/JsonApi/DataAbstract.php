@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
 use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
@@ -30,8 +31,8 @@ abstract class DataAbstract
                 'id' => [
                     'type' => 'integer',
                     'format' => 'int64',
-                    'example' => 12
-                ]
+                    'example' => 12,
+                ],
             ];
         } else {
             $idProperties = [];
@@ -43,10 +44,10 @@ abstract class DataAbstract
                 $idProperties,
                 [
                     'type' => ['type' => 'string', 'example' => JsonApiStr::entityNameToType($this->entityName)],
-                    'attributes' => ['$ref' => '#/definitions/' . $this->entityName],
-                    'relationships' => $this->attributes->getRelations()
+                    'attributes' => ['$ref' => '#/definitions/'.$this->entityName],
+                    'relationships' => $this->attributes->getRelations(),
                 ]
-            )
+            ),
         ];
     }
 }
