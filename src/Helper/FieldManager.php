@@ -1,4 +1,5 @@
 <?php
+
 namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
@@ -139,9 +140,9 @@ class FieldManager
     {
 
         return sprintf(
-          '%s.%s',
-          $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
-          $this->fields[$fieldName]['field']
+            '%s.%s',
+            $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
+            $this->fields[$fieldName]['field']
         );
     }
 
@@ -172,9 +173,9 @@ class FieldManager
         $entity = !empty($processedField) ? array_shift($processedField) : $this->getRootEntity();
 
         return [
-          'field' => $finalField,
-          'entity-path' => $processedField,
-          'entity' => $entity,
+            'field' => $finalField,
+            'entity-path' => $processedField,
+            'entity' => $entity,
         ];
     }
 
@@ -283,10 +284,10 @@ class FieldManager
         $relationMetaData = $this->getRelatiionMetaData($sourceEntity, $entity);
 
         $this->relations[$entity] = [
-          'entity' => $relationMetaData['fieldName'] ?? null,
-          'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
-          'sourceEntity' => $sourceEntity,
-          'alias' => $alias,
+            'entity' => $relationMetaData['fieldName'] ?? null,
+            'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
+            'sourceEntity' => $sourceEntity,
+            'alias' => $alias,
         ];
 
         return $this->relations[$entity]['entityClass'];
