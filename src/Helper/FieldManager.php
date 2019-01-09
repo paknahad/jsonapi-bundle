@@ -139,9 +139,9 @@ class FieldManager
     public function getQueryFieldName(string $fieldName): string
     {
         return sprintf(
-            '%s.%s',
-            $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
-            $this->fields[$fieldName]['field']
+          '%s.%s',
+          $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
+          $this->fields[$fieldName]['field']
         );
     }
 
@@ -172,9 +172,9 @@ class FieldManager
         $entity = !empty($processedField) ? array_shift($processedField) : $this->getRootEntity();
 
         return [
-            'field' => $finalField,
-            'entity-path' => $processedField,
-            'entity' => $entity,
+          'field' => $finalField,
+          'entity-path' => $processedField,
+          'entity' => $entity,
         ];
     }
 
@@ -188,7 +188,7 @@ class FieldManager
     protected function getProcessedField($fieldName): array
     {
         $entity = $this->rootEntity;
-        $explodedField = \explode('.', $fieldName);
+        $explodedField = explode('.', $fieldName);
         $numParts = \count($explodedField);
 
         if (1 === $numParts) {
@@ -196,7 +196,7 @@ class FieldManager
         }
 
         $field = [];
-        for ($i = 0, $length = $numParts; $i < $length; $i++) {
+        for ($i = 0, $length = $numParts; $i < $length; ++$i) {
             $fields = $this->entityManager->getClassMetadata($entity)->fieldMappings;
 
             if (!isset($explodedField[$i + 1])) {
@@ -213,7 +213,7 @@ class FieldManager
             }
 
             $field[] = $explodedField[$i].'.'.$explodedField[$i + 1];
-            $i++;
+            ++$i;
         }
 
         return $field;
@@ -281,13 +281,13 @@ class FieldManager
             $alias = 'r__'.$iterator++;
         }
 
-        $relationMetaData = $this->getRelatiionMetaData($sourceEntity, $entity);
+        $relationMetaData = $this->getRelationMetaData($sourceEntity, $entity);
 
         $this->relations[$entity] = [
-            'entity' => $relationMetaData['fieldName'] ?? null,
-            'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
-            'sourceEntity' => $sourceEntity,
-            'alias' => $alias,
+          'entity' => $relationMetaData['fieldName'] ?? null,
+          'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
+          'sourceEntity' => $sourceEntity,
+          'alias' => $alias,
         ];
 
         return $this->relations[$entity]['entityClass'];
