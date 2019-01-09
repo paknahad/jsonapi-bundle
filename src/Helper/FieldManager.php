@@ -188,14 +188,15 @@ class FieldManager
     protected function getProcessedField($fieldName): array
     {
         $entity = $this->rootEntity;
-        $explodedField = explode('.', $fieldName);
+        $explodedField = \explode('.', $fieldName);
+        $numParts = \count($explodedField);
 
-        if (count($explodedField) === 1) {
+        if (1 === $numParts) {
             return $explodedField;
         }
 
         $field = [];
-        for ($i = 0, $length = count($explodedField); $i < $length; $i++) {
+        for ($i = 0, $length = $numParts; $i < $length; $i++) {
             $fields = $this->entityManager->getClassMetadata($entity)->fieldMappings;
 
             if (!isset($explodedField[$i + 1])) {
@@ -203,7 +204,7 @@ class FieldManager
                 continue;
             }
 
-            if (!isset($fields[$explodedField[$i] . '.' . $explodedField[$i + 1]])) {
+            if (!isset($fields[$explodedField[$i].'.'.$explodedField[$i + 1]])) {
                 $field[] = $explodedField[$i];
 
                 $relationMetaData = $this->getRelationMetaData($entity, $explodedField[$i]);
@@ -211,7 +212,7 @@ class FieldManager
                 continue;
             }
 
-            $field[] = $explodedField[$i] . '.' . $explodedField[$i + 1];
+            $field[] = $explodedField[$i].'.'.$explodedField[$i + 1];
             $i++;
         }
 
@@ -300,7 +301,8 @@ class FieldManager
      *
      * @return array
      */
-    protected function getRelationMetaData($sourceEntity, $entity) {
+    protected function getRelationMetaData($sourceEntity, $entity)
+    {
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
 
         return $associations[$entity] ?? [];
