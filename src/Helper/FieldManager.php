@@ -172,9 +172,9 @@ class FieldManager
         $entity = !empty($processedField) ? array_shift($processedField) : $this->getRootEntity();
 
         return [
-          'field' => $finalField,
-          'entity-path' => $processedField,
-          'entity' => $entity,
+            'field' => $finalField,
+            'entity-path' => $processedField,
+            'entity' => $entity,
         ];
     }
 
