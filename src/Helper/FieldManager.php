@@ -139,9 +139,9 @@ class FieldManager
     public function getQueryFieldName(string $fieldName): string
     {
         return sprintf(
-          '%s.%s',
-          $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
-          $this->fields[$fieldName]['field']
+            '%s.%s',
+            $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
+            $this->fields[$fieldName]['field']
         );
     }
 
