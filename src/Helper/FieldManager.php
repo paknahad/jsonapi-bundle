@@ -204,7 +204,8 @@ class FieldManager
                 continue;
             }
 
-            if (!isset($fields[$explodedField[$i].'.'.$explodedField[$i + 1]])) {
+            $fieldKey = $explodedField[$i].'.'.$explodedField[$i + 1];
+            if (!isset($fields[$fieldKey])) {
                 $field[] = $explodedField[$i];
 
                 $relationMetaData = $this->getRelationMetaData($entity, $explodedField[$i]);
@@ -284,10 +285,10 @@ class FieldManager
         $relationMetaData = $this->getRelationMetaData($sourceEntity, $entity);
 
         $this->relations[$entity] = [
-          'entity' => $relationMetaData['fieldName'] ?? null,
-          'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
-          'sourceEntity' => $sourceEntity,
-          'alias' => $alias,
+            'entity' => $relationMetaData['fieldName'] ?? null,
+            'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
+            'sourceEntity' => $sourceEntity,
+            'alias' => $alias,
         ];
 
         return $this->relations[$entity]['entityClass'];
@@ -296,12 +297,12 @@ class FieldManager
     /**
      * Get the relation metadata for the provided entity.
      *
-     * @param $sourceEntity
-     * @param $entity
+     * @param string $sourceEntity
+     * @param string $entity
      *
      * @return array
      */
-    protected function getRelationMetaData($sourceEntity, $entity)
+    protected function getRelationMetaData($sourceEntity, $entity): array
     {
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
 
