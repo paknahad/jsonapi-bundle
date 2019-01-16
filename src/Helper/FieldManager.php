@@ -112,7 +112,7 @@ class FieldManager
      *
      * @throws EntityNotFoundException
      */
-    public function addField($fieldName): array
+    public function addField(string $fieldName): array
     {
         if (!empty($this->fields[$fieldName])) {
             return $this->fields[$fieldName];
@@ -152,7 +152,7 @@ class FieldManager
      *
      * @return array|null
      */
-    public function getField($fieldName): ?array
+    public function getField(string $fieldName): ?array
     {
         return $this->fields[$fieldName] ?? null;
     }
@@ -164,17 +164,60 @@ class FieldManager
      *
      * @return array
      */
-    protected function parseField($fieldName): array
+    protected function parseField(string $fieldName): array
     {
-        $explodedField = explode('.', $fieldName);
-        $finalField = array_pop($explodedField);
-        $entity = !empty($explodedField) ? array_shift($explodedField) : $this->getRootEntity();
+        $processedField = $this->getProcessedField($fieldName);
+
+        $finalField = array_pop($processedField);
+        $entity = !empty($processedField) ? array_shift($processedField) : $this->getRootEntity();
 
         return [
             'field' => $finalField,
-            'entity-path' => $explodedField,
+            'entity-path' => $processedField,
             'entity' => $entity,
         ];
+    }
+
+    /**
+     * Get an indexed array with entities and actual fields separated.
+     *
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    protected function getProcessedField(string $fieldName): array
+    {
+        $entity = $this->rootEntity;
+        $explodedField = explode('.', $fieldName);
+        $numParts = \count($explodedField);
+
+        if (1 === $numParts) {
+            return $explodedField;
+        }
+
+        $field = [];
+        for ($i = 0, $length = $numParts; $i < $length; ++$i) {
+            $fields = $this->entityManager->getClassMetadata($entity)->fieldMappings;
+
+            if (!isset($explodedField[$i + 1])) {
+                $field[] = $explodedField[$i];
+                continue;
+            }
+
+            $fieldKey = $explodedField[$i].'.'.$explodedField[$i + 1];
+            if (!isset($fields[$fieldKey])) {
+                $field[] = $explodedField[$i];
+
+                $relationMetaData = $this->getRelationMetaData($entity, $explodedField[$i]);
+                $entity = $relationMetaData['targetEntity'];
+                continue;
+            }
+
+            $field[] = $explodedField[$i].'.'.$explodedField[$i + 1];
+            ++$i;
+        }
+
+        return $field;
     }
 
     /**
@@ -239,15 +282,30 @@ class FieldManager
             $alias = 'r__'.$iterator++;
         }
 
-        $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
+        $relationMetaData = $this->getRelationMetaData($sourceEntity, $entity);
 
         $this->relations[$entity] = [
-            'entity' => $associations[$entity]['fieldName'] ?? null,
-            'entityClass' => $associations[$entity]['targetEntity'] ?? $entity,
+            'entity' => $relationMetaData['fieldName'] ?? null,
+            'entityClass' => $relationMetaData['targetEntity'] ?? $entity,
             'sourceEntity' => $sourceEntity,
             'alias' => $alias,
         ];
 
         return $this->relations[$entity]['entityClass'];
+    }
+
+    /**
+     * Get the relation metadata for the provided entity.
+     *
+     * @param string $sourceEntity
+     * @param string $entity
+     *
+     * @return array
+     */
+    protected function getRelationMetaData(string $sourceEntity, string $entity): array
+    {
+        $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
+
+        return $associations[$entity] ?? [];
     }
 }
