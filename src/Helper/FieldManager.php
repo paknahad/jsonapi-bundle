@@ -112,7 +112,7 @@ class FieldManager
      *
      * @throws EntityNotFoundException
      */
-    public function addField($fieldName): array
+    public function addField(string $fieldName): array
     {
         if (!empty($this->fields[$fieldName])) {
             return $this->fields[$fieldName];
@@ -152,7 +152,7 @@ class FieldManager
      *
      * @return array|null
      */
-    public function getField($fieldName): ?array
+    public function getField(string $fieldName): ?array
     {
         return $this->fields[$fieldName] ?? null;
     }
@@ -164,7 +164,7 @@ class FieldManager
      *
      * @return array
      */
-    protected function parseField($fieldName): array
+    protected function parseField(string $fieldName): array
     {
         $processedField = $this->getProcessedField($fieldName);
 
@@ -181,11 +181,11 @@ class FieldManager
     /**
      * Get an indexed array with entities and actual fields separated.
      *
-     * @param $fieldName
+     * @param string $fieldName
      *
      * @return array
      */
-    protected function getProcessedField($fieldName): array
+    protected function getProcessedField(string $fieldName): array
     {
         $entity = $this->rootEntity;
         $explodedField = explode('.', $fieldName);
@@ -302,7 +302,7 @@ class FieldManager
      *
      * @return array
      */
-    protected function getRelationMetaData($sourceEntity, $entity): array
+    protected function getRelationMetaData(string $sourceEntity, string $entity): array
     {
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
 
