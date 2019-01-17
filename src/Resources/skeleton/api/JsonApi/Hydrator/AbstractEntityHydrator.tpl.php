@@ -132,11 +132,16 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, ToOneRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
                 $this->validateRelationType($<?= $association['field_name'] ?>, ['<?= $association['target_entity_type']?>']);
 
-                $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
-                    ->find($<?= $association['field_name'] ?>->getResourceIdentifier()->getId());
 
-                if (is_null($association)) {
-                    throw new InvalidRelationshipValueException($relationshipName, [$<?= $association['field_name'] ?>->getResourceIdentifier()->getId()]);
+                $association = null;
+                $id = $<?= $association['field_name'] ?>->getResourceIdentifier();
+                if ($id) {
+                    $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
+                        ->find($<?= $association['field_name'] ?>->getResourceIdentifier()->getId());
+
+                    if (is_null($association)) {
+                        throw new InvalidRelationshipValueException($relationshipName, [$<?= $association['field_name'] ?>->getResourceIdentifier()->getId()]);
+                    }
                 }
 
                 $<?= $entity_var_name ?>-><?= $association['setter'] ?>($association);
