@@ -30,10 +30,18 @@ trait ValidatorTrait
     protected function validateRelationType($relation, array $validTypes): void
     {
         if ($relation instanceof ToOneRelationship) {
+            if (!$relation->getResourceIdentifier()) {
+                return;
+            }
+
             if (!\in_array($relation->getResourceIdentifier()->getType(), $validTypes, true)) {
                 throw new ValidatorException('Invalid type: '.$relation->getResourceIdentifier()->getType());
             }
         } elseif ($relation instanceof ToManyRelationship) {
+            if (!$relation->getResourceIdentifiers()) {
+                return;
+            }
+
             foreach (array_unique($relation->getResourceIdentifierTypes()) as $type) {
                 if (!\in_array($type, $validTypes, true)) {
                     throw new ValidatorException('Invalid type: '.$type);
