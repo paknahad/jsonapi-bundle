@@ -82,7 +82,7 @@ trait ValidatorTrait
 
         foreach ($request->getResourceAttributes() as $field => $value) {
             if ($validExistance && !$metadata->hasField($field)) {
-                throw new ValidatorException('This attribute dose not exist');
+                throw new ValidatorException('This attribute does not exist');
             }
 
             $validator = $this->getValidator($metadata->getTypeOfField($field));
