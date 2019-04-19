@@ -4,6 +4,7 @@ namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
+use Paknahad\JsonApiBundle\Helper\Filter\SubQueryManager;
 
 /**
  * Class FieldManager.
@@ -47,6 +48,16 @@ class FieldManager
      * @var EntityManager
      */
     protected $entityManager;
+
+    /**
+     * @var SubQueryManager
+     */
+    protected $subQueryManager;
+
+    public function __construct(SubQueryManager $subQueryManager)
+    {
+        $this->subQueryManager = $subQueryManager;
+    }
 
     /**
      * Gets the EntityManager.
@@ -138,6 +149,10 @@ class FieldManager
      */
     public function getQueryFieldName(string $fieldName): string
     {
+        if (isset($this->fields[$fieldName]['metadata']['isSubQuery'])) {
+            return $this->subQueryManager->getSubQuery($fieldName);
+        }
+
         return sprintf(
             '%s.%s',
             $this->fields[$fieldName]['relation_alias'] ?? self::ROOT_ALIAS,
@@ -232,16 +247,19 @@ class FieldManager
      */
     protected function getFieldMetaData(string $entity, string $fieldName): array
     {
+        $entityClass = $this->relations[$entity]['entityClass'];
+
         if (!isset($this->entityFieldMetaData[$entity])) {
-            $entityClass = $this->relations[$entity]['entityClass'];
             $this->entityFieldMetaData[$entity] = $this->entityManager->getClassMetadata($entityClass)->fieldMappings;
         }
 
-        if (!isset($this->entityFieldMetaData[$entity][$fieldName])) {
-            throw new EntityNotFoundException(sprintf('No entity found for entity %s and field %s', $entity, $fieldName));
+        if (isset($this->entityFieldMetaData[$entity][$fieldName])) {
+            return $this->entityFieldMetaData[$entity][$fieldName];
+        } elseif ($this->subQueryManager->exists($entityClass, $fieldName)) {
+            return $this->subQueryManager->generateMetaData($entityClass, $fieldName);
         }
 
-        return $this->entityFieldMetaData[$entity][$fieldName];
+        throw new EntityNotFoundException(sprintf('No entity found for entity %s and field %s', $entity, $fieldName));
     }
 
     /**

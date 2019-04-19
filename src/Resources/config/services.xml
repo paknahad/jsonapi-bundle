@@ -43,8 +43,15 @@
 
         <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
 
+        <service id="Paknahad\JsonApiBundle\Helper\Filter\SubQueryManager">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
-        <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
+
+        <service id="Paknahad\JsonApiBundle\Helper\FieldManager">
+            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Filter\SubQueryManager" />
+        </service>
 
         <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
             <argument type="service" id="request_stack"/>

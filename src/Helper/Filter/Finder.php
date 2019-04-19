@@ -71,33 +71,38 @@ class Finder implements FinderInterface
     {
         $fieldMetaData = $this->fieldManager->addField($field);
 
-        $this->query->andWhere(sprintf(
-            '%s %s %s',
-            $this->fieldManager->getQueryFieldName($field),
-            $this->getOperator($fieldMetaData, $value),
-            $this->setValue($value)
-        ));
+        $this->query->andWhere($this->generateCondition($fieldMetaData, $field, $value));
     }
 
     /**
-     * @param array       $fieldMetadata
-     * @param string|null $value
+     * @param array  $fieldMetaData
+     * @param string $field
+     * @param string $value
      *
-     * @return string
+     * @return \Doctrine\ORM\Query\Expr\Comparison|string
      */
-    protected function getOperator(array $fieldMetadata, string &$value): string
+    protected function generateCondition(array $fieldMetaData, string $field, string $value)
     {
+        $fieldName = $this->fieldManager->getQueryFieldName($field);
+
         if ('null' === strtolower($value)) {
-            $value = null;
-
-            return 'IS NULL';
+            return $this->query->expr()->isNull($fieldName);
         }
 
-        if ('string' === $fieldMetadata['metadata']['type'] && false !== strpos($value, '%')) {
-            return 'LIKE';
+        $parameter = $this->setValue($value);
+
+        if (isset($fieldMetaData[SubQueryManager::OPERATOR]) &&
+            SubQueryManager::IN_OPERATOR === $fieldMetaData[SubQueryManager::OPERATOR]
+        ) {
+
+            return $this->query->expr()->in($parameter, $fieldName);
         }
 
-        return '=';
+        if ('string' === $fieldMetaData['metadata']['type'] && false !== strpos($value, '%')) {
+            return $this->query->expr()->like($fieldName, $parameter);
+        }
+
+        return $this->query->expr()->eq($fieldName, $parameter);
     }
 
     /**
@@ -110,10 +115,6 @@ class Finder implements FinderInterface
     protected function setValue($value): string
     {
         static $iterator = 1;
-
-        if (null === $value) {
-            return '';
-        }
 
         $paramName = ':P'.$iterator++;
 
