@@ -2,9 +2,9 @@
 
 namespace <?= $namespace ?>;
 
-use WoohooLabs\Yin\JsonApi\Document\AbstractSingleResourceDocument;
+use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractSingleResourceDocument;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
-use WoohooLabs\Yin\JsonApi\Schema\Link;
+use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
 
 /**

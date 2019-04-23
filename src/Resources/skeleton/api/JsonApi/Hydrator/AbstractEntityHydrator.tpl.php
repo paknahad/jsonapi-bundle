@@ -28,7 +28,7 @@ use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 ';
     }
 ?>
-use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
+use WoohooLabs\Yin\JsonApi\Request\JsonApiRequestInterface;
 
 /**
  * Abstract <?= $entity_class_name ?> Hydrator.
@@ -42,7 +42,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
      */
     protected function validateClientGeneratedId(
         string $clientGeneratedId,
-        RequestInterface $request,
+        JsonApiRequestInterface $request,
         ExceptionFactoryInterface $exceptionFactory
     ): void {
         if (!empty($clientGeneratedId)) {
@@ -80,7 +80,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     /**
      * {@inheritdoc}
      */
-    protected function validateRequest(RequestInterface $request): void
+    protected function validateRequest(JsonApiRequestInterface $request): void
     {
         $this->validateFields($this->objectManager->getClassMetadata(<?= $entity_class_name ?>::class), $request);
     }
@@ -105,10 +105,10 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
         if (in_array($association['type'], $to_many_types)) {
             ?>
 
-            '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, ToManyRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
+            '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>, ToManyRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
                 $this->validateRelationType($<?= $association['field_name'] ?>, ['<?= $association['target_entity_type']?>']);
 
-                if (count($authors->getResourceIdentifierIds()) > 0) {
+                if (count($<?= $association['field_name'] ?>->getResourceIdentifierIds()) > 0) {
                     $association = $this->objectManager->getRepository('<?= $association['target_entity']?>')
                         ->createQueryBuilder('<?= substr($association['field_name'], 0, 1) ?>')
                         ->where((new Expr())->in('<?= substr($association['field_name'], 0, 1) ?>.id', $<?= $association['field_name'] ?>->getResourceIdentifierIds()))
@@ -133,7 +133,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
         } else {
             ?>
 
-            '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> &$<?= $entity_var_name ?>, ToOneRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
+            '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>, ToOneRelationship $<?= $association['field_name'] ?>, $data, $relationshipName) {
                 $this->validateRelationType($<?= $association['field_name'] ?>, ['<?= $association['target_entity_type']?>']);
 
 

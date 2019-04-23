@@ -15,12 +15,12 @@ foreach ($associations as $association) {
 echo isset($useManyRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToManyRelationship;' . PHP_EOL : '';
 echo isset($useOneRelation) ? 'use WoohooLabs\Yin\JsonApi\Schema\Relationship\ToOneRelationship;' . PHP_EOL : '';
 ?>
-use WoohooLabs\Yin\JsonApi\Transformer\AbstractResourceTransformer;
+use WoohooLabs\Yin\JsonApi\Schema\Resource\AbstractResource;
 
 /**
  * <?= $entity_class_name ?> Resource Transformer.
  */
-class <?= $entity_class_name ?>ResourceTransformer extends AbstractResourceTransformer
+class <?= $entity_class_name ?>ResourceTransformer extends AbstractResource
 {
     /**
      * {@inheritdoc}

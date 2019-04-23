@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
-use WoohooLabs\Yin\JsonApi\Request\RequestInterface;
+use WoohooLabs\Yin\JsonApi\Request\JsonApiRequestInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ValidatorTrait
@@ -79,12 +79,12 @@ trait ValidatorTrait
     /**
      * Validate all fields.
      *
-     * @param ClassMetadata    $metadata
-     * @param RequestInterface $request
+     * @param ClassMetadata           $metadata
+     * @param JsonApiRequestInterface $request
      *
      * @throws InvalidAttributeException
      */
-    protected function validateFields(ClassMetadata $metadata, RequestInterface $request, bool $validExistance = true): void
+    protected function validateFields(ClassMetadata $metadata, JsonApiRequestInterface $request, bool $validExistance = true): void
     {
         $this->validator = Validation::createValidator();
 
