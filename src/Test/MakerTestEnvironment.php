@@ -291,7 +291,7 @@ final class MakerTestEnvironment
         // fetch a few packages needed for testing
         MakerTestProcess::create(
             'composer require symfony/psr-http-message-bridge \
-                woohoolabs/yin \
+                woohoolabs/yin:^3.0 \
                 phpunit \
                 symfony/maker-bundle \
                 symfony/process \

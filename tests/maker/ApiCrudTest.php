@@ -4,6 +4,7 @@ namespace Symfony\Bundle\JsonApiBundle\Tests\Maker;
 
 use Paknahad\JsonApiBundle\JsonApiBundle;
 use Paknahad\JsonApiBundle\Test\MakerTestCase;
+use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\MakerBundle\DependencyInjection\CompilerPass\MakeCommandRegistrationPass;
@@ -103,6 +104,7 @@ class FunctionalTestKernel extends Kernel implements CompilerPassInterface
     {
         return [
             new FrameworkBundle(),
+            new SensioFrameworkExtraBundle(),
             new JsonApiBundle(),
             new MakerBundle()
         ];
