@@ -297,8 +297,10 @@ final class MakerTestEnvironment
                 symfony/process \
                 phootwork/collection \
                 sensio/framework-extra-bundle \
+                symfony/psr-http-message-bridge \
                 opis/json-schema \
-                zendframework/zend-diactoros "^1.3.0" \
+                symfony/translation \
+                nyholm/psr7 \
                 --prefer-dist --no-progress --no-suggest',
             $this->flexPath
         )->run();

@@ -4,23 +4,21 @@ namespace Paknahad\JsonApiBundle\EventSubscriber;
 
 use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
 use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Throwable;
-use WoohooLabs\Yin\JsonApi\Document\ErrorDocument;
+use WoohooLabs\Yin\JsonApi\JsonApi;
+use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
-use WoohooLabs\Yin\JsonApi\Request\Request;
 use WoohooLabs\Yin\JsonApi\Response\Responder;
-use WoohooLabs\Yin\JsonApi\Schema\Error;
-use WoohooLabs\Yin\JsonApi\Schema\ErrorSource;
+use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
+use WoohooLabs\Yin\JsonApi\Schema\Error\ErrorSource;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
-use WoohooLabs\Yin\JsonApi\Schema\Link;
+use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
 use WoohooLabs\Yin\JsonApi\Schema\Links;
 use WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer;
 
@@ -28,9 +26,12 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 {
     private $environment;
 
-    public function __construct($environment)
+    private $jsonApi;
+
+    public function __construct($environment, JsonApi $jsonApi)
     {
         $this->environment = $environment;
+        $this->jsonApi = $jsonApi;
     }
 
     public static function getSubscribedEvents()
@@ -42,15 +43,15 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
     public function onKernelException(GetResponseForExceptionEvent $event)
     {
-        $psrFactory = new DiactorosFactory();
         $exceptionFactory = new DefaultExceptionFactory();
 
         $exception = $event->getException();
 
-        $request = new Request($psrFactory->createRequest($event->getRequest()), $exceptionFactory);
+        $httpFoundationFactory = new HttpFoundationFactory();
+
         $responder = new Responder(
-            $request,
-            $psrFactory->createResponse(new Response()),
+            $this->jsonApi->request,
+            $this->jsonApi->response,
             $exceptionFactory,
             new JsonSerializer()
         );
@@ -71,8 +72,6 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
                 $additionalMeta
             );
         }
-
-        $httpFoundationFactory = new HttpFoundationFactory();
 
         $event->setResponse($httpFoundationFactory->createResponse($response));
     }

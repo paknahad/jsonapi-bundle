@@ -18,13 +18,14 @@
         "symfony/orm-pack": "^1.0",
         "symfony/validator": "^4.1",
         "woohoolabs/yin": "^3.0",
-        "zendframework/zend-diactoros": "^1.3.0"
+        "nyholm/psr7": "^1.1"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.8",
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^4.0",
         "symfony/process": "^4.0",
+        "symfony/translation": "^4.2",
         "phootwork/collection" : "~1",
         "opis/json-schema": "^1.0",
         "symfony/yaml": "^4.0"

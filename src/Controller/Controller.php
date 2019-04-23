@@ -13,18 +13,19 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 
 class Controller extends AbstractController
 {
-    private static $jsonApi;
+    private $jsonApi;
+
+    public function __construct(JsonApi $jsonApi)
+    {
+        $this->jsonApi = $jsonApi;
+    }
 
     /**
      * @return JsonApi
      */
     protected function jsonApi(): JsonApi
     {
-        if (!self::$jsonApi) {
-            self::$jsonApi = $this->container->get('request_stack')->getCurrentRequest()->get('JsonApi');
-        }
-
-        return self::$jsonApi;
+        return $this->jsonApi;
     }
 
     /**

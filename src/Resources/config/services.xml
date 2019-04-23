@@ -9,11 +9,17 @@
 
         <service id="jsonapi.error.handler.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiErrorHandlerEvent">
             <tag name="event_subscriber" />
+            <argument type="service" id="WoohooLabs\Yin\JsonApi\JsonApi" />
             <argument key="$environment">%kernel.environment%</argument>
         </service>
 
-        <service id="jsonapi.request.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiEvent">
-            <tag name="event_subscriber" />
+        <service id="jsonapi.jsonApi.factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
+            <argument type="service" id="sensio_framework_extra.psr7.http_message_factory" />
+            <argument type="service" id="request_stack" />
+        </service>
+
+        <service id="WoohooLabs\Yin\JsonApi\JsonApi" class="WoohooLabs\Yin\JsonApi\JsonApi">
+            <factory service="jsonapi.jsonApi.factory" method="create" />
         </service>
 
         <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator">
