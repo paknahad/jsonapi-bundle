@@ -315,8 +315,8 @@ final class ApiCrud extends AbstractMaker
                 'id' => isset($field['id']) && $field['id'],
                 'name' => $field['fieldName'],
                 'type' => $field['type'],
-                'unique' => $field['unique'],
-                'nullable' => $field['nullable'],
+                'unique' => $field['unique'] ?? false,
+                'nullable' => $field['nullable'] ?? false,
                 'getter' => 'get'.Str::asCamelCase($field['fieldName']),
                 'setter' => 'set'.Str::asCamelCase($field['fieldName']),
             ];
