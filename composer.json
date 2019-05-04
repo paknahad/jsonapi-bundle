@@ -15,6 +15,7 @@
         "ext-json": "*",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/psr-http-message-bridge": "^1.0",
+        "symfony/proxy-manager-bridge": "^4.1",
         "symfony/orm-pack": "^1.0",
         "symfony/validator": "^4.1",
         "woohoolabs/yin": "^3.0",
