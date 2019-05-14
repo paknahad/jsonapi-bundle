@@ -4,6 +4,7 @@ namespace Paknahad\JsonApiBundle\Helper\Filter;
 
 use Doctrine\ORM\QueryBuilder;
 use Paknahad\JsonApiBundle\Helper\FieldManager;
+use Paknahad\JsonApiBundle\Helper\Sorter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -25,6 +26,21 @@ class Finder implements FinderInterface
      * @var FieldManager
      */
     protected $fieldManager;
+
+    /**
+     * @var Sorter
+     */
+    protected $sorter;
+
+    /**
+     * Finder constructor.
+     *
+     * @param Sorter $sorter
+     */
+    public function __construct(Sorter $sorter)
+    {
+        $this->sorter = $sorter;
+    }
 
     /**
      * {@inheritdoc}
@@ -59,6 +75,14 @@ class Finder implements FinderInterface
         foreach ($filters as $field => $value) {
             $this->setCondition($field, $value);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function sortQuery(): void
+    {
+        $this->sorter->handleQuery($this->query, $this->request, $this->fieldManager);
     }
 
     /**

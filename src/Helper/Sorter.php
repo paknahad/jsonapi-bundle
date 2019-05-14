@@ -39,7 +39,7 @@ class Sorter
      *
      * @return array
      */
-    protected function parseSortingString($sort): array
+    protected function parseSortingString(string $sort): array
     {
         $sorting = [];
 
@@ -58,7 +58,7 @@ class Sorter
      *
      * @return array
      */
-    protected function parseField($field): array
+    protected function parseField(string $field): array
     {
         $data = [
             'field' => $field,

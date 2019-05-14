@@ -45,11 +45,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected $paginator;
 
     /**
-     * @var Sorter
-     */
-    protected $sorter;
-
-    /**
      * @var FieldManager
      */
     protected $fieldManager;
@@ -60,15 +55,13 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
      * @param RequestStack     $requestStack
      * @param FinderCollection $finderCollection
      * @param Paginator        $paginator
-     * @param Sorter           $sorter
      * @param FieldManager     $fieldManager
      */
-    public function __construct(RequestStack $requestStack, FinderCollection $finderCollection, Paginator $paginator, Sorter $sorter, FieldManager $fieldManager)
+    public function __construct(RequestStack $requestStack, FinderCollection $finderCollection, Paginator $paginator, FieldManager $fieldManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->finderCollection = $finderCollection;
         $this->paginator = $paginator;
-        $this->sorter = $sorter;
         $this->fieldManager = $fieldManager;
     }
 
@@ -121,7 +114,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
 
         $this->finderCollection->handleQuery($this->query, $this->request, $this->fieldManager);
-        $this->sorter->handleQuery($this->query, $this->request, $this->fieldManager);
 
         $this->addRelationsToQuery();
 

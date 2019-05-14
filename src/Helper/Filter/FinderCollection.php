@@ -41,6 +41,7 @@ class FinderCollection
             $handler->setFieldManager($fieldManager);
 
             $handler->filterQuery();
+            $handler->sortQuery();
         }
     }
 }

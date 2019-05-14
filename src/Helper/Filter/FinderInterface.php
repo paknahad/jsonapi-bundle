@@ -36,4 +36,9 @@ interface FinderInterface
      * Filters the query based on the registered Finders.
      */
     public function filterQuery(): void;
+
+    /**
+     * Sort the query based on the registered Finders.
+     */
+    public function sortQuery(): void;
 }
