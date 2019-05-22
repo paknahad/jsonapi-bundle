@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Throwable;
+use WoohooLabs\Yin\JsonApi\Exception\JsonApiExceptionInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
 use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
@@ -98,6 +99,10 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
     protected function toErrorDocument(Throwable $exception, string $url)
     {
+        if ($exception instanceof JsonApiExceptionInterface) {
+            return $exception->getErrorDocument();
+        }
+
         $title = 'Internal Server Error';
         $statusCode = 500;
 
