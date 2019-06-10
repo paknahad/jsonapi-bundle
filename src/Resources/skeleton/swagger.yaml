@@ -1,23 +1,2 @@
-swagger: "2.0"
-info:
-  description: ""
-  version: "1.0.0"
-  title: "Swagger JsonApi"
-  termsOfService: "http://swagger.io/terms/"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost"
-schemes:
-- "https"
-- "http"
 paths:
-securityDefinitions:
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
 definitions:
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"

@@ -7,7 +7,6 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -21,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -32,8 +32,11 @@ final class ApiCrud extends AbstractMaker
     private $swaggerGenerator;
     private $doctrineHelper;
 
-    public function __construct(PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        PostmanCollectionGenerator $postmanGenerator,
+        SwaggerCollectionGenerator $swaggerGenerator,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->postmanGenerator = $postmanGenerator;
         $this->swaggerGenerator = $swaggerGenerator;
         $this->doctrineHelper = $doctrineHelper;
@@ -47,22 +50,22 @@ final class ApiCrud extends AbstractMaker
     /**
      * {@inheritdoc}
      */
-    public function configureCommand(Command $command, InputConfiguration $inputConfig)
+    public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $command
             ->setDescription('Creates CRUD API for Doctrine entity class')
             ->addArgument(
                 'entity-class',
                 InputArgument::OPTIONAL,
-                sprintf('The class name of the entity to create API (e.g. <fg=yellow>%s</>)', Str::asClassName(Str::getRandomTerm()))
+                sprintf('The class name of the entity to create API (e.g. <fg=yellow>%s</>)',
+                    Str::asClassName(Str::getRandomTerm()))
             )
-            ->setHelp(file_get_contents(__DIR__.'/../Resources/help/MakeCrud.txt'))
-        ;
+            ->setHelp(file_get_contents(__DIR__.'/../Resources/help/MakeCrud.txt'));
 
         $inputConfig->setArgumentAsNonInteractive('entity-class');
     }
 
-    public function interact(InputInterface $input, ConsoleStyle $io, Command $command)
+    public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
     {
         if (null === $input->getArgument('entity-class')) {
             $argument = $command->getDefinition()->getArgument('entity-class');
@@ -78,10 +81,11 @@ final class ApiCrud extends AbstractMaker
         }
     }
 
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
+    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
         $entityClassDetails = $generator->createClassNameDetails(
-            Validator::entityExists($input->getArgument('entity-class'), $this->doctrineHelper->getEntitiesForAutocomplete()),
+            Validator::entityExists($input->getArgument('entity-class'),
+                $this->doctrineHelper->getEntitiesForAutocomplete()),
             'Entity\\'
         );
 
@@ -132,18 +136,18 @@ final class ApiCrud extends AbstractMaker
             'ResourceTransformer'
         );
 
-        foreach (['abstract', 'create', 'update'] as $key) {
-            $hydratorClassDetails[$key] = $generator->createClassNameDetails(
+        foreach (['create', 'update'] as $key) {
+            $dtoClassDetails[$key] = $generator->createClassNameDetails(
                 ucfirst($key).$entityVarSingular,
-                sprintf('JsonApi\\Hydrator\\%s', $entityClassDetails->getShortName()),
-                'Hydrator'
+                sprintf('DTO\\%s', $entityClassDetails->getShortName()),
+                'DTO'
             );
         }
 
         $entityTypeVarPlural = Str::asTwigVariable($entityVarPlural);
 
         $routeName = Str::asRouteName($entityVarPlural);
-        $routePath = Str::asRoutePath($entityVarPlural);
+        $routePath = '/' . Str::asCommand($entityVarPlural);
         $skeletonPath = __DIR__.'/../Resources/skeleton/';
 
         $generator->generateClass(
@@ -164,12 +168,14 @@ final class ApiCrud extends AbstractMaker
                     'document_class_name' => $documentClassDetails->getShortName(),
                     'documents_full_class_name' => $documentsClassDetails->getFullname(),
                     'documents_class_name' => $documentsClassDetails->getShortName(),
-                    'create_hydrator_full_class_name' => $hydratorClassDetails['create']->getFullname(),
-                    'create_hydrator_class_name' => $hydratorClassDetails['create']->getShortName(),
-                    'update_hydrator_full_class_name' => $hydratorClassDetails['update']->getFullname(),
-                    'update_hydrator_class_name' => $hydratorClassDetails['update']->getShortName(),
                     'transformer_full_class_name' => $transformerClassDetails->getFullname(),
                     'transformer_class_name' => $transformerClassDetails->getShortName(),
+                    'update_dto_full_class_name' => $dtoClassDetails['update']->getFullName(),
+                    'update_dto_class_name' => $dtoClassDetails['update']->getShortName(),
+                    'update_dto_var_name' => lcfirst($dtoClassDetails['update']->getShortName()),
+                    'create_dto_full_class_name' => $dtoClassDetails['create']->getFullName(),
+                    'create_dto_class_name' => $dtoClassDetails['create']->getShortName(),
+                    'create_dto_var_name' => lcfirst($dtoClassDetails['create']->getShortName()),
                 ],
                 $repositoryVars
             )
@@ -209,7 +215,7 @@ final class ApiCrud extends AbstractMaker
                 'entity_full_class_name' => $entityClassDetails->getFullName(),
                 'entity_class_name' => $entityClassDetails->getShortName(),
                 'entity_var_name' => lcfirst($entityVarSingular),
-                'entity_type_var_plural' => $entityTypeVarPlural,
+                'entity_type_var_plural' => Str::asCamelCase($entityTypeVarPlural),
                 'namespace' => $transformerClassDetails->getFullName(),
                 'fields' => $fields,
                 'associations' => $associations,
@@ -217,17 +223,18 @@ final class ApiCrud extends AbstractMaker
             ]
         );
 
-        foreach (['abstract', 'create', 'update'] as $key) {
+        foreach (['create', 'update'] as $key) {
             $generator->generateClass(
-                $hydratorClassDetails[$key]->getFullName(),
-                $skeletonPath.sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
+                $dtoClassDetails[$key]->getFullName(),
+                $skeletonPath.sprintf('api/JsonApi/DTO/EntityDTO.tpl.php'),
                 [
+                    'class_name' => $dtoClassDetails[$key]->getShortName(),
                     'route_path' => $routePath,
                     'entity_class_name' => $entityClassDetails->getShortName(),
                     'entity_var_name' => lcfirst($entityVarSingular),
                     'entity_full_class_name' => $entityClassDetails->getFullName(),
                     'entity_type_var_plural' => $entityTypeVarPlural,
-                    'namespace' => $hydratorClassDetails[$key]->getFullName(),
+                    'namespace' => $dtoClassDetails[$key]->getFullName(),
                     'fields' => $fields,
                     'associations' => $associations,
                     'to_many_types' => $toMayTypes,

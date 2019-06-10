@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
 use Paknahad\JsonApiBundle\Collection\Swagger\Paths;
 use Paknahad\JsonApiBundle\Collection\Swagger\Swagger;
+use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Component\Yaml\Yaml;
 
 class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
@@ -15,7 +16,7 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
     /** @var Attributes */
     private $fields;
 
-    const SWAGGER_PATH = 'collections/swagger.yaml';
+    const SWAGGER_PATH = 'collections/%s.yaml';
     const SWAGGER_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/swagger.yaml';
 
     public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): string
@@ -27,7 +28,7 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
         $this->setDefinitions($entityName);
         $this->generateAllPaths($entityName, $route);
 
-        $this->fileManager->dumpFile(self::SWAGGER_PATH, Yaml::dump($this->swagger->toArray(), 20, 2));
+        $this->fileManager->dumpFile(sprintf(self::SWAGGER_PATH, Str::asCommand($entityName)), Yaml::dump($this->swagger->toArray(), 20, 2));
 
         return self::SWAGGER_PATH;
     }

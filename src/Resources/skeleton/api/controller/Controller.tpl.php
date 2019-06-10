@@ -1,12 +1,12 @@
-<?= "<?php\n" ?>
+<?= "<?php\ndeclare(strict_types=1);\n" ?>
 
 namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
 use <?= $document_full_class_name ?>;
 use <?= $documents_full_class_name ?>;
-use <?= $create_hydrator_full_class_name ?>;
-use <?= $update_hydrator_full_class_name ?>;
+use <?= $create_dto_full_class_name ?>;
+use <?= $update_dto_full_class_name ?>;
 use <?= $transformer_full_class_name ?>;
 use <?= $repository_full_class_name ?>;
 use Paknahad\JsonApiBundle\Controller\Controller;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * @Route("<?= $route_path ?>")
@@ -37,27 +37,27 @@ class <?= $class_name ?> extends Controller
         );
     }
 
+
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
+     * @ParamConverter("<?= $create_dto_var_name ?>", converter="JsonApiParamConverter")
      */
-    public function new(ValidatorInterface $validator): ResponseInterface
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
-
-        /** @var ConstraintViolationList $errors */
-        $errors = $validator->validate($<?= $entity_var_name ?>);
-        if ($errors->count() > 0) {
-            return $this->validationErrorResponse($errors);
+    public function new(
+        <?= $create_dto_class_name ?> $<?= $create_dto_var_name ?>,
+        ConstraintViolationList $validationErrors
+    ): ResponseInterface {
+        if (count($validationErrors) > 0) {
+            return $this->validationErrorResponse($validationErrors);
         }
 
-        $entityManager->persist($<?= $entity_var_name ?>);
-        $entityManager->flush();
+        $dataContainer = $this-><?= $entity_var_name ?>Service->create<?= $entity_var_name ?>FromDTO($<?= $create_dto_var_name ?>);
+        if ($dataContainer->hasViolations() === true) {
+            return $this->validationErrorResponse($dataContainer->getViolations());
+        }
 
         return $this->jsonApi()->respond()->ok(
             new <?= $document_class_name ?>(new <?= $transformer_class_name ?>()),
-            $<?= $entity_var_name ?>
+            $dataContainer->getModel()
 
         );
     }
@@ -76,25 +76,25 @@ class <?= $class_name ?> extends Controller
 
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
+     * @ParamConverter("<?= $update_dto_var_name ?>", converter="JsonApiParamConverter")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator): ResponseInterface
-    {
-        $entityManager = $this->getDoctrine()->getManager();
-
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
-
-        /** @var ConstraintViolationList $errors */
-        $errors = $validator->validate($<?= $entity_var_name ?>);
-        if ($errors->count() > 0) {
-            return $this->validationErrorResponse($errors);
+    public function edit(
+        <?= $entity_class_name ?> $<?= $entity_var_name ?>,
+        <?= $update_dto_class_name ?> $<?= $update_dto_var_name ?>,
+        ConstraintViolationList $validationErrors
+    ): ResponseInterface {
+        if (count($validationErrors) > 0) {
+            return $this->validationErrorResponse($validationErrors);
         }
 
-        $entityManager->flush();
+        $dataContainer = $this-><?= $entity_var_name ?>Service->update<?= $entity_var_name ?>FromDTO($<?= $entity_var_name ?>, $<?= $update_dto_var_name ?>);
+        if ($dataContainer->hasViolations() === true) {
+            return $this->validationErrorResponse($dataContainer->getViolations());
+        }
 
         return $this->jsonApi()->respond()->ok(
             new <?= $document_class_name ?>(new <?= $transformer_class_name ?>()),
-            $<?= $entity_var_name ?>
-
+            $dataContainer->getModel()
         );
     }
 
