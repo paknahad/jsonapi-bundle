@@ -1,10 +1,14 @@
 {
     "description": "The jsonapi-bundle is a Symfony bundle. it is the fastest way to generate API based on JsonApi.org using woohoolabs/yin",
-    "name": "paknahad/jsonapi-bundle",
+    "name": "degordian/jsonapi-bundle",
     "type": "symfony-bundle",
     "license": "MIT",
     "keywords": ["generator", "code generator", "json-api", "symfony", "php", "RESTful"],
     "authors": [
+        {
+            "name": "Andrija Dvorski",
+            "email": "andrija.dvorski@bornfight.com"
+        },
         {
             "name": "Hamid Paknahad",
             "email": "hp.paknahad@gmail.com"
