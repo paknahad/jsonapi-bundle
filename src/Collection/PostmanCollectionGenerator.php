@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Bornfight\JsonApiBundle\Collection;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Bornfight\JsonApiBundle\JsonApiStr;
+use function in_array;
 
 class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 {
@@ -33,16 +35,16 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
                             'value' => 'application/json',
                         ],
                     ],
-                    'body' => \in_array($name, ['add', 'edit']) ?
+                    'body' => in_array($name, ['add', 'edit']) ?
                         $this->generateBody($entityName, $action['method'], $classMetadata) : '',
                     'url' => [
-                        'raw' => '{{host}}'.$route.(\in_array($name, ['add', 'list']) ? '/' : '/1'),
+                        'raw' => '{{host}}'.$route.(in_array($name, ['add', 'list']) ? '/' : '/1'),
                         'host' => [
                             '{{host}}',
                         ],
                         'path' => [
                             $route,
-                            \in_array($name, ['add', 'list']) ? '' : '1',
+                            in_array($name, ['add', 'list']) ? '' : '1',
                         ],
                     ],
                 ],
@@ -70,7 +72,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
             'type' => JsonApiStr::entityNameToType($entityName),
         ];
 
-        if ('PATCH' == $method) {
+        if ('PATCH' === $method) {
             $data['id'] = '1';
         }
 
@@ -105,7 +107,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         foreach ($associations as $association) {
             $relationData = ['type' => JsonApiStr::entityNameToType($association['targetEntity']), 'id' => '1'];
 
-            if (\in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
+            if (in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
                 $relationData = [$relationData];
             }
 

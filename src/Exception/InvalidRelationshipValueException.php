@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Exception;
+namespace Bornfight\JsonApiBundle\Exception;
 
+use Exception;
 use Throwable;
 
-class InvalidRelationshipValueException extends \Exception
+class InvalidRelationshipValueException extends Exception
 {
     private $relation;
     private $values;
@@ -17,12 +19,12 @@ class InvalidRelationshipValueException extends \Exception
         $this->values = $values;
     }
 
-    public function getRelation()
+    public function getRelation(): string
     {
         return $this->relation;
     }
 
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }

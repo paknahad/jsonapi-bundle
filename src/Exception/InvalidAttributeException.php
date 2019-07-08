@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Exception;
+namespace Bornfight\JsonApiBundle\Exception;
 
+use Exception;
 use Throwable;
 
-class InvalidAttributeException extends \Exception
+class InvalidAttributeException extends Exception
 {
     private $attribute;
     private $value;
@@ -17,12 +19,12 @@ class InvalidAttributeException extends \Exception
         $this->value = $value;
     }
 
-    public function getAttribute()
+    public function getAttribute(): string
     {
         return $this->attribute;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return $this->value;
     }

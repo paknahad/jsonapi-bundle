@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Bornfight\JsonApiBundle\Helper;
 
+use function count;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;
 
@@ -169,7 +171,7 @@ class FieldManager
         $processedField = $this->getProcessedField($fieldName);
 
         $finalField = array_pop($processedField);
-        $entity = !empty($processedField) ? array_shift($processedField) : $this->getRootEntity();
+        $entity = count($processedField) !== 0 ? array_shift($processedField) : $this->getRootEntity();
 
         return [
             'field' => $finalField,
@@ -189,7 +191,7 @@ class FieldManager
     {
         $entity = $this->rootEntity;
         $explodedField = explode('.', $fieldName);
-        $numParts = \count($explodedField);
+        $numParts = count($explodedField);
 
         if (1 === $numParts) {
             return $explodedField;

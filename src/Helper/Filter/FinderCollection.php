@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Helper\Filter;
+namespace Bornfight\JsonApiBundle\Helper\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Paknahad\JsonApiBundle\Helper\FieldManager;
+use Bornfight\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger;
+namespace Bornfight\JsonApiBundle\Collection\Swagger;
 
+use function is_object;
 use phootwork\collection\ArrayList;
 use phootwork\collection\CollectionUtils;
 use phootwork\collection\Map;
@@ -38,7 +40,7 @@ class Swagger implements Arrayable
 
     public function toArray(): array
     {
-        return self::mapToArray($this->content);
+        return $this->mapToArray($this->content);
     }
 
     /**
@@ -51,7 +53,7 @@ class Swagger implements Arrayable
         $result = $collection->toArray();
 
         foreach ($result as $key => &$content) {
-            if (\is_object($content)) {
+            if (is_object($content)) {
                 $content = self::mapToArray($content);
             }
         }

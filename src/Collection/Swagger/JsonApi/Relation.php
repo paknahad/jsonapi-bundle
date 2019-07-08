@@ -1,15 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Bornfight\JsonApiBundle\JsonApiStr;
+use function in_array;
 
 class Relation extends AttributeAbstract
 {
     const RELATIONS_SUFFIX = '_relation';
 
-    public function toArray()
+    public function toArray(): array
     {
         $array = [
             'type' => [
@@ -21,16 +23,16 @@ class Relation extends AttributeAbstract
                 'type' => 'integer',
                 'minimum' => 1,
                 'description' => JsonApiStr::singularizeClassName($this->get('targetEntity')).' ID',
-                'example' => rand(2, 99),
+                'example' => random_int(2, 99),
             ],
         ];
 
         return $array;
     }
 
-    public function getDefinitionPath()
+    public function getDefinitionPath(): array
     {
-        if (\in_array($this->get('type'), [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
+        if (in_array($this->get('type'), [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
             $relation = [
                 $this->get('fieldName') => [
                     'type' => 'array',
@@ -44,7 +46,7 @@ class Relation extends AttributeAbstract
         return $relation;
     }
 
-    public function generateName()
+    public function generateName(): string
     {
         return JsonApiStr::singularizeClassName($this->get('targetEntity')).self::RELATIONS_SUFFIX;
     }

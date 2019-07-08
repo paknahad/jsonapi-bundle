@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Bornfight\JsonApiBundle\Collection;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
-use Paknahad\JsonApiBundle\Collection\Swagger\Paths;
-use Paknahad\JsonApiBundle\Collection\Swagger\Swagger;
+use Bornfight\JsonApiBundle\Collection\Swagger\Attributes;
+use Bornfight\JsonApiBundle\Collection\Swagger\Paths;
+use Bornfight\JsonApiBundle\Collection\Swagger\Swagger;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Component\Yaml\Yaml;
 

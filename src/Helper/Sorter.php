@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Bornfight\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,7 @@ class Sorter
      *
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
-    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager): void
     {
         $sort = $request->get('sort', null);
 

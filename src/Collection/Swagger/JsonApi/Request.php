@@ -1,15 +1,17 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\CollectionGeneratorAbstract;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Bornfight\JsonApiBundle\Collection\CollectionGeneratorAbstract;
+use Bornfight\JsonApiBundle\JsonApiStr;
+use function in_array;
 
 class Request extends DataAbstract
 {
-    private function hasBody()
+    private function hasBody(): bool
     {
-        return \in_array(
+        return in_array(
             $this->actionName,
             [
                 CollectionGeneratorAbstract::ADD_ACTION,
@@ -18,9 +20,9 @@ class Request extends DataAbstract
         );
     }
 
-    private function hasPathParam()
+    private function hasPathParam(): bool
     {
-        return \in_array(
+        return in_array(
             $this->actionName,
             [
                 CollectionGeneratorAbstract::VIEW_ACTION,

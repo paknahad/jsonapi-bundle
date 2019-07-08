@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\DependencyInjection;
+namespace Bornfight\JsonApiBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,7 +18,7 @@ class JsonApiExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');

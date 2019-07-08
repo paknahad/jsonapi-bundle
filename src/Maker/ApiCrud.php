@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Maker;
+namespace Bornfight\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
-use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
+use Bornfight\JsonApiBundle\Collection\PostmanCollectionGenerator;
+use Bornfight\JsonApiBundle\Collection\SwaggerCollectionGenerator;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;

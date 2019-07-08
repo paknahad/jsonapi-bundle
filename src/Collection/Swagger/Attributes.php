@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger;
+namespace Bornfight\JsonApiBundle\Collection\Swagger;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Attribute;
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Relation;
+use Bornfight\JsonApiBundle\Collection\Swagger\JsonApi\Attribute;
+use Bornfight\JsonApiBundle\Collection\Swagger\JsonApi\Relation;
 use phootwork\collection\Map;
 
 class Attributes
@@ -46,7 +47,7 @@ class Attributes
         $this->relations->set($relation->get('fieldName'), $relation);
     }
 
-    public function getFieldsSchema()
+    public function getFieldsSchema(): array
     {
         $result = [];
         $this->fields->each(function (string $key, Attribute $field) use (&$result) {
@@ -61,7 +62,7 @@ class Attributes
         ];
     }
 
-    public function getRelationsSchemas()
+    public function getRelationsSchemas(): array
     {
         $result = [];
         $this->relations->each(function (string $key, Relation $relation) use (&$result) {
@@ -74,7 +75,7 @@ class Attributes
         return $result;
     }
 
-    public function getRelations()
+    public function getRelations(): array
     {
         $result = [];
         $this->relations->each(function (string $key, Relation $relation) use (&$result) {

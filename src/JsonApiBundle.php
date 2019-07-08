@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle;
+namespace Bornfight\JsonApiBundle;
 
-use Paknahad\JsonApiBundle\DependencyInjection\JsonApiExtension;
+use Bornfight\JsonApiBundle\DependencyInjection\JsonApiExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class JsonApiBundle extends Bundle

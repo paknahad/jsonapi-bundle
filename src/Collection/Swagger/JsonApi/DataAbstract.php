@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Bornfight\JsonApiBundle\Collection\Swagger\Attributes;
+use Bornfight\JsonApiBundle\JsonApiStr;
 
 abstract class DataAbstract
 {

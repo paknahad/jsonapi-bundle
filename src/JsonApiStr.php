@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle;
+namespace Bornfight\JsonApiBundle;
 
 use Doctrine\Common\Inflector\Inflector;
 use Symfony\Bundle\MakerBundle\Str;
@@ -24,7 +25,7 @@ class JsonApiStr
         return Inflector::pluralize(Str::getShortClassName($entityName));
     }
 
-    public static function genEntityIdName($entityName, bool $withBrackets = false)
+    public static function genEntityIdName($entityName, bool $withBrackets = false): string
     {
         return sprintf(
             $withBrackets ? '{%s}' : '%s',

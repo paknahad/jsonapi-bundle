@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\CollectionGeneratorAbstract;
+use Bornfight\JsonApiBundle\Collection\CollectionGeneratorAbstract;
 
 class Link
 {

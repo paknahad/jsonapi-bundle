@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Bornfight\JsonApiBundle\Test;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
 
 class MakerTestCase extends TestCase
 {
-    protected function executeMakerCommand(MakerTestDetails $testDetails)
+    protected function executeMakerCommand(MakerTestDetails $testDetails): void
     {
         static $isFirst = true;
 
@@ -52,7 +53,7 @@ class MakerTestCase extends TestCase
         }
     }
 
-    protected function assertContainsCount(string $needle, string $haystack, int $count)
+    protected function assertContainsCount(string $needle, string $haystack, int $count): void
     {
         $this->assertEquals(1, substr_count($haystack, $needle), sprintf('Found more than %d occurrences of "%s" in "%s"', $count, $needle, $haystack));
     }

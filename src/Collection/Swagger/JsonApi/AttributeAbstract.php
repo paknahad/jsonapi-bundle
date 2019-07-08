@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
 use gossi\swagger\Schema;
 use phootwork\collection\CollectionUtils;
@@ -21,7 +22,7 @@ abstract class AttributeAbstract
 
     abstract public function toArray();
 
-    public function toSchema()
+    public function toSchema(): Schema
     {
         return new Schema([
             'type' => 'object',

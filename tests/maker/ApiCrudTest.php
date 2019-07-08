@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Symfony\Bundle\JsonApiBundle\Tests\Maker;
 
-use Paknahad\JsonApiBundle\JsonApiBundle;
-use Paknahad\JsonApiBundle\Test\MakerTestCase;
+use Bornfight\JsonApiBundle\JsonApiBundle;
+use Bornfight\JsonApiBundle\Test\MakerTestCase;
+use Generator;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -28,12 +30,12 @@ class ApiCrudTest extends MakerTestCase
      * @group functional_group1
      * @dataProvider getCommandTests
      */
-    public function testCommands(MakerTestDetails $makerTestDetails)
+    public function testCommands(MakerTestDetails $makerTestDetails): void
     {
         $this->executeMakerCommand($makerTestDetails);
     }
 
-    public function getCommandTests()
+    public function getCommandTests(): ?Generator
     {
         yield 'crud_author' => [
             MakerTestDetails::createTest(
@@ -124,7 +126,7 @@ class FunctionalTestKernel extends Kernel implements CompilerPassInterface
         return sys_get_temp_dir().'/'.uniqid('api_maker_', true);
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         // makes all makers public to help the tests
         foreach ($container->findTaggedServiceIds(MakeCommandRegistrationPass::MAKER_TAG) as $id => $tags) {

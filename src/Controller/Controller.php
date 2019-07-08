@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Controller;
+namespace Bornfight\JsonApiBundle\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

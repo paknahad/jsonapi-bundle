@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Bornfight\JsonApiBundle\Helper;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as BasePaginator;
@@ -31,7 +32,7 @@ class Paginator
      * @param Request      $request
      * @param FieldManager $fieldManager
      */
-    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
+    public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager): void
     {
         $page = $request->get('page', []);
         $this->page = isset($page['number']) ? (int) ($page['number']) : 1;

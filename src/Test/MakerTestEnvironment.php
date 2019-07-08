@@ -1,7 +1,10 @@
+
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Bornfight\JsonApiBundle\Test;
 
+use const DIRECTORY_SEPARATOR;
+use Exception;
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
 use Symfony\Bundle\MakerBundle\Test\MakerTestProcess;
 use Symfony\Bundle\MakerBundle\Util\YamlSourceManipulator;
@@ -43,7 +46,7 @@ final class MakerTestEnvironment
         $this->cachePath = realpath($cachePath);
         $this->flexPath = $this->cachePath.'/flex_project';
 
-        $this->path = $this->cachePath.\DIRECTORY_SEPARATOR.$testDetails->getUniqueCacheDirectoryName();
+        $this->path = $this->cachePath.DIRECTORY_SEPARATOR.$testDetails->getUniqueCacheDirectoryName();
     }
 
     public static function create(MakerTestDetails $testDetails): self
@@ -56,7 +59,7 @@ final class MakerTestEnvironment
         return $this->path;
     }
 
-    private function changeRootNamespaceIfNeeded()
+    private function changeRootNamespaceIfNeeded(): void
     {
         if ('App' === ($rootNamespace = $this->testDetails->getRootNamespace())) {
             return;
@@ -106,7 +109,7 @@ final class MakerTestEnvironment
         $this->processReplacements($replacements, $this->path);
     }
 
-    public function prepare()
+    public function prepare(): void
     {
         if (!$this->fs->exists($this->flexPath)) {
             $this->buildFlexSkeleton();
@@ -161,7 +164,7 @@ final class MakerTestEnvironment
             ->run();
     }
 
-    private function preMake()
+    private function preMake(): void
     {
         foreach ($this->testDetails->getPreMakeCommands() as $preCommand) {
             MakerTestProcess::create($preCommand, $this->path)
@@ -169,7 +172,7 @@ final class MakerTestEnvironment
         }
     }
 
-    public function runMaker()
+    public function runMaker(): MakerTestProcess
     {
         $this->preMake();
 
@@ -212,7 +215,7 @@ final class MakerTestEnvironment
         return $this->runnedMakerProcess;
     }
 
-    public function getGeneratedFilesFromOutputText()
+    public function getGeneratedFilesFromOutputText(): array
     {
         $output = $this->runnedMakerProcess->getOutput();
 
@@ -223,24 +226,24 @@ final class MakerTestEnvironment
         return array_map('trim', $matches[2]);
     }
 
-    public function fileExists(string $file)
+    public function fileExists(string $file): bool
     {
         return $this->fs->exists($this->path.'/'.$file);
     }
 
-    public function runPhpCSFixer(string $file)
+    public function runPhpCSFixer(string $file): MakerTestProcess
     {
         return MakerTestProcess::create(sprintf('php vendor/bin/php-cs-fixer --config=%s fix --dry-run --diff %s', __DIR__.'/../Resources/test/.php_cs.test', $this->path.'/'.$file), $this->rootPath)
             ->run(true);
     }
 
-    public function runTwigCSLint(string $file)
+    public function runTwigCSLint(string $file): MakerTestProcess
     {
         return MakerTestProcess::create(sprintf('php vendor/bin/twigcs lint %s', $this->path.'/'.$file), $this->rootPath)
             ->run(true);
     }
 
-    public function runInternalTests()
+    public function runInternalTests(): ?MakerTestProcess
     {
         $finder = new Finder();
         $finder->in($this->path.'/tests')->files();
@@ -253,18 +256,18 @@ final class MakerTestEnvironment
         return null;
     }
 
-    private function postMake()
+    private function postMake(): void
     {
         $this->processReplacements($this->testDetails->getPostMakeReplacements(), $this->path);
 
         $guardAuthenticators = $this->testDetails->getGuardAuthenticators();
-        if (!empty($guardAuthenticators)) {
+        if (count($guardAuthenticators) !== 0) {
             $yaml = file_get_contents($this->path.'/config/packages/security.yaml');
             $manipulator = new YamlSourceManipulator($yaml);
             $data = $manipulator->getData();
             foreach ($guardAuthenticators as $firewallName => $id) {
                 if (!isset($data['security']['firewalls'][$firewallName])) {
-                    throw new \Exception(sprintf('Could not find firewall "%s"', $firewallName));
+                    throw new Exception(sprintf('Could not find firewall "%s"', $firewallName));
                 }
 
                 $data['security']['firewalls'][$firewallName]['guard'] = [
@@ -281,7 +284,7 @@ final class MakerTestEnvironment
         }
     }
 
-    private function buildFlexSkeleton()
+    private function buildFlexSkeleton(): void
     {
         MakerTestProcess::create('composer create-project symfony/skeleton flex_project --prefer-dist --no-progress', $this->cachePath)
             ->run();
@@ -313,14 +316,14 @@ final class MakerTestEnvironment
             [
                 'filename' => 'config/bundles.php',
                 'find' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],",
-                'replace' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
+                'replace' => "Symfony\Bundle\MakerBundle\MakerBundle::class => ['all' => true],\n    Bornfight\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
             ],
             [
                 // ugly way to autoload Maker & any other vendor libs needed in the command
                 'filename' => 'composer.json',
                 'find' => '"App\\\Tests\\\": "tests/"',
                 'replace' => sprintf(
-                    '"App\\\Tests\\\": "tests/",'."\n".'            "Paknahad\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
+                    '"App\\\Tests\\\": "tests/",'."\n".'            "Bornfight\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
                     // escape \ for Windows
                     $rootPath,
                     $rootPath
@@ -330,13 +333,13 @@ final class MakerTestEnvironment
         $this->processReplacements($replacements, $this->flexPath);
     }
 
-    private function processReplacements(array $replacements, $rootDir)
+    private function processReplacements(array $replacements, $rootDir): void
     {
         foreach ($replacements as $replacement) {
             $path = realpath($rootDir.'/'.$replacement['filename']);
 
             if (!$this->fs->exists($path)) {
-                throw new \Exception(sprintf('Could not find file "%s" to process replacements inside "%s"', $replacement['filename'], $rootDir));
+                throw new Exception(sprintf('Could not find file "%s" to process replacements inside "%s"', $replacement['filename'], $rootDir));
             }
 
             $contents = file_get_contents($path);
@@ -371,7 +374,7 @@ echo json_encode($missingDependencies);
         $process = MakerTestProcess::create('php dep_runner.php', $this->path)->run();
         $data = json_decode($process->getOutput(), true);
         if (null === $data) {
-            throw new \Exception('Could not determine dependencies');
+            throw new Exception('Could not determine dependencies');
         }
 
         unlink($this->path.'/dep_builder');

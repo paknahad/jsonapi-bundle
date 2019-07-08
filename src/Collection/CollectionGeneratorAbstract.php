@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Bornfight\JsonApiBundle\Collection;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Symfony\Bundle\MakerBundle\FileManager;

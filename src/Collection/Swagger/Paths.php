@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger;
+namespace Bornfight\JsonApiBundle\Collection\Swagger;
 
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Request;
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Response;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Bornfight\JsonApiBundle\Collection\Swagger\JsonApi\Request;
+use Bornfight\JsonApiBundle\Collection\Swagger\JsonApi\Response;
+use Bornfight\JsonApiBundle\JsonApiStr;
+use function in_array;
 
 class Paths
 {
@@ -33,11 +35,11 @@ class Paths
         return $paths;
     }
 
-    private static function generateUrl($baseRoute, $actionName, $entityName)
+    private static function generateUrl($baseRoute, $actionName, $entityName): string
     {
         return $baseRoute.'/'.
             (
-                \in_array($actionName, ['edit', 'delete', 'view']) ?
+                in_array($actionName, ['edit', 'delete', 'view']) ?
                     JsonApiStr::genEntityIdName($entityName, true) : ''
             );
     }

@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Factory;
+namespace Bornfight\JsonApiBundle\Factory;
 
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +22,7 @@ class JsonApiFactory
         $this->requestStack = $requestStack;
     }
 
-    public function create()
+    public function create(): JsonApi
     {
         $jsonApiRequest = new JsonApiRequest(
             $this->psrFactory->createRequest($this->requestStack->getCurrentRequest()),

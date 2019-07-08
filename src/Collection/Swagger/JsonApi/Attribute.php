@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Bornfight\JsonApiBundle\Collection\Swagger\JsonApi;
 
 class Attribute extends AttributeAbstract
 {
@@ -9,14 +10,12 @@ class Attribute extends AttributeAbstract
         return $this->metadata->has('id') && (bool) ($this->get('id'));
     }
 
-    public function toArray()
+    public function toArray(): array
     {
-        $array = [$this->get('fieldName') => $this->getSwaggerType()];
-
-        return $array;
+        return [$this->get('fieldName') => $this->getSwaggerType()];
     }
 
-    private function getSwaggerType()
+    private function getSwaggerType(): ?array
     {
         switch ($this->get('type')) {
             case 'json':

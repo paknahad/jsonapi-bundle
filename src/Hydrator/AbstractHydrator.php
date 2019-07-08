@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Hydrator;
+namespace Bornfight\JsonApiBundle\Hydrator;
 
 use WoohooLabs\Yin\JsonApi\Hydrator\AbstractHydrator as BaseHydrator;
 use Doctrine\Common\Persistence\ObjectManager;

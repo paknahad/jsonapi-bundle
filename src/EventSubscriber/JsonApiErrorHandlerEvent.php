@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\EventSubscriber;
+namespace Bornfight\JsonApiBundle\EventSubscriber;
 
-use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
-use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+use Bornfight\JsonApiBundle\Exception\InvalidAttributeException;
+use Bornfight\JsonApiBundle\Exception\InvalidRelationshipValueException;
+use Exception;
+use function in_array;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -34,14 +37,14 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         $this->jsonApi = $jsonApi;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(GetResponseForExceptionEvent $event): void
     {
         $exceptionFactory = new DefaultExceptionFactory();
 
@@ -56,7 +59,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = \in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
 
         if ($exception instanceof InvalidRelationshipValueException || $exception instanceof InvalidAttributeException) {
             $response = $responder->genericError(
@@ -96,7 +99,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         ];
     }
 
-    protected function toErrorDocument(Throwable $exception, string $url)
+    protected function toErrorDocument(Throwable $exception, string $url): ErrorDocument
     {
         $title = 'Internal Server Error';
         $statusCode = 500;
@@ -128,7 +131,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         return $errorDocument;
     }
 
-    protected function generateValidationErrorDocument(\Exception $exception): ErrorDocument
+    protected function generateValidationErrorDocument(Exception $exception): ErrorDocument
     {
         $errorDocument = new ErrorDocument();
         $errorDocument->setJsonApi(new JsonApiObject('1.0'));

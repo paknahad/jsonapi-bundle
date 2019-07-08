@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Test\Constraint;
+namespace Bornfight\JsonApiBundle\Test\Constraint;
 
 use Opis\JsonSchema\Schema;
 use Opis\JsonSchema\ValidationResult;
@@ -25,7 +26,7 @@ class IsValidJsonApi extends constraint
      *
      * @return bool
      */
-    protected function matches($json)
+    protected function matches($json): bool
     {
         $data = json_decode($json);
         $schema = Schema::fromJsonString(file_get_contents(__DIR__.'/../../Resources/schema/jsonapi-schema.json'));
@@ -42,7 +43,7 @@ class IsValidJsonApi extends constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         $error = $this->result->getFirstError();
 
@@ -59,7 +60,7 @@ class IsValidJsonApi extends constraint
      *
      * @return string
      */
-    protected function failureDescription($other)
+    protected function failureDescription($other): string
     {
         foreach ($this->result->getFirstError()->subErrors() as $item) {
             var_dump($item);

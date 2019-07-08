@@ -1,13 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Tests;
 
-use Paknahad\JsonApiBundle\Test\JsonApiTestCase;
+use Bornfight\JsonApiBundle\Test\JsonApiTestCase;
 
 class GeneratedApiCRUDTest extends JsonApiTestCase
 {
     /** @dataProvider provideAuthor */
-    public function testNewAuthorAction($author)
+    public function testNewAuthorAction($author): void
     {
         static $id;
         $id++;
@@ -32,7 +33,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
     }
 
     /** @dataProvider provide‌Book */
-    public function testNewBookAction($book, $authorId)
+    public function testNewBookAction($book, $authorId): void
     {
         static $id;
         $id++;
@@ -73,7 +74,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
     }
 
-    public function testEditAction()
+    public function testEditAction(): void
     {
         $client = self::createClient();
         $client->insulate();
@@ -93,7 +94,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
     }
 
-    public function testGetAction()
+    public function testGetAction(): void
     {
         $client = self::createClient();
         $client->insulate();
@@ -109,7 +110,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         $client = self::createClient();
         $client->insulate();
@@ -121,7 +122,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
     }
 
-    public function testDeleteAction()
+    public function testDeleteAction(): void
     {
         $client = self::createClient();
         $client->request(
@@ -132,13 +133,13 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
     }
 
 
-    public function provideAuthor()
+    public function provideAuthor(): ?\Generator
     {
         yield['George Orwell'];
         yield['Aldous Huxley'];
     }
 
-    public function provide‌Book()
+    public function provide‌Book(): ?\Generator
     {
         yield['Nineteen Eighty-Four', 1];
         yield['Animal Farm', 1];

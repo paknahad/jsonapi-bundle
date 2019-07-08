@@ -1,11 +1,15 @@
 <?php
+declare(strict_types=1);
 
-namespace Paknahad\JsonApiBundle\Hydrator;
+namespace Bornfight\JsonApiBundle\Hydrator;
 
+use function count;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\Entity;
-use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
-use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+use Bornfight\JsonApiBundle\Exception\InvalidAttributeException;
+use Bornfight\JsonApiBundle\Exception\InvalidRelationshipValueException;
+use Exception;
+use function in_array;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -25,7 +29,7 @@ trait ValidatorTrait
      * @param ToOneRelationship|ToManyRelationship $relation
      * @param array                                $validTypes
      *
-     * @throws \Exception | ValidatorException
+     * @throws Exception | ValidatorException
      */
     protected function validateRelationType($relation, array $validTypes): void
     {
@@ -34,7 +38,7 @@ trait ValidatorTrait
                 return;
             }
 
-            if (!\in_array($relation->getResourceIdentifier()->getType(), $validTypes, true)) {
+            if (!in_array($relation->getResourceIdentifier()->getType(), $validTypes, true)) {
                 throw new ValidatorException('Invalid type: '.$relation->getResourceIdentifier()->getType());
             }
         } elseif ($relation instanceof ToManyRelationship) {
@@ -43,12 +47,12 @@ trait ValidatorTrait
             }
 
             foreach (array_unique($relation->getResourceIdentifierTypes()) as $type) {
-                if (!\in_array($type, $validTypes, true)) {
+                if (!in_array($type, $validTypes, true)) {
                     throw new ValidatorException('Invalid type: '.$type);
                 }
             }
         } else {
-            throw new \Exception('Invalid Relation');
+            throw new Exception('Invalid Relation');
         }
     }
 
@@ -61,7 +65,7 @@ trait ValidatorTrait
      */
     protected function validateRelationValues(array $availableEntities, array $requestedIds, string $relationshipName): void
     {
-        if (\count($availableEntities) === \count($requestedIds)) {
+        if (count($availableEntities) === count($requestedIds)) {
             return;
         }
 
