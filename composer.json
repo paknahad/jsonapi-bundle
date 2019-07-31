@@ -18,7 +18,7 @@
         "symfony/proxy-manager-bridge": "^4.1",
         "symfony/orm-pack": "^1.0",
         "symfony/validator": "^4.1",
-        "woohoolabs/yin": "^3.0",
+        "woohoolabs/yin": "^4.0",
         "nyholm/psr7": "^1.1"
     },
     "require-dev": {

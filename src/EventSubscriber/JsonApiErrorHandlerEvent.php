@@ -19,8 +19,8 @@ use WoohooLabs\Yin\JsonApi\Response\Responder;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
 use WoohooLabs\Yin\JsonApi\Schema\Error\ErrorSource;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
+use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
-use WoohooLabs\Yin\JsonApi\Schema\Links;
 use WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer;
 
 class JsonApiErrorHandlerEvent implements EventSubscriberInterface
@@ -62,13 +62,12 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         if ($exception instanceof InvalidRelationshipValueException || $exception instanceof InvalidAttributeException) {
             $response = $responder->genericError(
                 $this->generateValidationErrorDocument($exception),
-                [],
-                422
+                422,
+                []
             );
         } else {
             $response = $responder->genericError(
                 $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
-                [],
                 null,
                 $additionalMeta
             );
@@ -117,7 +116,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         /** @var ErrorDocument $errorDocument */
         $errorDocument = new ErrorDocument();
         $errorDocument->setLinks(
-            Links::createWithoutBaseUri()->setSelf(
+            DocumentLinks::createWithoutBaseUri()->setSelf(
                 new Link($url)
             )
         )->addError(

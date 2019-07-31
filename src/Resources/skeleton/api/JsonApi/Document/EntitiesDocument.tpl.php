@@ -2,9 +2,9 @@
 
 namespace <?= $namespace ?>;
 
-use WoohooLabs\Yin\JsonApi\Document\AbstractCollectionDocument;
+use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractCollectionDocument;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
-use WoohooLabs\Yin\JsonApi\Schema\Links;
+use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 
 /**
  * <?= $entity_class_name_plural ?> Document.
@@ -30,9 +30,9 @@ class <?= $entity_class_name_plural ?>Document extends AbstractCollectionDocumen
     /**
      * {@inheritdoc}
      */
-    public function getLinks(): Links
+    public function getLinks(): ?DocumentLinks
     {
-        return Links::createWithoutBaseUri()
-            ->setPagination('<?= $route_path ?>', $this->domainObject);
+        return DocumentLinks::createWithoutBaseUri()
+            ->setPagination('<?= $route_path ?>', $this->object);
     }
 }

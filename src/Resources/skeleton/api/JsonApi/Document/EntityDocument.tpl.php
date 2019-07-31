@@ -5,7 +5,7 @@ namespace <?= $namespace ?>;
 use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractSingleResourceDocument;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
-use WoohooLabs\Yin\JsonApi\Schema\Links;
+use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 
 /**
  * <?= $entity_class_name ?> Document.
@@ -31,9 +31,9 @@ class <?= $entity_class_name ?>Document extends AbstractSingleResourceDocument
     /**
      * {@inheritdoc}
      */
-    public function getLinks(): Links
+    public function getLinks(): ?DocumentLinks
     {
-        return Links::createWithoutBaseUri(
+        return DocumentLinks::createWithoutBaseUri(
             [
                 'self' => new Link('<?= $route_path ?>/'.$this->getResourceId()),
             ]

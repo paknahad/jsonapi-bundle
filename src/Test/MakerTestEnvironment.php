@@ -180,12 +180,11 @@ final class MakerTestEnvironment
         $testProcess = MakerTestProcess::create(
             sprintf('php bin/console %s %s --no-ansi', $this->testDetails->getMaker()::getCommandName(), $this->testDetails->getArgumentsString()),
             $this->path,
+            [
+                'SHELL_INTERACTIVE' => '1',
+            ],
             10
         );
-
-        $testProcess->setEnv([
-            'SHELL_INTERACTIVE' => '1',
-        ]);
 
         if ($userInputs = $this->testDetails->getInputs()) {
             $inputStream = new InputStream();
@@ -291,7 +290,7 @@ final class MakerTestEnvironment
         // fetch a few packages needed for testing
         MakerTestProcess::create(
             'composer require symfony/psr-http-message-bridge \
-                woohoolabs/yin:^3.0 \
+                woohoolabs/yin:^4.0 \
                 phpunit \
                 symfony/maker-bundle \
                 symfony/process \
