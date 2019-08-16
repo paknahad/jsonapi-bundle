@@ -16,6 +16,7 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 
 /**
  * @Route("<?= $route_path ?>")
@@ -40,11 +41,11 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
      */
-    public function new(ValidatorInterface $validator): ResponseInterface
+    public function new(ValidatorInterface $validator, DefaultExceptionFactory $exceptionFactory): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager), new <?= $entity_class_name ?>());
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager, $exceptionFactory), new <?= $entity_class_name ?>());
 
         /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($<?= $entity_var_name ?>);
@@ -77,11 +78,11 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator): ResponseInterface
+    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator, DefaultExceptionFactory $exceptionFactory): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager), $<?= $entity_var_name ?>);
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager, $exceptionFactory), $<?= $entity_var_name ?>);
 
         /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($<?= $entity_var_name ?>);

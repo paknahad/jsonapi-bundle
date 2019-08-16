@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
+use WoohooLabs\Yin\JsonApi\Exception\RelationshipNotExists;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
 use WoohooLabs\Yin\JsonApi\Request\JsonApiRequestInterface;
@@ -102,6 +103,22 @@ trait ValidatorTrait
                 if ($validation->count() > 0) {
                     throw new InvalidAttributeException($field, $value, $validation->get(0)->getMessage(), 422);
                 }
+            }
+        }
+    }
+
+    /**
+     * Validate expected relations
+     *
+     * @param array $expectedRelation
+     * @param JsonApiRequestInterface $request
+     *
+     * @throws RelationshipNotExists
+     */
+    protected function validateRelations(array $expectedRelation, JsonApiRequestInterface $request) {
+        foreach ($request->getResource()['relationships'] as $name => $relation) {
+            if (!in_array($name, $expectedRelation)) {
+                throw $this->exceptionFactory->createRelationshipNotExistsException($name);
             }
         }
     }
