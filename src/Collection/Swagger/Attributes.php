@@ -2,7 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Collection\Swagger;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Attribute;
 use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Relation;
 use phootwork\collection\Map;
@@ -21,7 +21,7 @@ class Attributes
         $this->relations = new Map();
     }
 
-    public static function parse(ClassMetadata $classMetadata): self
+    public static function parse(ClassMetadataInfo $classMetadata): self
     {
         $attributes = new self();
 

@@ -2,7 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Collection;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
 use Paknahad\JsonApiBundle\Collection\Swagger\Paths;
 use Paknahad\JsonApiBundle\Collection\Swagger\Swagger;
@@ -18,7 +18,7 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
     const SWAGGER_PATH = 'collections/swagger.yaml';
     const SWAGGER_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/swagger.yaml';
 
-    public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): string
+    public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {
         $this->swagger = new Swagger($this->loadOldCollection());
 

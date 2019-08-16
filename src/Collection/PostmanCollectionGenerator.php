@@ -2,7 +2,6 @@
 
 namespace Paknahad\JsonApiBundle\Collection;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\JsonApiStr;
 
@@ -13,13 +12,13 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
     /**
      * Generate Postman Collection.
      *
-     * @param ClassMetadata $classMetadata
-     * @param string        $entityName
-     * @param string        $route
+     * @param ClassMetadataInfo $classMetadata
+     * @param string            $entityName
+     * @param string            $route
      *
      * @return string
      */
-    public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): string
+    public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {
         $requests = [];
         foreach ($this->getActionsList($entityName) as $name => $action) {
@@ -64,7 +63,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         return self::POSTMAN_PATH;
     }
 
-    private function generateBody(string $entityName, string $method, ClassMetadata $classMetadata): array
+    private function generateBody(string $entityName, string $method, ClassMetadataInfo $classMetadata): array
     {
         $data = [
             'type' => JsonApiStr::entityNameToType($entityName),

@@ -2,7 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Collection;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Bundle\MakerBundle\FileManager;
 
 abstract class CollectionGeneratorAbstract
@@ -30,7 +30,7 @@ abstract class CollectionGeneratorAbstract
         $this->rootDirectory = $rootDirectory;
     }
 
-    abstract public function generateCollection(ClassMetadata $classMetadata, string $entityName, string $route): ?string;
+    abstract public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): ?string;
 
     protected function getActionsList(string $entityName): array
     {
