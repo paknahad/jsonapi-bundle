@@ -94,13 +94,25 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResource
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>) {
                 return ToManyRelationship::create()
-                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), new <?= $association['target_entity_name'] ?>ResourceTransformer());
+                    ->setDataAsCallable(
+                        function () use ($<?= $entity_var_name ?>) {
+                            return $<?= $entity_var_name ?>-><?= $association['getter'] ?>();
+                        },
+                        new <?= $association['target_entity_name'] ?>ResourceTransformer()
+                    )
+                    ->omitDataWhenNotIncluded();
             },<?php
         } else {?>
 
             '<?= $association['field_name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>) {
                 return ToOneRelationship::create()
-                    ->setData($<?= $entity_var_name ?>-><?= $association['getter'] ?>(), new <?= $association['target_entity_name'] ?>ResourceTransformer());
+                    ->setDataAsCallable(
+                        function () use ($<?= $entity_var_name ?>) {
+                            return $<?= $entity_var_name ?>-><?= $association['getter'] ?>();
+                        },
+                        new <?= $association['target_entity_name'] ?>ResourceTransformer()
+                    )
+                    ->omitDataWhenNotIncluded();
             },<?php
         }
     }?>
