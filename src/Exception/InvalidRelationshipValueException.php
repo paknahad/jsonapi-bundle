@@ -2,16 +2,16 @@
 
 namespace Paknahad\JsonApiBundle\Exception;
 
-use Throwable;
+use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
 
-class InvalidRelationshipValueException extends \Exception
+class InvalidRelationshipValueException extends AbstractJsonApiValidationException
 {
     private $relation;
     private $values;
 
-    public function __construct(string $relation, array $values, string $message = '', int $code = 0, Throwable $previous = null)
+    public function __construct(string $relation, array $values)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct('Invalid value', 422);
 
         $this->relation = $relation;
         $this->values = $values;
@@ -25,5 +25,18 @@ class InvalidRelationshipValueException extends \Exception
     public function getValues()
     {
         return $this->values;
+    }
+
+    /**
+     * @return Error[]
+     */
+    protected function getErrors(): array
+    {
+        $errors = [];
+        foreach ($this->getValues() as $value) {
+            $errors[] = $this->generateValidationError(false, $this->getRelation(), $value);
+        }
+
+        return $errors;
     }
 }

@@ -2,14 +2,13 @@
 
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
-use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
-use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Validator\Exception\ValidatorException;
 use Throwable;
 use WoohooLabs\Yin\JsonApi\Exception\JsonApiExceptionInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
@@ -17,8 +16,6 @@ use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Response\Responder;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
-use WoohooLabs\Yin\JsonApi\Schema\Error\ErrorSource;
-use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
 use WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer;
@@ -59,19 +56,11 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
         $additionalMeta = \in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
 
-        if ($exception instanceof InvalidRelationshipValueException || $exception instanceof InvalidAttributeException) {
-            $response = $responder->genericError(
-                $this->generateValidationErrorDocument($exception),
-                422,
-                []
-            );
-        } else {
-            $response = $responder->genericError(
-                $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
-                null,
-                $additionalMeta
-            );
-        }
+        $response = $responder->genericError(
+            $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
+            null,
+            $additionalMeta
+        );
 
         $event->setResponse($httpFoundationFactory->createResponse($response));
     }
@@ -105,7 +94,10 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         $title = 'Internal Server Error';
         $statusCode = 500;
 
-        if ($exception instanceof HttpException || ($exception->getCode() >= 400 && $exception->getCode() < 512)) {
+        if ($exception instanceof ValidatorException) {
+            $title = $exception->getMessage();
+            $statusCode = 422;
+        } elseif ($exception instanceof HttpException) {
             $title = $exception->getMessage();
             $statusCode = $exception->getStatusCode();
         } elseif ($exception instanceof AuthenticationException) {
@@ -130,42 +122,5 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         );
 
         return $errorDocument;
-    }
-
-    protected function generateValidationErrorDocument(\Exception $exception): ErrorDocument
-    {
-        $errorDocument = new ErrorDocument();
-        $errorDocument->setJsonApi(new JsonApiObject('1.0'));
-
-        if ($exception instanceof InvalidAttributeException) {
-            $error = $this->generateValidationError(true, $exception->getAttribute(), $exception->getValue());
-        } elseif ($exception instanceof InvalidRelationshipValueException) {
-            foreach ($exception->getValues() as $value) {
-                $error = $this->generateValidationError(false, $exception->getRelation(), $value);
-            }
-        }
-
-        return $errorDocument->addError($error);
-    }
-
-    protected function generateValidationError(bool $isAttribute, string $name, string $value): Error
-    {
-        $error = Error::create();
-        $pointer = sprintf(
-            '/data/%s/%s',
-            $isAttribute ? 'attributes' : 'relationships',
-            $name
-        );
-
-        $errorSource = new ErrorSource(
-            $pointer,
-            $value
-        );
-
-        $error->setSource($errorSource)
-            ->setDetail('Invalid value')
-            ->setStatus('');
-
-        return $error;
     }
 }

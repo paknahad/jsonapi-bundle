@@ -2,16 +2,16 @@
 
 namespace Paknahad\JsonApiBundle\Exception;
 
-use Throwable;
+use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
 
-class InvalidAttributeException extends \Exception
+class InvalidAttributeException extends AbstractJsonApiValidationException
 {
     private $attribute;
     private $value;
 
-    public function __construct(string $attribute, string $value, string $message = '', int $code = 0, Throwable $previous = null)
+    public function __construct(string $attribute, string $value)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct('Invalid value', 422);
 
         $this->attribute = $attribute;
         $this->value = $value;
@@ -25,5 +25,15 @@ class InvalidAttributeException extends \Exception
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @return Error[]
+     */
+    protected function getErrors(): array
+    {
+        return [
+            $this->generateValidationError(true, $this->getAttribute(), $this->getValue()),
+        ];
     }
 }
