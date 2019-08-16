@@ -108,16 +108,17 @@ trait ValidatorTrait
     }
 
     /**
-     * Validate expected relations
+     * Validate expected relations.
      *
-     * @param array $expectedRelation
+     * @param array                   $expectedRelation
      * @param JsonApiRequestInterface $request
      *
      * @throws RelationshipNotExists
      */
-    protected function validateRelations(array $expectedRelation, JsonApiRequestInterface $request) {
+    protected function validateRelations(array $expectedRelation, JsonApiRequestInterface $request)
+    {
         foreach ($request->getResource()['relationships'] as $name => $relation) {
-            if (!in_array($name, $expectedRelation)) {
+            if (!\in_array($name, $expectedRelation)) {
                 throw $this->exceptionFactory->createRelationshipNotExistsException($name);
             }
         }
