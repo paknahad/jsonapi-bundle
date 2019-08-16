@@ -1,0 +1,12 @@
+parameters:
+    bootstrap: vendor/autoload.php
+    autoload_files:
+        - vendor/bin/.phpunit/phpunit-7.5/vendor/autoload.php
+    ignoreErrors:
+        - message: '#Undefined variable#'
+          path: %currentWorkingDirectory%/src/Resources/skeleton/api
+
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
