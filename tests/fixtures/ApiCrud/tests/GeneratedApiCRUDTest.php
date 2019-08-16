@@ -26,7 +26,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
-            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/'.$id.'"},"data":{"type":"authors","id":"'.$id.'","attributes":{"name":"'.$author.'"},"relationships":{"books":{"data":[]}}}}',
+            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/'.$id.'"},"data":{"type":"authors","id":"'.$id.'","links":{"self":"\/authors\/'.$id.'"},"attributes":{"name":"'.$author.'"}}}',
             $client->getResponse()->getContent()
         );
     }
@@ -68,7 +68,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
-            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/books\/'.$id.'"},"data":{"type":"books","id":"'.$id.'","attributes":{"title":"'.$book.'"},"relationships":{"authors":{"data":[{"type":"authors","id":"'.$authorId.'"}]}}}}',
+            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/books\/'.$id.'"},"data":{"type":"books","id":"'.$id.'","links":{"self":"\/books\/'.$id.'"},"attributes":{"title":"'.$book.'"}}}',
             $client->getResponse()->getContent()
         );
     }
@@ -88,7 +88,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
-            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}}}',
+            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"}}}',
             $client->getResponse()->getContent()
         );
     }
@@ -104,7 +104,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
         $this->assertContains(
-            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}},"included":[{"type":"books","id":"3","attributes":{"title":"Brave New World"},"relationships":{"authors":{"data":[{"type":"authors","id":"2"}]}}}]}',
+            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}},"included":[{"type":"books","id":"3","links":{"self":"\/books\/3"},"attributes":{"title":"Brave New World"}}]}',
             $client->getResponse()->getContent()
         );
     }
@@ -116,7 +116,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $client->request('GET', '/authors/');
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertContains(
-            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","first":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","last":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","prev":null,"next":null},"data":[{"type":"authors","id":"1","attributes":{"name":"George Orwell"},"relationships":{"books":{"data":[{"type":"books","id":"1"},{"type":"books","id":"2"}]}}},{"type":"authors","id":"2","attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}}]}',
+            '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","first":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","last":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","prev":null,"next":null},"data":[{"type":"authors","id":"1","links":{"self":"\/authors\/1"},"attributes":{"name":"George Orwell"}},{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"}}]}',
             $client->getResponse()->getContent()
         );
     }
