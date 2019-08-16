@@ -81,15 +81,16 @@ trait ValidatorTrait
      *
      * @param ClassMetadata           $metadata
      * @param JsonApiRequestInterface $request
+     * @param bool                    $validExistence
      *
      * @throws InvalidAttributeException
      */
-    protected function validateFields(ClassMetadata $metadata, JsonApiRequestInterface $request, bool $validExistance = true): void
+    protected function validateFields(ClassMetadata $metadata, JsonApiRequestInterface $request, bool $validExistence = true): void
     {
         $this->validator = Validation::createValidator();
 
         foreach ($request->getResourceAttributes() as $field => $value) {
-            if ($validExistance && !$metadata->hasField($field)) {
+            if ($validExistence && !$metadata->hasField($field)) {
                 throw new ValidatorException('This attribute does not exist');
             }
 
