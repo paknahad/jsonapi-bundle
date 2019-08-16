@@ -4,6 +4,7 @@ namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
 use WoohooLabs\Yin\JsonApi\Schema\Link\ResourceLinks;
+use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
 <?php
 foreach ($associations as $association) {
     if (in_array($association['type'], $to_many_types)) {
@@ -51,7 +52,7 @@ class <?= $entity_class_name ?>ResourceTransformer extends AbstractResource
      */
     public function getLinks($<?= $entity_var_name ?>): ?ResourceLinks
     {
-        return null;
+        return ResourceLinks::createWithoutBaseUri()->setSelf(new Link('<?= $route_path ?>/'.$this->getId($<?= $entity_var_name ?>)));
     }
 
     /**
