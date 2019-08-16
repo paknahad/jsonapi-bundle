@@ -125,7 +125,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the Paginator.
      *
-     * @return paginator
+     * @return Paginator
      *                   The Paginator
      */
     public function getPaginator(): Paginator
@@ -136,7 +136,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     /**
      * Gets the FieldManager.
      *
-     * @return fieldManager
+     * @return FieldManager
      *                      The FieldManager
      */
     public function getFieldManager(): FieldManager

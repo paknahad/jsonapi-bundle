@@ -251,8 +251,6 @@ class FieldManager
      */
     protected function setRelations(string $fieldName): void
     {
-        $this->fields[$fieldName];
-
         $entities = array_merge([$this->fields[$fieldName]['entity']], $this->fields[$fieldName]['entity-path']);
 
         $sourceEntity = $this->getRootEntity();

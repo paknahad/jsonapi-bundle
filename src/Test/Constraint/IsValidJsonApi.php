@@ -12,7 +12,7 @@ use PHPUnit\Framework\Constraint\Constraint;
  *
  * The json is passed in the constructor.
  */
-class IsValidJsonApi extends constraint
+class IsValidJsonApi extends Constraint
 {
     /** @var ValidationResult $result */
     private $result;
@@ -25,7 +25,7 @@ class IsValidJsonApi extends constraint
      *
      * @return bool
      */
-    protected function matches($json)
+    protected function matches($json): bool
     {
         $data = json_decode($json);
         $schema = Schema::fromJsonString(file_get_contents(__DIR__.'/../../Resources/schema/jsonapi-schema.json'));
@@ -42,7 +42,7 @@ class IsValidJsonApi extends constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         $error = $this->result->getFirstError();
 
@@ -59,7 +59,7 @@ class IsValidJsonApi extends constraint
      *
      * @return string
      */
-    protected function failureDescription($other)
+    protected function failureDescription($other): string
     {
         foreach ($this->result->getFirstError()->subErrors() as $item) {
             var_dump($item);

@@ -104,8 +104,8 @@ class Finder implements FinderInterface
     }
 
     /**
-     * @param array       $fieldMetadata
-     * @param string|null $value
+     * @param array  $fieldMetadata
+     * @param string $value
      *
      * @return string
      */

@@ -2,7 +2,6 @@
 
 namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use gossi\swagger\Schema;
 use phootwork\collection\CollectionUtils;
 
 abstract class AttributeAbstract
@@ -20,12 +19,4 @@ abstract class AttributeAbstract
     }
 
     abstract public function toArray();
-
-    public function toSchema()
-    {
-        return new Schema([
-            'type' => 'object',
-            'properties' => $this->toArray(),
-        ]);
-    }
 }

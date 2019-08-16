@@ -45,7 +45,7 @@ class MakerTestCase extends TestCase
         $isFirst = false;
 
         // checkout user asserts
-        if (null === $testDetails->getAssert()) {
+        if (null == $testDetails->getAssert()) {
             $this->assertContains('Success', $makerTestProcess->getOutput(), $makerTestProcess->getErrorOutput());
         } else {
             ($testDetails->getAssert())($makerTestProcess->getOutput(), $testEnv->getPath());

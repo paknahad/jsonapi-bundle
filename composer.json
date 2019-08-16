@@ -28,6 +28,7 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^4.0",
         "symfony/process": "^4.0",
+        "symfony/security-core": "^4.3",
         "symfony/translation": "^4.2",
         "phootwork/collection" : "~1",
         "opis/json-schema": "^1.0",
