@@ -33,4 +33,17 @@ class Transformer
 
         return sprintf('$%s->%s()', $entityName, $fieldAttributes['getter']);
     }
+
+    public static function validationValueToString($value): string
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format(DATE_ATOM);
+        }
+
+        return 'Invalid Value';
+    }
 }
