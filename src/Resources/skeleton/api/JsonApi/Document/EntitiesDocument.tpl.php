@@ -14,7 +14,7 @@ class <?= $entity_class_name_plural ?>Document extends AbstractCollectionDocumen
     /**
      * {@inheritdoc}
      */
-    public function getJsonApi(): JsonApiObject
+    public function getJsonApi(): ?JsonApiObject
     {
         return new JsonApiObject('1.0');
     }

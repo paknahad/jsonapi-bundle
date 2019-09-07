@@ -36,7 +36,7 @@ class Transformer
 
     public static function validationValueToString($value): string
     {
-        if (is_string($value)) {
+        if (\is_string($value)) {
             return $value;
         }
 

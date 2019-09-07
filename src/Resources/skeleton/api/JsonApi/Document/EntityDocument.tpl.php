@@ -15,7 +15,7 @@ class <?= $entity_class_name ?>Document extends AbstractSingleResourceDocument
     /**
      * {@inheritdoc}
      */
-    public function getJsonApi(): JsonApiObject
+    public function getJsonApi(): ?JsonApiObject
     {
         return new JsonApiObject('1.0');
     }
