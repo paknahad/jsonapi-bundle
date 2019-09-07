@@ -2,6 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
+use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -44,7 +45,7 @@ class Controller extends AbstractController
 
             $errorSource = new ErrorSource(
                 $pointer,
-                $fieldError->getInvalidValue() ?? 'Invalid Value'
+                Transformer::validationValueToString($fieldError->getInvalidValue())
             );
 
             $error->setSource($errorSource)
