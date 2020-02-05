@@ -4,11 +4,11 @@ namespace Paknahad\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use IteratorAggregate;
 use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PageBasedPaginationLinkProviderTrait;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PaginationLinkProviderInterface;
 
@@ -51,11 +51,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
 
     /**
      * ResourceCollection constructor.
-     *
-     * @param RequestStack     $requestStack
-     * @param FinderCollection $finderCollection
-     * @param Paginator        $paginator
-     * @param FieldManager     $fieldManager
      */
     public function __construct(RequestStack $requestStack, FinderCollection $finderCollection, Paginator $paginator, FieldManager $fieldManager)
     {
@@ -152,25 +147,16 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
         return $this->paginator->getDoctrinePaginator();
     }
 
-    /**
-     * @return int
-     */
     public function getTotalItems(): int
     {
         return $this->paginator->getCount();
     }
 
-    /**
-     * @return int
-     */
     public function getPage(): int
     {
         return $this->paginator->getPage();
     }
 
-    /**
-     * @return int
-     */
     public function getSize(): int
     {
         return $this->paginator->getSize();
@@ -178,8 +164,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
 
     /**
      * Creates a QueryBuilder by EntityRepository and applies requested filters on that.
-     *
-     * @return QueryBuilder
      */
     protected function generateQuery(): QueryBuilder
     {

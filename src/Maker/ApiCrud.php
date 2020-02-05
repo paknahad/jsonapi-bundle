@@ -7,7 +7,6 @@ use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -21,6 +20,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -272,11 +272,6 @@ final class ApiCrud extends AbstractMaker
         );
     }
 
-    /**
-     * @param array $associationMappings
-     *
-     * @return array
-     */
     private function getAssociations(array $associationMappings): array
     {
         $associations = [];
@@ -301,11 +296,6 @@ final class ApiCrud extends AbstractMaker
         return $associations;
     }
 
-    /**
-     * @param array $fieldMappings
-     *
-     * @return array
-     */
     private function getFields(array $fieldMappings): array
     {
         $fields = [];

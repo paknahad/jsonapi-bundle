@@ -11,11 +11,11 @@ use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\Exception\RelationshipNotExists;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
 use WoohooLabs\Yin\JsonApi\Request\JsonApiRequestInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 trait ValidatorTrait
 {
@@ -24,7 +24,6 @@ trait ValidatorTrait
 
     /**
      * @param ToOneRelationship|ToManyRelationship $relation
-     * @param array                                $validTypes
      *
      * @throws \Exception | ValidatorException
      */
@@ -54,10 +53,6 @@ trait ValidatorTrait
     }
 
     /**
-     * @param array  $availableEntities
-     * @param array  $requestedIds
-     * @param string $relationshipName
-     *
      * @throws InvalidRelationshipValueException
      */
     protected function validateRelationValues(array $availableEntities, array $requestedIds, string $relationshipName): void
@@ -79,10 +74,6 @@ trait ValidatorTrait
 
     /**
      * Validate all fields.
-     *
-     * @param ClassMetadata           $metadata
-     * @param JsonApiRequestInterface $request
-     * @param bool                    $validExistence
      *
      * @throws InvalidAttributeException
      */
@@ -110,9 +101,6 @@ trait ValidatorTrait
     /**
      * Validate expected relations.
      *
-     * @param array                   $expectedRelation
-     * @param JsonApiRequestInterface $request
-     *
      * @throws RelationshipNotExists
      */
     protected function validateRelations(array $expectedRelation, JsonApiRequestInterface $request)
@@ -126,8 +114,6 @@ trait ValidatorTrait
 
     /**
      * @param string $dateTime
-     *
-     * @return ConstraintViolationListInterface
      */
     private function validateDateTime($dateTime): ConstraintViolationListInterface
     {
@@ -136,19 +122,12 @@ trait ValidatorTrait
 
     /**
      * @param string $date
-     *
-     * @return ConstraintViolationListInterface
      */
     private function validateDate($date): ConstraintViolationListInterface
     {
         return $this->validator->validate($date, new Date());
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string|null
-     */
     private function getValidator(string $type): ?string
     {
         switch ($type) {

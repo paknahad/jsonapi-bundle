@@ -94,8 +94,6 @@ class FieldManager
 
     /**
      * Get relations based on the added fields.
-     *
-     * @return array
      */
     public function getRelations(): array
     {
@@ -104,8 +102,6 @@ class FieldManager
 
     /**
      * Add a field to the Fieldmanager.
-     *
-     * @param string $fieldName
      *
      * @return array
      *               Field information with relation alias
@@ -131,10 +127,6 @@ class FieldManager
 
     /**
      * Get field name with table alias prefixed for use in a query.
-     *
-     * @param string $fieldName
-     *
-     * @return string
      */
     public function getQueryFieldName(string $fieldName): string
     {
@@ -147,10 +139,6 @@ class FieldManager
 
     /**
      * Get the field data for the requested field.
-     *
-     * @param string $fieldName
-     *
-     * @return array|null
      */
     public function getField(string $fieldName): ?array
     {
@@ -159,10 +147,6 @@ class FieldManager
 
     /**
      * Parse field string into a separate field and entity.
-     *
-     * @param string $fieldName
-     *
-     * @return array
      */
     protected function parseField(string $fieldName): array
     {
@@ -180,10 +164,6 @@ class FieldManager
 
     /**
      * Get an indexed array with entities and actual fields separated.
-     *
-     * @param string $fieldName
-     *
-     * @return array
      */
     protected function getProcessedField(string $fieldName): array
     {
@@ -223,11 +203,6 @@ class FieldManager
     /**
      * Get field metadata.
      *
-     * @param string $entity
-     * @param string $fieldName
-     *
-     * @return array
-     *
      * @throws EntityNotFoundException
      */
     protected function getFieldMetaData(string $entity, string $fieldName): array
@@ -246,8 +221,6 @@ class FieldManager
 
     /**
      * Set relations for the passed field name.
-     *
-     * @param string $fieldName
      */
     protected function setRelations(string $fieldName): void
     {
@@ -261,11 +234,6 @@ class FieldManager
 
     /**
      * Set relation & return the class for the relation.
-     *
-     * @param string      $entity
-     * @param string|null $sourceEntity
-     *
-     * @return string
      */
     protected function setRelation(string $entity, string $sourceEntity = null): string
     {
@@ -294,11 +262,6 @@ class FieldManager
 
     /**
      * Get the relation metadata for the provided entity.
-     *
-     * @param string $sourceEntity
-     * @param string $entity
-     *
-     * @return array
      */
     protected function getRelationMetaData(string $sourceEntity, string $entity): array
     {
