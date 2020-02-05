@@ -1,12 +1,4 @@
 <?= "<?php\n" ?>
-
-namespace <?= $namespace ?>;
-
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use <?= $entity_full_class_name ?>;
-use Paknahad\JsonApiBundle\Hydrator\ValidatorTrait;
-use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
-use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 <?php
     foreach ($associations as $association) {
         if (in_array($association['type'], $to_many_types)) {
@@ -15,16 +7,35 @@ use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
             $useOneRelation = true;
         }
     }
+?>
 
+namespace <?= $namespace ?>;
+
+use <?= $entity_full_class_name ?>;
+<?php
     if (isset($useManyRelation)) {
         echo 'use Doctrine\ORM\Query\Expr;
-use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
+';
+    }
+?>
+use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
+use Paknahad\JsonApiBundle\Hydrator\ValidatorTrait;
+<?php
+    if (isset($useOneRelation)) {
+        echo 'use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+';
+    }
+?>
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
+<?php
+    if (isset($useManyRelation)) {
+        echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
 ';
     }
 
     if (isset($useOneRelation)) {
         echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToOneRelationship;
-use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 ';
     }
 ?>
@@ -46,10 +57,7 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
         ExceptionFactoryInterface $exceptionFactory
     ): void {
         if (!empty($clientGeneratedId)) {
-            throw $exceptionFactory->createClientGeneratedIdNotSupportedException(
-                $request,
-                $clientGeneratedId
-            );
+            throw $exceptionFactory->createClientGeneratedIdNotSupportedException($request, $clientGeneratedId);
         }
     }
 

@@ -4,7 +4,7 @@ namespace Paknahad\JsonApiBundle\EventSubscriber;
 
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -39,11 +39,11 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
         $exceptionFactory = new DefaultExceptionFactory();
 
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
         $httpFoundationFactory = new HttpFoundationFactory();
 
