@@ -3,8 +3,8 @@
 namespace <?= $namespace ?>;
 
 use <?= $entity_full_class_name ?>;
-use WoohooLabs\Yin\JsonApi\Schema\Link\ResourceLinks;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
+use WoohooLabs\Yin\JsonApi\Schema\Link\ResourceLinks;
 <?php
 foreach ($associations as $association) {
     if (in_array($association['type'], $to_many_types)) {
