@@ -29,7 +29,7 @@
         "symfony/phpunit-bridge": "^5.0",
         "symfony/process": "^5.0",
         "symfony/security-core": "^5.0",
-        "symfony/translation": "^45.0",
+        "symfony/translation": "^5.0",
         "phootwork/collection" : "~1",
         "opis/json-schema": "^1.0",
         "symfony/yaml": "^5.0"
