@@ -11,10 +11,10 @@ use <?= $transformer_full_class_name ?>;
 use <?= $repository_full_class_name ?>;
 use Paknahad\JsonApiBundle\Controller\Controller;
 use Paknahad\JsonApiBundle\Helper\ResourceCollection;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Routing\Annotation\Route;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 
