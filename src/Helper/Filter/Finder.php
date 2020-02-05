@@ -34,8 +34,6 @@ class Finder implements FinderInterface
 
     /**
      * Finder constructor.
-     *
-     * @param Sorter $sorter
      */
     public function __construct(Sorter $sorter)
     {
@@ -86,9 +84,6 @@ class Finder implements FinderInterface
     }
 
     /**
-     * @param string $field
-     * @param string $value
-     *
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
     protected function setCondition(string $field, string $value): void
@@ -103,12 +98,6 @@ class Finder implements FinderInterface
         ));
     }
 
-    /**
-     * @param array  $fieldMetadata
-     * @param string $value
-     *
-     * @return string
-     */
     protected function getOperator(array $fieldMetadata, string &$value): string
     {
         if ('null' === strtolower($value)) {
@@ -128,8 +117,6 @@ class Finder implements FinderInterface
      * Set value & return that parameter name.
      *
      * @param mixed $value
-     *
-     * @return string
      */
     protected function setValue($value): string
     {
