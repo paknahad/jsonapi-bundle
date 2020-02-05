@@ -26,11 +26,6 @@ class Paginator
      */
     private $size;
 
-    /**
-     * @param QueryBuilder $query
-     * @param Request      $request
-     * @param FieldManager $fieldManager
-     */
     public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
     {
         $page = $request->get('page', []);
@@ -43,33 +38,21 @@ class Paginator
         $this->doctrinePaginator = new BasePaginator($query, true);
     }
 
-    /**
-     * @return int
-     */
     public function getPage(): int
     {
         return $this->page;
     }
 
-    /**
-     * @return int
-     */
     public function getSize(): int
     {
         return $this->size;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->doctrinePaginator->count();
     }
 
-    /**
-     * @return BasePaginator|null
-     */
     public function getDoctrinePaginator(): ?BasePaginator
     {
         return $this->doctrinePaginator;

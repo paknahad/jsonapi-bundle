@@ -18,8 +18,6 @@ class FinderCollection
 
     /**
      * FinderCollection constructor.
-     *
-     * @param iterable $handlers
      */
     public function __construct(iterable $handlers)
     {
@@ -27,10 +25,6 @@ class FinderCollection
     }
 
     /**
-     * @param QueryBuilder $query
-     * @param Request      $request
-     * @param FieldManager $fieldManager
-     *
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
     public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager): void

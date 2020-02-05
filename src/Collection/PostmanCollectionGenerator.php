@@ -11,12 +11,6 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 
     /**
      * Generate Postman Collection.
-     *
-     * @param ClassMetadataInfo $classMetadata
-     * @param string            $entityName
-     * @param string            $route
-     *
-     * @return string
      */
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {

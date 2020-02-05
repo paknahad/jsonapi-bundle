@@ -43,8 +43,6 @@ class Swagger implements Arrayable
 
     /**
      * @param Map|ArrayList $collection
-     *
-     * @return array
      */
     private function mapToArray($collection): array
     {

@@ -13,10 +13,6 @@ class Sorter
     protected $sorting;
 
     /**
-     * @param QueryBuilder $query
-     * @param Request      $request
-     * @param FieldManager $fieldManager
-     *
      * @throws \Doctrine\ORM\EntityNotFoundException
      */
     public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager)
@@ -34,11 +30,6 @@ class Sorter
         }
     }
 
-    /**
-     * @param string $sort
-     *
-     * @return array
-     */
     protected function parseSortingString(string $sort): array
     {
         $sorting = [];
@@ -53,10 +44,6 @@ class Sorter
 
     /**
      * Process an individual field.
-     *
-     * @param string $field
-     *
-     * @return array
      */
     protected function parseField(string $field): array
     {

@@ -6,8 +6,8 @@ use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\ConstraintViolationList;
-use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\JsonApi;
+use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
 use WoohooLabs\Yin\JsonApi\Schema\Error\ErrorSource;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
@@ -21,19 +21,11 @@ class Controller extends AbstractController
         $this->jsonApi = $jsonApi;
     }
 
-    /**
-     * @return JsonApi
-     */
     protected function jsonApi(): JsonApi
     {
         return $this->jsonApi;
     }
 
-    /**
-     * @param ConstraintViolationList $errors
-     *
-     * @return ResponseInterface
-     */
     protected function validationErrorResponse(ConstraintViolationList $errors): ResponseInterface
     {
         $errorDocument = new ErrorDocument();

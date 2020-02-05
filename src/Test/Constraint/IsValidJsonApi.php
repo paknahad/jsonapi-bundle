@@ -22,8 +22,6 @@ class IsValidJsonApi extends Constraint
      * constraint is met, false otherwise.
      *
      * @param string $json JSON
-     *
-     * @return bool
      */
     protected function matches($json): bool
     {
@@ -39,8 +37,6 @@ class IsValidJsonApi extends Constraint
 
     /**
      * Returns a string representation of the constraint.
-     *
-     * @return string
      */
     public function toString(): string
     {
@@ -56,8 +52,6 @@ class IsValidJsonApi extends Constraint
      * cases. This method should return the second part of that sentence.
      *
      * @param mixed $other evaluated value or object
-     *
-     * @return string
      */
     protected function failureDescription($other): string
     {
