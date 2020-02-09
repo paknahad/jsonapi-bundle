@@ -25,6 +25,10 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     composer require paknahad/jsonapi-bundle
     ```
+    For Symfony 4 use:
+    ```
+    composer require paknahad/jsonapi-bundle:3.0.0
+    ```
 
 4. Add below line to ``config/bundles.php``
     ```
