@@ -4,16 +4,17 @@ namespace Paknahad\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
-use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter;
-use PhpParser\NodeVisitorAbstract;
 use PhpParser\Parser\Php7;
 use PhpParser\Lexer;
 use ReflectionClass;
+use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -24,7 +25,6 @@ use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Bundle\MakerBundle\Util\ClassDetails;
-use Symfony\Bundle\MakerBundle\Util\ClassSourceManipulator;
 use Symfony\Bundle\MakerBundle\Validator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,14 +46,36 @@ final class ApiCrud extends AbstractMaker
      * @var NodeFactory
      */
     private $nodeFactory;
+    /**
+     * @var OpenApiCollectionGenerator
+     */
+    private $openApiCollectionGenerator;
+    /**
+     * @var string
+     */
+    private $documentation;
+    /**
+     * @var string
+     */
+    private $controllerNamespace;
 
-    public function __construct(PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, DoctrineHelper $doctrineHelper, FileManager $fileManager, NodeFactory $nodeFactory)
+    public function __construct(
+        string $documentation, string $controllerNamespace,
+        PostmanCollectionGenerator $postmanGenerator,
+        SwaggerCollectionGenerator $swaggerGenerator,
+        OpenApiCollectionGenerator $openApiCollectionGenerator,
+        DoctrineHelper $doctrineHelper,
+        FileManager $fileManager,
+        NodeFactory $nodeFactory)
     {
         $this->postmanGenerator = $postmanGenerator;
         $this->swaggerGenerator = $swaggerGenerator;
         $this->doctrineHelper = $doctrineHelper;
         $this->fileManager = $fileManager;
         $this->nodeFactory = $nodeFactory;
+        $this->openApiCollectionGenerator = $openApiCollectionGenerator;
+        $this->documentation = $documentation;
+        $this->controllerNamespace = $controllerNamespace;
     }
 
     public static function getCommandName(): string
@@ -128,7 +150,7 @@ final class ApiCrud extends AbstractMaker
 
         $controllerClassDetails = $generator->createClassNameDetails(
             $entityVarSingular,
-            'Controller\\Api\\', // TODO add config dir
+            $this->controllerNamespace.'\\',
             'Controller'
         );
 
@@ -147,6 +169,8 @@ final class ApiCrud extends AbstractMaker
             'JsonApi\\Transformer\\',
             'ResourceTransformer'
         );
+
+        $hydratorClassDetails = [];
 
         foreach (['abstract', 'create', 'update'] as $key) {
             $hydratorClassDetails[$key] = $generator->createClassNameDetails(
@@ -234,9 +258,21 @@ final class ApiCrud extends AbstractMaker
             ClassMetadataInfo::ONE_TO_MANY,
         ];
 
-        $classExists = class_exists($transformerClassDetails->getFullName());
 
-        if (!$classExists) {
+        $prettyPrinter = new PrettyPrinter\Standard();
+        $lexer = new Lexer\Emulative([
+            'usedAttributes' => [
+                'comments',
+                'startLine', 'endLine',
+                'startTokenPos', 'endTokenPos',
+            ],
+        ]);
+        $parser = new Php7($lexer);
+
+
+        $transformerPath = $transformerClassDetails->getFullName();
+
+        if (!class_exists($transformerPath)) {
             $generator->generateClass(
                 $transformerClassDetails->getFullName(),
                 $skeletonPath . 'api/JsonApi/Transformer/EntityResourceTransformer.tpl.php',
@@ -246,7 +282,7 @@ final class ApiCrud extends AbstractMaker
                     'entity_class_name' => $entityClassDetails->getShortName(),
                     'entity_var_name' => lcfirst($entityVarSingular),
                     'entity_type_var_plural' => $entityTypeVarPlural,
-                    'namespace' => $transformerClassDetails->getFullName(),
+                    'namespace' => $transformerPath,
                     'fields' => $fields,
                     'associations' => $associations,
                     'to_many_types' => $toMayTypes,
@@ -254,108 +290,54 @@ final class ApiCrud extends AbstractMaker
             );
 
         } else {
-            $transformerPath = $this->getPathOfClass($transformerClassDetails->getFullName());
-            $manipulator = new ClassSourceManipulator($this->fileManager->getFileContents($transformerPath), true);
-            $manipulator->setIo($io);
 
             $propertyNames = $this->getPropertyNames($entityClassDetails->getFullName());
-            $propertyNames = array_diff($propertyNames, ['id']);
-
 
             $traverser = new NodeTraverser;
-            $traverser->addVisitor(new class($propertyNames, $entityClassDetails->getShortName()) extends NodeVisitorAbstract {
-
-                private $className;
-
-                public function __construct($propertyNames, $className) {
-                    $this->propertyNames = $propertyNames;
-                    $this->className = $className;
-                }
-
-                public function leaveNode(Node $node)
-                {
-                    if ($node instanceof Node\Stmt\ClassMethod and $node->name->name === 'getAttributes') {
-                        foreach ($node->stmts as $stmt) {
-                            if ($stmt instanceof Node\Stmt\Return_) {
-                                $existingItems = $stmt->expr->items;
-                                $existingItemNames = $stmt->expr->items;
-                                $newItems = [];
-
-                                foreach ($existingItems as $existingItem) {
-                                    $existingItemNames[] = $existingItem->key->value;
-                                }
-
-                                foreach ($this->propertyNames as $propertyName) {
-
-                                    if(!in_array($propertyName, $existingItemNames)){
-                                        $newItems[] = $propertyName;
-                                    }
-                                }
-                                foreach ($newItems as $newItem){
-                                    $key = new Node\Scalar\String_($newItem);
-                                    $type = new Node\Name($this->className);
-                                    $var = new Node\Expr\Variable(lcfirst($this->className));
-                                    $closureParam = new Node\Param($var,null,$type);
-                                    $functionName = 'get'.ucfirst($newItem);
-                                    $expr = new Node\Expr\MethodCall($var,$functionName);
-                                    $return = new Node\Stmt\Return_($expr);
-
-                                    $subNodes = [];
-                                    $subNodes['params'] = [$closureParam];
-                                    $subNodes['stmts'] = [$return];
-
-                                    $closure = new Node\Expr\Closure($subNodes);
-                                    $newAttribute = new Node\Expr\ArrayItem($closure,$key);
-                                    $existingItems[] = $newAttribute;
-                                }
-                                $stmt->expr->items = $existingItems;
-
-
-                            }
-                        }
-                    }
-                }
-            });
-            $lexer = new Lexer\Emulative([
-                'usedAttributes' => [
-                    'comments',
-                    'startLine', 'endLine',
-                    'startTokenPos', 'endTokenPos',
-                ],
-            ]);
-            $parser = new Php7($lexer);
-            $stmts = $parser->parse($this->fileManager->getFileContents($transformerPath));
-            $modifiedStmts = $traverser->traverse($stmts);
-
-            //TODO functions
-            $prettyPrinter = new PrettyPrinter\Standard();
-
-            $this->fileManager->dumpFile($transformerPath, $prettyPrinter->prettyPrintFile($stmts));
-
+            $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames, $entityClassDetails->getShortName()));
+            $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($transformerPath)));
+            $stmts = $traverser->traverse($stmts);
+            $this->fileManager->dumpFile($this->getPathOfClass($transformerPath), $prettyPrinter->prettyPrintFile($stmts));
         }
+
         foreach (['abstract', 'create', 'update'] as $key) {
-            $generator->generateClass(
-                $hydratorClassDetails[$key]->getFullName(),
-                $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
-                [
-                    'route_path' => $routePath,
-                    'entity_class_name' => $entityClassDetails->getShortName(),
-                    'entity_var_name' => lcfirst($entityVarSingular),
-                    'entity_full_class_name' => $entityClassDetails->getFullName(),
-                    'entity_type_var_plural' => $entityTypeVarPlural,
-                    'namespace' => $hydratorClassDetails[$key]->getFullName(),
-                    'fields' => $fields,
-                    'associations' => $associations,
-                    'to_many_types' => $toMayTypes,
-                ]
-            );
+
+            $classFullName = $hydratorClassDetails[$key]->getFullName();
+
+            if (!class_exists($classFullName)) {
+
+                $generator->generateClass(
+                    $hydratorClassDetails[$key]->getFullName(),
+                    $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
+                    [
+                        'route_path' => $routePath,
+                        'entity_class_name' => $entityClassDetails->getShortName(),
+                        'entity_var_name' => lcfirst($entityVarSingular),
+                        'entity_full_class_name' => $entityClassDetails->getFullName(),
+                        'entity_type_var_plural' => $entityTypeVarPlural,
+                        'namespace' => $hydratorClassDetails[$key]->getFullName(),
+                        'fields' => $fields,
+                        'associations' => $associations,
+                        'to_many_types' => $toMayTypes,
+                    ]
+                );
+            } else {
+
+                $classPath = $this->getPathOfClass($classFullName);
+
+                $propertyNames = $this->getPropertyNames($entityClassDetails->getFullName());
+
+                $traverser = new NodeTraverser;
+                $traverser->addVisitor($this->nodeFactory->makeHydratorVisitor($propertyNames, $entityClassDetails->getShortName()));
+                $stmts = $parser->parse($this->fileManager->getFileContents($classPath));
+                $stmts = $traverser->traverse($stmts);
+                $this->fileManager->dumpFile($classPath, $prettyPrinter->prettyPrintFile($stmts));
+            }
         }
 
         $generator->writeChanges();
 
-        $this->postmanGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
-
-        $this->swaggerGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
+        $this->generateDocumentation($entityMetadata, $entityClassDetails->getShortName(), $routePath);
 
         $this->writeSuccessMessage($io);
 
@@ -365,20 +347,6 @@ final class ApiCrud extends AbstractMaker
                 PostmanCollectionGenerator::POSTMAN_PATH
             )
         );
-    }
-
-
-    private function getPropertyNames(string $class): array
-    {
-        if (!class_exists($class)) {
-            return [];
-        }
-
-        $reflClass = new ReflectionClass($class);
-
-        return array_map(function (\ReflectionProperty $prop) {
-            return $prop->getName();
-        }, $reflClass->getProperties());
     }
 
     private function getPathOfClass(string $class): string
@@ -456,5 +424,51 @@ final class ApiCrud extends AbstractMaker
         }
 
         return $fields;
+    }
+
+    private function isViableProperty(ReflectionProperty $property): bool
+    {
+        $doc = $property->getDocComment();
+        preg_match_all('#@(.*?)\n#s', $doc, $annotations);
+        $annotations = $annotations[1];
+
+        foreach ($annotations as $annotation) {
+            if (preg_match_all('#ORM\\\Column\(.*?\)#s', $annotation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getPropertyNames(string $class): array
+    {
+        $idProperty = 'id';
+        if (!class_exists($class)) {
+            return [];
+        }
+        $viableProperties = [];
+
+        $reflClass = new ReflectionClass($class);
+
+        foreach ($reflClass->getProperties() as $property) {
+            if ($this->isViableProperty($property) and $property->getName() !== $idProperty) {
+                $viableProperties[] = $property->getName();
+            }
+        }
+        return $viableProperties;
+    }
+
+    private function generateDocumentation(ClassMetadata $entityMetadata, string $getShortName, string $routePath): void
+    {
+        switch ($this->documentation) {
+            case 'swagger': // TODO make constants
+                $this->swaggerGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+            case 'openapi':  // TODO make constants
+                $this->openApiCollectionGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+        }
+
+        $this->postmanGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
     }
 }

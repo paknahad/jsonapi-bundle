@@ -3,26 +3,31 @@
 
 namespace Paknahad\JsonApiBundle\Maker;
 
-use PhpParser\Node;
+use PhpParser\NodeVisitorAbstract;
 
 class NodeFactory
 {
 
-    public function makeString($value): Node\Scalar\String_ {
-        return new Node\Scalar\String_($value);
-    }
-
-
-    public function createNewItem($className, $propertyName): Node\Expr\ArrayItem
+    /**
+     * @param String[] $propertyNames
+     * @param string $entityName
+     * @return NodeVisitorAbstract
+     */
+    public function makeTransformerVisitor(array $propertyNames, string $entityName): NodeVisitorAbstract
     {
 
-        $key = new Node\Scalar\String_($className);
-        $value = new Node\Expr\Closure();
-        $closureParam =
-        $type = new Node\Name('Product');
-        $functionName = 'get'.ucfirst($className);
+        return new TransformerNodeVisitor($propertyNames, $entityName);
 
-        $newAttribute = new Node\Expr\ArrayItem();
     }
+    /**
+     * @param String[] $propertyNames
+     * @param string $entityName
+     * @return NodeVisitorAbstract
+     */
+    public function makeHydratorVisitor(array $propertyNames, string $entityName): NodeVisitorAbstract
+    {
+        return new HydratorNodeVisitor($propertyNames, $entityName);
+    }
+
 
 }
