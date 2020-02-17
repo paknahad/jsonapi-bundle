@@ -6,19 +6,39 @@ use phootwork\collection\ArrayList;
 use phootwork\collection\CollectionUtils;
 use phootwork\collection\Map;
 use phootwork\lang\Arrayable;
+use function is_object;
 
 class OpenApi implements Arrayable
 {
     private $content;
+    private $components = 'components';
+    private $schemas = 'schemas';
 
     public function __construct(array $collection)
     {
         $this->content = CollectionUtils::toMap($collection);
     }
 
-    public function addDefinition(string $name, array $content): void
+    public function addSchema(string $name, array $content): void
     {
-        $this->add('definitions', $name, $content);
+
+
+        if (!$this->content->has($this->components)) {
+            $this->content->set($this->components, new Map());
+        }
+        $components = $this->content->get($this->components);
+        if (!$components->has($this->schemas)) {
+            $components->set($this->schemas, new Map());
+        }
+        /** @var Map $schema */
+        $schema = $components->get($this->schemas);
+
+        if (!$schema->has($name)) {
+            $schema->set($name, new Map());
+        }
+
+        $schema->remove($name);
+        $schema->set($name, $content);
     }
 
     public function addPath(string $name, array $content): void
@@ -43,13 +63,14 @@ class OpenApi implements Arrayable
 
     /**
      * @param Map|ArrayList $collection
+     * @return array
      */
     private function mapToArray($collection): array
     {
         $result = $collection->toArray();
 
         foreach ($result as $key => &$content) {
-            if (\is_object($content)) {
+            if (is_object($content)) {
                 $content = self::mapToArray($content);
             }
         }

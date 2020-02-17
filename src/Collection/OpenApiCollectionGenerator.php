@@ -3,9 +3,9 @@
 namespace Paknahad\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
+use Paknahad\JsonApiBundle\Collection\OpenApi\Attributes;
 use Paknahad\JsonApiBundle\Collection\OpenApi\OpenApi;
-use Paknahad\JsonApiBundle\Collection\Swagger\Paths;
+use Paknahad\JsonApiBundle\Collection\OpenApi\Paths;
 use Symfony\Component\Yaml\Yaml;
 
 class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
@@ -24,7 +24,7 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
 
         $this->fields = Attributes::parse($classMetadata);
 
-        $this->setDefinitions($entityName);
+        $this->setSchemas($entityName);
         $this->generateAllPaths($entityName, $route);
 
         $this->fileManager->dumpFile(self::OPEN_API_PATH, Yaml::dump($this->openApi->toArray(), 20, 2));
@@ -41,12 +41,12 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
         }
     }
 
-    private function setDefinitions(string $entityName): void
+    private function setSchemas(string $entityName): void
     {
-        $this->openApi->addDefinition($entityName, $this->fields->getFieldsSchema());
+        $this->openApi->addSchema($entityName, $this->fields->getFieldsSchema());
 
         foreach ($this->fields->getRelationsSchemas() as $name => $schema) {
-            $this->openApi->addDefinition($name, $schema);
+            $this->openApi->addSchema($name, $schema);
         }
     }
 
