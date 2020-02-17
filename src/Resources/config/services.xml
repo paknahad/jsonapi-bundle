@@ -37,6 +37,7 @@
             <argument type="service" id="jsonapi.postman_collection_generator" />
             <argument type="service" id="jsonapi.swagger_collection_generator" />
             <argument type="service" id="maker.doctrine_helper" />
+            <argument type="service" id="maker.file_manager" />
         </service>
 
         <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
@@ -51,6 +52,7 @@
         <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
 
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
+        <service id="Paknahad\JsonApiBundle\Maker\NodeFactory" />
         <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory" />
 
