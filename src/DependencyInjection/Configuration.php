@@ -16,7 +16,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->scalarNode('documentation')->defaultValue('swagger')->end()
-            ->scalarNode('controller_namespace')->defaultValue('..\\Controller\\')->end()
+            ->scalarNode('controller_namespace')->defaultValue('Controller\\')->end()
             ->end()
         ;
         return $treeBuilder;
