@@ -30,6 +30,11 @@ abstract class CollectionGeneratorAbstract
         $this->rootDirectory = $rootDirectory;
     }
 
+    public function setSeed(int $int)
+    {
+        srand($int);
+    }
+
     abstract public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): ?string;
 
     protected function getActionsList(string $entityName): array

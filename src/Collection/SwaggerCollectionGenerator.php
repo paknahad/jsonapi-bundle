@@ -16,10 +16,12 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
     private $fields;
 
     const SWAGGER_PATH = 'collections/swagger.yaml';
-    const SWAGGER_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/swagger.yaml';
+    const SWAGGER_TEMPLATE_PATH = __DIR__ . '/../Resources/skeleton/swagger.yaml';
 
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {
+        $this->setSeed(12345678);
+
         $this->swagger = new Swagger($this->loadOldCollection());
 
         $this->fields = Attributes::parse($classMetadata);
@@ -52,8 +54,8 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
 
     private function loadOldCollection(): array
     {
-        if (file_exists($this->rootDirectory.'/'.self::SWAGGER_PATH)) {
-            $file = $this->rootDirectory.'/'.self::SWAGGER_PATH;
+        if (file_exists($this->rootDirectory . '/' . self::SWAGGER_PATH)) {
+            $file = $this->rootDirectory . '/' . self::SWAGGER_PATH;
         } else {
             $file = self::SWAGGER_TEMPLATE_PATH;
         }

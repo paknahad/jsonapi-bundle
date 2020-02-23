@@ -16,10 +16,12 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
     private $fields;
 
     const OPEN_API_PATH = 'collections/open_api.yaml';
-    const OPEN_API_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/open_api.yaml';
+    const OPEN_API_TEMPLATE_PATH = __DIR__ . '/../Resources/skeleton/open_api.yaml';
 
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {
+        $this->setSeed(12345678);
+
         $this->openApi = new OpenApi($this->loadOldCollection());
 
         $this->fields = Attributes::parse($classMetadata);
@@ -52,8 +54,8 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
 
     private function loadOldCollection(): array
     {
-        if (file_exists($this->rootDirectory.'/'.self::OPEN_API_PATH)) {
-            $file = $this->rootDirectory.'/'.self::OPEN_API_PATH;
+        if (file_exists($this->rootDirectory . '/' . self::OPEN_API_PATH)) {
+            $file = $this->rootDirectory . '/' . self::OPEN_API_PATH;
         } else {
             $file = self::OPEN_API_TEMPLATE_PATH;
         }
