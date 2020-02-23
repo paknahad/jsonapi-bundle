@@ -29,7 +29,12 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
         $this->setSchemas($entityName);
         $this->generateAllPaths($entityName, $route);
 
-        $this->fileManager->dumpFile(self::OPEN_API_PATH, Yaml::dump($this->openApi->toArray(), 20, 2));
+        $arrayFile = $this->openApi->toArray();
+
+        ksort($arrayFile['paths']);
+        ksort($arrayFile['components']['schemas']);
+
+        $this->fileManager->dumpFile(self::OPEN_API_PATH, Yaml::dump($arrayFile, 20, 2));
 
         return self::OPEN_API_PATH;
     }
