@@ -122,6 +122,17 @@ final class ApiCrud extends AbstractMaker
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator)
     {
+        $prettyPrinter = new PrettyPrinter\Standard();
+        $lexer = new Lexer\Emulative([
+            'usedAttributes' => [
+                'comments',
+                'startLine', 'endLine',
+                'startTokenPos', 'endTokenPos',
+            ],
+        ]);
+        $parser = new Php7($lexer);
+
+
         $entityClassDetails = $generator->createClassNameDetails(
             Validator::entityExists($input->getArgument('entity-class'), $this->doctrineHelper->getEntitiesForAutocomplete()),
             'Entity\\'
@@ -223,7 +234,8 @@ final class ApiCrud extends AbstractMaker
                 )
             );
         } else {
-            $this->writeWarning('Controller class already exists, skipping..', $io);
+            $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($controllerClassDetails->getFullName())));
+            $this->fileManager->dumpFile($this->getPathOfClass($controllerClassDetails->getFullName()), $prettyPrinter->prettyPrintFile($stmts));
         }
 
         $classExists = class_exists($documentClassDetails->getFullName());
@@ -239,7 +251,8 @@ final class ApiCrud extends AbstractMaker
             );
 
         } else {
-            $this->writeWarning('Document class already exists, skipping..', $io);
+            $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($documentClassDetails->getFullName())));
+            $this->fileManager->dumpFile($this->getPathOfClass($documentClassDetails->getFullName()), $prettyPrinter->prettyPrintFile($stmts));
         }
         $classExists = class_exists($documentsClassDetails->getFullName());
         if (!$classExists) {
@@ -254,24 +267,14 @@ final class ApiCrud extends AbstractMaker
                 ]
             );
         } else {
-            $this->writeWarning('Documents class already exists, skipping..', $io);
+            $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($documentsClassDetails->getFullName())));
+            $this->fileManager->dumpFile($this->getPathOfClass($documentsClassDetails->getFullName()), $prettyPrinter->prettyPrintFile($stmts));
         }
         $toMayTypes = [
             ClassMetadataInfo::TO_MANY,
             ClassMetadataInfo::MANY_TO_MANY,
             ClassMetadataInfo::ONE_TO_MANY,
         ];
-
-
-        $prettyPrinter = new PrettyPrinter\Standard();
-        $lexer = new Lexer\Emulative([
-            'usedAttributes' => [
-                'comments',
-                'startLine', 'endLine',
-                'startTokenPos', 'endTokenPos',
-            ],
-        ]);
-        $parser = new Php7($lexer);
 
         $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
         $relations = $this->entityReaderService->getRelations($entityClassDetails->getFullName());
@@ -296,8 +299,6 @@ final class ApiCrud extends AbstractMaker
             );
 
         } else {
-
-
             $traverser = new NodeTraverser();
             $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames, $relations, $entityClassDetails->getShortName()));
             $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($transformerPath)));
@@ -357,12 +358,6 @@ final class ApiCrud extends AbstractMaker
         $classDetails = new ClassDetails($class);
 
         return $classDetails->getPath();
-    }
-
-    private function writeWarning(string $message, ConsoleStyle $io)
-    {
-
-        $io->writeln('<fg=yellow;options=bold,underscore>[Warning] ' . $message . '</>');
     }
 
     /**
