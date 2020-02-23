@@ -4,6 +4,7 @@ namespace Paknahad\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\JsonApiStr;
+use function in_array;
 
 class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 {
@@ -32,16 +33,16 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
                             'value' => 'application/json',
                         ],
                     ],
-                    'body' => \in_array($name, ['add', 'edit']) ?
+                    'body' => in_array($name, ['add', 'edit']) ?
                         $this->generateBody($entityName, $action['method'], $classMetadata) : '',
                     'url' => [
-                        'raw' => '{{host}}'.$route.(\in_array($name, ['add', 'list']) ? '/' : '/1'),
+                        'raw' => '{{host}}'.$route.(in_array($name, ['add', 'list']) ? '/' : '/1'),
                         'host' => [
                             '{{host}}',
                         ],
                         'path' => [
                             $route,
-                            \in_array($name, ['add', 'list']) ? '' : '1',
+                            in_array($name, ['add', 'list']) ? '' : '1',
                         ],
                     ],
                 ],
@@ -56,7 +57,14 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 
         $collection = $this->LoadOldCollection();
 
-        $collection['item'][] = $directory;
+        $index = $this->alreadyExists($collection,$directory);
+
+        if($index === null){
+            $collection['item'][] = $directory;
+        }
+        else{
+            $collection['item'][$index] = $directory;
+        }
 
         $this->fileManager->dumpFile(self::POSTMAN_PATH, json_encode($collection, JSON_PRETTY_PRINT));
 
@@ -104,7 +112,7 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         foreach ($associations as $association) {
             $relationData = ['type' => JsonApiStr::entityNameToType($association['targetEntity']), 'id' => '1'];
 
-            if (\in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
+            if (in_array($association['type'], [ClassMetadataInfo::TO_MANY, ClassMetadataInfo::MANY_TO_MANY, ClassMetadataInfo::ONE_TO_MANY])) {
                 $relationData = [$relationData];
             }
 
@@ -132,5 +140,15 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         }
 
         return $collection;
+    }
+
+    private function alreadyExists(array $collection, array $directory): ?int
+    {
+        foreach ($collection['item'] as $index => $item){
+            if($item['name'] === $directory['name']){
+                return $index;
+            }
+        }
+        return null;
     }
 }
