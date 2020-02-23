@@ -5,20 +5,22 @@ namespace Paknahad\JsonApiBundle\Maker;
 
 use PhpParser\NodeVisitorAbstract;
 
-class NodeFactory
+class NodeVisitorFactory
 {
 
     /**
      * @param String[] $propertyNames
+     * @param array $relations
      * @param string $entityName
      * @return NodeVisitorAbstract
      */
-    public function makeTransformerVisitor(array $propertyNames, string $entityName): NodeVisitorAbstract
+    public function makeTransformerVisitor(array $propertyNames, array $relations, string $entityName): NodeVisitorAbstract
     {
 
-        return new TransformerNodeVisitor($propertyNames, $entityName);
+        return new TransformerNodeVisitor($propertyNames, $relations, $entityName);
 
     }
+
     /**
      * @param String[] $propertyNames
      * @param string $entityName

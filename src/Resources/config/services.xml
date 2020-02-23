@@ -60,7 +60,8 @@
         <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
 
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
-        <service id="Paknahad\JsonApiBundle\Maker\NodeFactory" />
+        <service id="Paknahad\JsonApiBundle\Maker\NodeVisitorFactory" />
+        <service id="Paknahad\JsonApiBundle\Maker\EntityReaderService" />
         <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory" />
 

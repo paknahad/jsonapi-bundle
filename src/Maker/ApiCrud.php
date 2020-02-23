@@ -13,8 +13,6 @@ use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter;
 use PhpParser\Parser\Php7;
 use PhpParser\Lexer;
-use ReflectionClass;
-use ReflectionProperty;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -43,7 +41,7 @@ final class ApiCrud extends AbstractMaker
     private $doctrineHelper;
     private $fileManager;
     /**
-     * @var NodeFactory
+     * @var NodeVisitorFactory
      */
     private $nodeFactory;
     /**
@@ -58,6 +56,10 @@ final class ApiCrud extends AbstractMaker
      * @var string
      */
     private $controllerNamespace;
+    /**
+     * @var EntityReaderService
+     */
+    private $entityReaderService;
 
     public function __construct(
         string $documentation, string $controllerNamespace,
@@ -66,7 +68,8 @@ final class ApiCrud extends AbstractMaker
         OpenApiCollectionGenerator $openApiCollectionGenerator,
         DoctrineHelper $doctrineHelper,
         FileManager $fileManager,
-        NodeFactory $nodeFactory)
+        NodeVisitorFactory $nodeFactory,
+        EntityReaderService $entityReaderService)
     {
         $this->postmanGenerator = $postmanGenerator;
         $this->swaggerGenerator = $swaggerGenerator;
@@ -76,6 +79,7 @@ final class ApiCrud extends AbstractMaker
         $this->openApiCollectionGenerator = $openApiCollectionGenerator;
         $this->documentation = $documentation;
         $this->controllerNamespace = $controllerNamespace;
+        $this->entityReaderService = $entityReaderService;
     }
 
     public static function getCommandName(): string
@@ -291,10 +295,11 @@ final class ApiCrud extends AbstractMaker
 
         } else {
 
-            $propertyNames = $this->getPropertyNames($entityClassDetails->getFullName());
+            $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
+            $relations = $this->entityReaderService->getRelations($entityClassDetails->getFullName());
 
             $traverser = new NodeTraverser;
-            $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames, $entityClassDetails->getShortName()));
+            $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames,$relations, $entityClassDetails->getShortName()));
             $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($transformerPath)));
             $stmts = $traverser->traverse($stmts);
             $this->fileManager->dumpFile($this->getPathOfClass($transformerPath), $prettyPrinter->prettyPrintFile($stmts));
@@ -325,7 +330,7 @@ final class ApiCrud extends AbstractMaker
 
                 $classPath = $this->getPathOfClass($classFullName);
 
-                $propertyNames = $this->getPropertyNames($entityClassDetails->getFullName());
+                $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
 
                 $traverser = new NodeTraverser;
                 $traverser->addVisitor($this->nodeFactory->makeHydratorVisitor($propertyNames, $entityClassDetails->getShortName()));
@@ -407,6 +412,20 @@ final class ApiCrud extends AbstractMaker
         return $associations;
     }
 
+    private function generateDocumentation(ClassMetadata $entityMetadata, string $getShortName, string $routePath): void
+    {
+        switch ($this->documentation) {
+            case 'swagger': // TODO make constants
+                $this->swaggerGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+            case 'openapi':  // TODO make constants
+                $this->openApiCollectionGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+        }
+
+        $this->postmanGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+    }
+
     private function getFields(array $fieldMappings): array
     {
         $fields = [];
@@ -424,51 +443,5 @@ final class ApiCrud extends AbstractMaker
         }
 
         return $fields;
-    }
-
-    private function isViableProperty(ReflectionProperty $property): bool
-    {
-        $doc = $property->getDocComment();
-        preg_match_all('#@(.*?)\n#s', $doc, $annotations);
-        $annotations = $annotations[1];
-
-        foreach ($annotations as $annotation) {
-            if (preg_match_all('#ORM\\\Column\(.*?\)#s', $annotation)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function getPropertyNames(string $class): array
-    {
-        $idProperty = 'id';
-        if (!class_exists($class)) {
-            return [];
-        }
-        $viableProperties = [];
-
-        $reflClass = new ReflectionClass($class);
-
-        foreach ($reflClass->getProperties() as $property) {
-            if ($this->isViableProperty($property) and $property->getName() !== $idProperty) {
-                $viableProperties[] = $property->getName();
-            }
-        }
-        return $viableProperties;
-    }
-
-    private function generateDocumentation(ClassMetadata $entityMetadata, string $getShortName, string $routePath): void
-    {
-        switch ($this->documentation) {
-            case 'swagger': // TODO make constants
-                $this->swaggerGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
-                break;
-            case 'openapi':  // TODO make constants
-                $this->openApiCollectionGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
-                break;
-        }
-
-        $this->postmanGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
     }
 }
