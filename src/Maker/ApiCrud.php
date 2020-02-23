@@ -154,7 +154,7 @@ final class ApiCrud extends AbstractMaker
 
         $controllerClassDetails = $generator->createClassNameDetails(
             $entityVarSingular,
-            $this->controllerNamespace.'\\',
+            $this->controllerNamespace . '\\',
             'Controller'
         );
 
@@ -176,9 +176,9 @@ final class ApiCrud extends AbstractMaker
 
         $hydratorClassDetails = [];
 
-        foreach (['abstract', 'create', 'update'] as $key) {
-            $hydratorClassDetails[$key] = $generator->createClassNameDetails(
-                ucfirst($key) . $entityVarSingular,
+        foreach (['abstract', 'create', 'update'] as $hydratorType) {
+            $hydratorClassDetails[$hydratorType] = $generator->createClassNameDetails(
+                ucfirst($hydratorType) . $entityVarSingular,
                 sprintf('JsonApi\\Hydrator\\%s', $entityClassDetails->getShortName()),
                 'Hydrator'
             );
@@ -273,6 +273,8 @@ final class ApiCrud extends AbstractMaker
         ]);
         $parser = new Php7($lexer);
 
+        $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
+        $relations = $this->entityReaderService->getRelations($entityClassDetails->getFullName());
 
         $transformerPath = $transformerClassDetails->getFullName();
 
@@ -295,32 +297,30 @@ final class ApiCrud extends AbstractMaker
 
         } else {
 
-            $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
-            $relations = $this->entityReaderService->getRelations($entityClassDetails->getFullName());
 
-            $traverser = new NodeTraverser;
-            $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames,$relations, $entityClassDetails->getShortName()));
+            $traverser = new NodeTraverser();
+            $traverser->addVisitor($this->nodeFactory->makeTransformerVisitor($propertyNames, $relations, $entityClassDetails->getShortName()));
             $stmts = $parser->parse($this->fileManager->getFileContents($this->getPathOfClass($transformerPath)));
             $stmts = $traverser->traverse($stmts);
             $this->fileManager->dumpFile($this->getPathOfClass($transformerPath), $prettyPrinter->prettyPrintFile($stmts));
         }
 
-        foreach (['abstract', 'create', 'update'] as $key) {
+        foreach (['abstract', 'create', 'update'] as $hydratorType) {
 
-            $classFullName = $hydratorClassDetails[$key]->getFullName();
+            $classFullName = $hydratorClassDetails[$hydratorType]->getFullName();
 
             if (!class_exists($classFullName)) {
 
                 $generator->generateClass(
-                    $hydratorClassDetails[$key]->getFullName(),
-                    $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($key)),
+                    $hydratorClassDetails[$hydratorType]->getFullName(),
+                    $skeletonPath . sprintf('api/JsonApi/Hydrator/%sEntityHydrator.tpl.php', ucfirst($hydratorType)),
                     [
                         'route_path' => $routePath,
                         'entity_class_name' => $entityClassDetails->getShortName(),
                         'entity_var_name' => lcfirst($entityVarSingular),
                         'entity_full_class_name' => $entityClassDetails->getFullName(),
                         'entity_type_var_plural' => $entityTypeVarPlural,
-                        'namespace' => $hydratorClassDetails[$key]->getFullName(),
+                        'namespace' => $hydratorClassDetails[$hydratorType]->getFullName(),
                         'fields' => $fields,
                         'associations' => $associations,
                         'to_many_types' => $toMayTypes,
@@ -330,10 +330,8 @@ final class ApiCrud extends AbstractMaker
 
                 $classPath = $this->getPathOfClass($classFullName);
 
-                $propertyNames = $this->entityReaderService->getPropertyNames($entityClassDetails->getFullName());
-
                 $traverser = new NodeTraverser;
-                $traverser->addVisitor($this->nodeFactory->makeHydratorVisitor($propertyNames, $entityClassDetails->getShortName()));
+                $traverser->addVisitor($this->nodeFactory->makeHydratorVisitor($propertyNames, $relations, $entityClassDetails->getShortName(), $hydratorType));
                 $stmts = $parser->parse($this->fileManager->getFileContents($classPath));
                 $stmts = $traverser->traverse($stmts);
                 $this->fileManager->dumpFile($classPath, $prettyPrinter->prettyPrintFile($stmts));
