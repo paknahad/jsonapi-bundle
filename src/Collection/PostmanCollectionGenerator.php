@@ -50,7 +50,13 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 
         $collection = $this->LoadOldCollection();
 
-        $collection['item'][] = $directory;
+        $index = $this->alreadyExists($collection, $directory);
+
+        if (null === $index) {
+            $collection['item'][] = $directory;
+        } else {
+            $collection['item'][$index] = $directory;
+        }
 
         $this->fileManager->dumpFile(self::POSTMAN_PATH, json_encode($collection, JSON_PRETTY_PRINT));
 
@@ -126,5 +132,16 @@ class PostmanCollectionGenerator extends CollectionGeneratorAbstract
         }
 
         return $collection;
+    }
+
+    private function alreadyExists(array $collection, array $directory): ?int
+    {
+        foreach ($collection['item'] as $index => $item) {
+            if ($item['name'] === $directory['name']) {
+                return $index;
+            }
+        }
+
+        return null;
     }
 }

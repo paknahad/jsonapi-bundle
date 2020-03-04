@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  description: "This is where you can give more detailed description of your API"
+  version: "1.0.0"
+  title: "Openapi JsonApi"
+  termsOfService: "http://swagger.io/terms/"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+paths:
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
+servers:
+  - url: http://localhost:8000/api
+    description: Local Environment
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:

@@ -20,6 +20,8 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
 
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {
+        $this->setSeed(12345678);
+
         $this->swagger = new Swagger($this->loadOldCollection());
 
         $this->fields = Attributes::parse($classMetadata);
