@@ -41,4 +41,9 @@ abstract class CollectionGeneratorAbstract
 
         return $actions;
     }
+
+    public function setSeed(int $int)
+    {
+        srand($int);
+    }
 }

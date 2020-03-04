@@ -21,5 +21,10 @@ class JsonApiExtension extends Extension
     {
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $definition = $container->getDefinition('maker.maker.make_api');
+        $definition->setArgument(0, $config['documentationSchema']);
     }
 }

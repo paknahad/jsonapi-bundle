@@ -4,7 +4,9 @@ namespace Paknahad\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
@@ -31,12 +33,23 @@ final class ApiCrud extends AbstractMaker
     private $postmanGenerator;
     private $swaggerGenerator;
     private $doctrineHelper;
+    /**
+     * @var OpenApiCollectionGenerator
+     */
+    private $openApiCollectionGenerator;
+    /**
+     * @var string
+     */
+    private $documentationSchema;
 
-    public function __construct(PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, DoctrineHelper $doctrineHelper)
+    public function __construct(string $documentationSchema, PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, OpenApiCollectionGenerator $openApiCollectionGenerator, DoctrineHelper $doctrineHelper)
     {
         $this->postmanGenerator = $postmanGenerator;
         $this->swaggerGenerator = $swaggerGenerator;
+
         $this->doctrineHelper = $doctrineHelper;
+        $this->openApiCollectionGenerator = $openApiCollectionGenerator;
+        $this->documentationSchema = $documentationSchema;
     }
 
     public static function getCommandName(): string
@@ -237,9 +250,7 @@ final class ApiCrud extends AbstractMaker
 
         $generator->writeChanges();
 
-        $this->postmanGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
-
-        $this->swaggerGenerator->generateCollection($entityMetadata, $entityClassDetails->getShortName(), $routePath);
+        $this->generateDocumentation($entityMetadata, $entityClassDetails->getShortName(), $routePath);
 
         $this->writeSuccessMessage($io);
 
@@ -294,6 +305,20 @@ final class ApiCrud extends AbstractMaker
         }
 
         return $associations;
+    }
+
+    private function generateDocumentation(ClassMetadata $entityMetadata, string $getShortName, string $routePath): void
+    {
+        switch ($this->documentationSchema) {
+            case 'swagger': // TODO make constants
+                $this->swaggerGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+            case 'openapi':  // TODO make constants
+                $this->openApiCollectionGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
+                break;
+        }
+
+        $this->postmanGenerator->generateCollection($entityMetadata, $getShortName, $routePath);
     }
 
     private function getFields(array $fieldMappings): array
