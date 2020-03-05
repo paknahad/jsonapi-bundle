@@ -282,7 +282,7 @@ final class MakerTestEnvironment
 
     private function buildFlexSkeleton()
     {
-        MakerTestProcess::create('composer create-project symfony/skeleton flex_project --prefer-dist --no-progress', $this->cachePath)
+        MakerTestProcess::create('composer create-project symfony/skeleton:^4.4 flex_project --prefer-dist --no-progress', $this->cachePath)
             ->run();
 
         $rootPath = str_replace('\\', '\\\\', realpath(__DIR__.'/../..'));
