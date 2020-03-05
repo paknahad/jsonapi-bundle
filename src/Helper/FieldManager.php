@@ -115,12 +115,14 @@ class FieldManager
         }
 
         $this->fields[$fieldName] = $this->parseField($fieldName);
-
         $this->setRelations($fieldName);
-        $relation = $this->relations[$this->fields[$fieldName]['entity']];
+
+        $relation = $this->getRelevantRelationFromFieldData($this->fields[$fieldName]);
         $this->fields[$fieldName]['relation_alias'] = $relation['alias'];
 
-        $this->fields[$fieldName]['metadata'] = $this->getFieldMetaData($this->fields[$fieldName]['entity'], $this->fields[$fieldName]['field']);
+        $entity = $relation['entity'] ?? $this->fields[$fieldName]['entity'];
+
+        $this->fields[$fieldName]['metadata'] = $this->getFieldMetaData($entity, $this->fields[$fieldName]['field']);
 
         return $this->fields[$fieldName];
     }
@@ -268,5 +270,18 @@ class FieldManager
         $associations = $this->entityManager->getClassMetadata($sourceEntity)->associationMappings;
 
         return $associations[$entity] ?? [];
+    }
+
+    protected function getRelevantRelationFromFieldData(array $fieldData): array
+    {
+        $entityPath = $fieldData['entity-path'];
+
+        if (count($entityPath) === 0) {
+            return $this->relations[$fieldData['entity']];
+        }
+
+        $relevantRelationEntity = $entityPath[count($entityPath)-1];
+
+        return $this->relations[$relevantRelationEntity];
     }
 }
