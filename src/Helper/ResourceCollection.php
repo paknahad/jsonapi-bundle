@@ -176,17 +176,35 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected function addRelationsToQuery()
     {
         $relations = $this->fieldManager->getRelations();
+
+        $formattedRelations = $this->getFormattedRelations($relations);
+
         foreach ($relations as $entity => $relation) {
             if ($entity === $this->fieldManager->getRootEntity()) {
                 continue;
             }
 
             $sourceAlias = FieldManager::ROOT_ALIAS;
-            if ($relations[$relation['entity']]['sourceEntity'] !== $this->fieldManager->getRootEntity()) {
-                $sourceAlias = $relations[$relation['entity']]['alias'];
+            $relationSourceEntity = $relations[$relation['entity']]['sourceEntity'];
+            if ($relationSourceEntity !== $this->fieldManager->getRootEntity()) {
+                $sourceAlias = $formattedRelations[$relationSourceEntity]['alias'];
             }
 
             $this->query->leftJoin(sprintf('%s.%s', $sourceAlias, $relation['entity']), $relation['alias']);
         }
+    }
+
+    /**
+     * Format relations to use entityClass as array key
+     */
+    protected function getFormattedRelations(array $relations): array
+    {
+        $formattedRelations = [];
+
+        foreach ($relations as $relation) {
+            $formattedRelations[$relation['entityClass']] = $relation;
+        }
+
+        return $formattedRelations;
     }
 }
