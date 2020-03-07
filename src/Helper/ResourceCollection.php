@@ -72,7 +72,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     }
 
     /**
-     * Sets the Repository.
+     * Sets the Repository And makes query_object.
      *
      * @param entityRepository $repository
      *                                     The Repository
@@ -80,6 +80,8 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     public function setRepository(EntityRepository $repository): void
     {
         $this->repository = $repository;
+
+        $this->query = $this->generateQuery();
     }
 
     /**
@@ -102,8 +104,6 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
      */
     public function handleIndexRequest()
     {
-        $this->query = $this->generateQuery();
-
         $entityManager = $this->query->getEntityManager();
         $this->fieldManager->setEntityManager($entityManager);
         $this->fieldManager->setRootEntity($this->query->getRootEntities()[0]);
