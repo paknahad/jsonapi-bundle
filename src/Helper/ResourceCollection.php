@@ -195,7 +195,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     }
 
     /**
-     * Format relations to use entityClass as array key
+     * Format relations to use entityClass as array key.
      */
     protected function getFormattedRelations(array $relations): array
     {

@@ -276,11 +276,11 @@ class FieldManager
     {
         $entityPath = $fieldData['entity-path'];
 
-        if (count($entityPath) === 0) {
+        if (0 === \count($entityPath)) {
             return $this->relations[$fieldData['entity']];
         }
 
-        $relevantRelationEntity = $entityPath[count($entityPath)-1];
+        $relevantRelationEntity = $entityPath[\count($entityPath) - 1];
 
         return $this->relations[$relevantRelationEntity];
     }
