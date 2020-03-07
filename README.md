@@ -145,6 +145,29 @@ Below line has additional condition: books which have "php" in their title.
 http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
 ```
 
+#### Setting a default filter on the IndexAction
+By using ```$resourceCollection->getQuery()``` you can get access on the query object.
+use "r" alias for referring to the current entity. in this example the "r" refers to the "ProjectEntity"
+```php
+class ProjectController extends Controller
+{
+    /**
+     * @Route("/", name="projects_index", methods="GET")
+     */
+    public function index(ProjectRepository $projectRepository, ResourceCollection $resourceCollection): ResponseInterface
+    {
+        $resourceCollection->setRepository($projectRepository);
+
+        $resourceCollection->getQuery()->where('r.user_id = :s1')->setParameter(...);
+        $resourceCollection->handleIndexRequest();
+
+        return $this->jsonApi()->respond()->ok(
+            new ProjectsDocument(new ProjectResourceTransformer()),
+            $resourceCollection
+        );
+    }
+```
+
 #### Other Finders
 Currently the following Finders are available via other bundles:
 
