@@ -19,6 +19,7 @@ class Attribute extends AttributeAbstract
     private function getSwaggerType()
     {
         switch ($this->get('type')) {
+            case 'array':
             case 'json':
                 return [
                     'type' => 'object',
