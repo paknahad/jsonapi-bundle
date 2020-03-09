@@ -61,7 +61,15 @@ class TransformerNodeVisitor extends NodeVisitorAbstract
     public function afterTraverse(array $nodes)
     {
         $existingUses = [];
-        foreach ($nodes[0]->stmts as $stmt) {
+        $namespace = null;
+        foreach ($nodes as $node){
+            if($node instanceof Node\Stmt\Namespace_){
+                $namespace = $node;
+            }
+        }
+
+
+        foreach ($namespace->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\Use_) {
                 $existingUses[] = $this->parseUseStatement($stmt);
             }
@@ -69,7 +77,7 @@ class TransformerNodeVisitor extends NodeVisitorAbstract
 
         foreach ($this->newUseClasses as $newUseClass) {
             if (!in_array($newUseClass, $existingUses)) {
-                array_unshift($nodes[0]->stmts, $this->createNewUseClass($newUseClass));
+                array_unshift($namespace->stmts, $this->createNewUseClass($newUseClass));
             }
         }
 
