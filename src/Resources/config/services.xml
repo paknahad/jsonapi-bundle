@@ -11,6 +11,7 @@
             <tag name="event_subscriber" />
             <argument type="service" id="WoohooLabs\Yin\JsonApi\JsonApi" />
             <argument key="$environment">%kernel.environment%</argument>
+            <argument key="$debug">%kernel.debug%</argument>
         </service>
 
         <service id="jsonapi.jsonApi.factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
