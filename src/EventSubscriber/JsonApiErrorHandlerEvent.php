@@ -26,10 +26,13 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
     private $jsonApi;
 
-    public function __construct($environment, JsonApi $jsonApi)
+    private $debug;
+
+    public function __construct($environment, JsonApi $jsonApi, $debug)
     {
         $this->environment = $environment;
         $this->jsonApi = $jsonApi;
+        $this->debug = $debug;
     }
 
     public static function getSubscribedEvents()
@@ -54,7 +57,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = \in_array($this->environment, ['dev', 'test']) ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = \in_array($this->environment, ['dev', 'test']) || $this->debug === true ? $this->getExceptionMeta($exception) : [];
 
         $response = $responder->genericError(
             $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
