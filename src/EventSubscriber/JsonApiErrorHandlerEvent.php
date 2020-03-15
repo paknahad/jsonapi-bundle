@@ -57,7 +57,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = \in_array($this->environment, ['dev', 'test']) || $this->debug === true ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = \in_array($this->environment, ['dev', 'test']) || true === $this->debug ? $this->getExceptionMeta($exception) : [];
 
         $response = $responder->genericError(
             $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
