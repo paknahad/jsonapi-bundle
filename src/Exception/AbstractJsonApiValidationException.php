@@ -37,7 +37,7 @@ abstract class AbstractJsonApiValidationException extends Exception implements J
 
         $error->setSource($errorSource)
             ->setDetail('Invalid value')
-            ->setStatus('');
+            ->setStatus((string) $this->code);
 
         return $error;
     }
