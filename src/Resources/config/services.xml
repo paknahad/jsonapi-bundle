@@ -38,6 +38,10 @@
             <argument>%kernel.project_dir%</argument>
         </service>
 
+        <service id="Doctrine\Inflector\LanguageInflectorFactory">
+            <factory class="Doctrine\Inflector\InflectorFactory" method="create"/>
+        </service>
+
         <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
             <tag name="maker.command" />
             <argument/>
@@ -45,6 +49,7 @@
             <argument type="service" id="jsonapi.swagger_collection_generator" />
             <argument type="service" id="jsonapi.open_api_collection_generator" />
             <argument type="service" id="maker.doctrine_helper" />
+            <argument type="service" id="Doctrine\Inflector\LanguageInflectorFactory" />
         </service>
 
         <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">

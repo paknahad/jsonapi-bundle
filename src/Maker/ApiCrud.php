@@ -3,8 +3,8 @@
 namespace Paknahad\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\Inflector\LanguageInflectorFactory;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
@@ -42,14 +42,27 @@ final class ApiCrud extends AbstractMaker
      */
     private $documentationSchema;
 
-    public function __construct(string $documentationSchema, PostmanCollectionGenerator $postmanGenerator, SwaggerCollectionGenerator $swaggerGenerator, OpenApiCollectionGenerator $openApiCollectionGenerator, DoctrineHelper $doctrineHelper)
-    {
+    /**
+     * @var \Doctrine\Inflector\Inflector
+     */
+    private $inflector;
+
+    public function __construct(
+        string $documentationSchema,
+        PostmanCollectionGenerator $postmanGenerator,
+        SwaggerCollectionGenerator $swaggerGenerator,
+        OpenApiCollectionGenerator $openApiCollectionGenerator,
+        DoctrineHelper $doctrineHelper,
+        LanguageInflectorFactory $languageInflectorFactory
+    ) {
         $this->postmanGenerator = $postmanGenerator;
         $this->swaggerGenerator = $swaggerGenerator;
 
         $this->doctrineHelper = $doctrineHelper;
         $this->openApiCollectionGenerator = $openApiCollectionGenerator;
         $this->documentationSchema = $documentationSchema;
+
+        $this->inflector = $languageInflectorFactory->build();
     }
 
     public static function getCommandName(): string
@@ -116,12 +129,12 @@ final class ApiCrud extends AbstractMaker
             $repositoryVars = [
                 'repository_full_class_name' => $repositoryClassDetails->getFullName(),
                 'repository_class_name' => $repositoryClassDetails->getShortName(),
-                'repository_var' => lcfirst(Inflector::singularize($repositoryClassDetails->getShortName())),
+                'repository_var' => lcfirst($this->inflector->singularize($repositoryClassDetails->getShortName())),
             ];
         }
 
-        $entityVarPlural = Inflector::pluralize($entityClassDetails->getShortName());
-        $entityVarSingular = Inflector::singularize($entityClassDetails->getShortName());
+        $entityVarPlural = $this->inflector->pluralize($entityClassDetails->getShortName());
+        $entityVarSingular = $this->inflector->singularize($entityClassDetails->getShortName());
 
         $controllerClassDetails = $generator->createClassNameDetails(
             $entityVarSingular,
@@ -292,15 +305,15 @@ final class ApiCrud extends AbstractMaker
 
             $associations[] = [
                 'field_name' => $association['fieldName'],
-                'field_name_singular' => Inflector::singularize($association['fieldName']),
+                'field_name_singular' => $this->inflector->singularize($association['fieldName']),
                 'type' => $association['type'],
                 'target_entity' => $association['targetEntity'],
                 'target_entity_name' => $entityName,
-                'target_entity_type' => Str::asTwigVariable(Inflector::pluralize($entityName)),
+                'target_entity_type' => Str::asTwigVariable($this->inflector->pluralize($entityName)),
                 'getter' => 'get'.Str::asCamelCase($association['fieldName']),
                 'setter' => 'set'.Str::asCamelCase($association['fieldName']),
-                'adder' => 'add'.Str::asCamelCase(Inflector::singularize($association['fieldName'])),
-                'remover' => 'remove'.Str::asCamelCase(Inflector::singularize($association['fieldName'])),
+                'adder' => 'add'.Str::asCamelCase($this->inflector->singularize($association['fieldName'])),
+                'remover' => 'remove'.Str::asCamelCase($this->inflector->singularize($association['fieldName'])),
             ];
         }
 

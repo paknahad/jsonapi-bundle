@@ -14,7 +14,7 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 class IsValidJsonApi extends Constraint
 {
-    /** @var ValidationResult $result */
+    /** @var ValidationResult */
     private $result;
 
     /**

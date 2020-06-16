@@ -2,7 +2,7 @@
 
 namespace Paknahad\JsonApiBundle;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Symfony\Bundle\MakerBundle\Str;
 
 class JsonApiStr
@@ -16,12 +16,12 @@ class JsonApiStr
 
     public static function singularizeClassName(string $entityName): string
     {
-        return Inflector::singularize(Str::getShortClassName($entityName));
+        return InflectorFactory::create()->build()->singularize(Str::getShortClassName($entityName));
     }
 
     public static function pluralizeClassName(string $entityName): string
     {
-        return Inflector::pluralize(Str::getShortClassName($entityName));
+        return InflectorFactory::create()->build()->pluralize(Str::getShortClassName($entityName));
     }
 
     public static function genEntityIdName($entityName, bool $withBrackets = false)
