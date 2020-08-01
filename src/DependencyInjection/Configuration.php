@@ -14,6 +14,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
             ->scalarNode('documentationSchema')->defaultValue('swagger')->end()
+            ->scalarNode('controllerNamespace')->defaultValue('Controller\\')->end()
             ->end()
         ;
 

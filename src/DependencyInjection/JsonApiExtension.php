@@ -26,5 +26,6 @@ class JsonApiExtension extends Extension
 
         $definition = $container->getDefinition('maker.maker.make_api');
         $definition->setArgument(0, $config['documentationSchema']);
+        $definition->setArgument(1, $config['controllerNamespace']);
     }
 }
