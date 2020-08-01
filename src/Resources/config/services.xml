@@ -45,6 +45,7 @@
         <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
             <tag name="maker.command" />
             <argument/>
+            <argument/>
             <argument type="service" id="jsonapi.postman_collection_generator" />
             <argument type="service" id="jsonapi.swagger_collection_generator" />
             <argument type="service" id="jsonapi.open_api_collection_generator" />

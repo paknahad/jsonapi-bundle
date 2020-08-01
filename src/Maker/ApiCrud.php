@@ -46,9 +46,14 @@ final class ApiCrud extends AbstractMaker
      * @var \Doctrine\Inflector\Inflector
      */
     private $inflector;
+    /**
+     * @var string
+     */
+    private $controllerNamespace;
 
     public function __construct(
         string $documentationSchema,
+        string $controllerNamespace,
         PostmanCollectionGenerator $postmanGenerator,
         SwaggerCollectionGenerator $swaggerGenerator,
         OpenApiCollectionGenerator $openApiCollectionGenerator,
@@ -63,6 +68,7 @@ final class ApiCrud extends AbstractMaker
         $this->documentationSchema = $documentationSchema;
 
         $this->inflector = $languageInflectorFactory->build();
+        $this->controllerNamespace = $controllerNamespace;
     }
 
     public static function getCommandName(): string
@@ -138,7 +144,7 @@ final class ApiCrud extends AbstractMaker
 
         $controllerClassDetails = $generator->createClassNameDetails(
             $entityVarSingular,
-            'Controller\\',
+            $this->controllerNamespace.'\\',
             'Controller'
         );
 
