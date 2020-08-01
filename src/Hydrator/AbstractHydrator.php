@@ -2,7 +2,7 @@
 
 namespace Paknahad\JsonApiBundle\Hydrator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 use WoohooLabs\Yin\JsonApi\Hydrator\AbstractHydrator as BaseHydrator;
 
