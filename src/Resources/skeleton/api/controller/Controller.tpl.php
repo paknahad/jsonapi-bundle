@@ -47,7 +47,6 @@ class <?= $class_name ?> extends Controller
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager, $exceptionFactory), new <?= $entity_class_name ?>());
 
-        /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
