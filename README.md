@@ -287,6 +287,31 @@ has responses like this:
 ```
 NOTICE: the "meta" field gets filled just on development environment.
 
+## Configuration
+
+You can configure this bundle with following options:
+
+```yaml
+#config/packages/json_api.yaml
+
+json_api:
+    documentationSchema: 'openapi'
+    controllerNamespace: 'Controller'
+```
+Supported documentation schemas are `openapi` and `swagger`.
+If you want to generate controllers in a different namespace, for example `Controller\Api` you can use controllerNamespace configuration option.
+To prefix Api routes you can use Symfony routes configuration:
+```yaml
+#config/routes/annotations.yaml
+
+api:
+    resource: ../../src/Controller/Api
+    type: annotation
+    prefix: /api
+
+```
+
+
 [1]: https://symfony.com/
 [2]: http://jsonapi.org/
 [3]: https://github.com/woohoolabs/yin
