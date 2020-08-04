@@ -14,7 +14,6 @@ use Paknahad\JsonApiBundle\Helper\ResourceCollection;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 
@@ -83,7 +82,6 @@ class <?= $class_name ?> extends Controller
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager, $exceptionFactory), $<?= $entity_var_name ?>);
 
-        /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($<?= $entity_var_name ?>);
         if ($errors->count() > 0) {
             return $this->validationErrorResponse($errors);
