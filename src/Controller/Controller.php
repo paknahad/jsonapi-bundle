@@ -5,7 +5,7 @@ namespace Paknahad\JsonApiBundle\Controller;
 use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
 use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
@@ -26,7 +26,7 @@ class Controller extends AbstractController
         return $this->jsonApi;
     }
 
-    protected function validationErrorResponse(ConstraintViolationList $errors): ResponseInterface
+    protected function validationErrorResponse(ConstraintViolationListInterface $errors): ResponseInterface
     {
         $errorDocument = new ErrorDocument();
         $errorDocument->setJsonApi(new JsonApiObject('1.0'));
