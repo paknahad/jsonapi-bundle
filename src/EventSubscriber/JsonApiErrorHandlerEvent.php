@@ -2,6 +2,8 @@
 
 namespace Paknahad\JsonApiBundle\EventSubscriber;
 
+use Paknahad\JsonApiBundle\Document\ValidationErrorDocument;
+use Paknahad\JsonApiBundle\Exception\ValidationException;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -57,7 +59,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             new JsonSerializer()
         );
 
-        $additionalMeta = \in_array($this->environment, ['dev', 'test']) || true === $this->debug ? $this->getExceptionMeta($exception) : [];
+        $additionalMeta = $this->getAdditionalMeta($exception);
 
         $response = $responder->genericError(
             $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
@@ -97,7 +99,9 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         $title = 'Internal Server Error';
         $statusCode = 500;
 
-        if ($exception instanceof ValidatorException) {
+        if ($exception instanceof ValidationException) {
+            return new ValidationErrorDocument($exception->getViolations());
+        } elseif ($exception instanceof ValidatorException) {
             $title = $exception->getMessage();
             $statusCode = 422;
         } elseif ($exception instanceof HttpException) {
@@ -108,7 +112,6 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
             $statusCode = 401;
         }
 
-        /** @var ErrorDocument $errorDocument */
         $errorDocument = new ErrorDocument();
         $errorDocument->setLinks(
             DocumentLinks::createWithoutBaseUri()->setSelf(
@@ -125,5 +128,14 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         );
 
         return $errorDocument;
+    }
+
+    private function getAdditionalMeta(Throwable $exception): array
+    {
+        if ($exception instanceof ValidationException) {
+            return [];
+        }
+
+        return \in_array($this->environment, ['dev', 'test']) || true === $this->debug ? $this->getExceptionMeta($exception) : [];
     }
 }
