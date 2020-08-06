@@ -2,10 +2,12 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
+use Paknahad\JsonApiBundle\Exception\ValidationException;
 use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
 use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
@@ -15,10 +17,15 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 class Controller extends AbstractController
 {
     private $jsonApi;
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
 
-    public function __construct(JsonApi $jsonApi)
+    public function __construct(JsonApi $jsonApi, ValidatorInterface $validator)
     {
         $this->jsonApi = $jsonApi;
+        $this->validator = $validator;
     }
 
     protected function jsonApi(): JsonApi
@@ -26,6 +33,20 @@ class Controller extends AbstractController
         return $this->jsonApi;
     }
 
+    /**
+     * @param mixed $object
+     */
+    protected function validate($object): void
+    {
+        $errors = $this->validator->validate($object);
+        if ($errors->count() > 0) {
+            throw new ValidationException($errors);
+        }
+    }
+
+    /**
+     * @deprecated This function is deprecated. Use validate() instead.
+     */
     protected function validationErrorResponse(ConstraintViolationListInterface $errors): ResponseInterface
     {
         $errorDocument = new ErrorDocument();

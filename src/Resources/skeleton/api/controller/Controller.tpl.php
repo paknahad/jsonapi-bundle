@@ -14,7 +14,6 @@ use Paknahad\JsonApiBundle\Helper\ResourceCollection;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 
 /**
@@ -40,16 +39,13 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
      */
-    public function new(ValidatorInterface $validator, DefaultExceptionFactory $exceptionFactory): ResponseInterface
+    public function new(DefaultExceptionFactory $exceptionFactory): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager, $exceptionFactory), new <?= $entity_class_name ?>());
 
-        $errors = $validator->validate($<?= $entity_var_name ?>);
-        if ($errors->count() > 0) {
-            return $this->validationErrorResponse($errors);
-        }
+        $this->validate($<?= $entity_var_name ?>);
 
         $entityManager->persist($<?= $entity_var_name ?>);
         $entityManager->flush();
@@ -76,16 +72,13 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, ValidatorInterface $validator, DefaultExceptionFactory $exceptionFactory): ResponseInterface
+    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, DefaultExceptionFactory $exceptionFactory): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
         $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager, $exceptionFactory), $<?= $entity_var_name ?>);
 
-        $errors = $validator->validate($<?= $entity_var_name ?>);
-        if ($errors->count() > 0) {
-            return $this->validationErrorResponse($errors);
-        }
+        $this->validate($<?= $entity_var_name ?>);
 
         $entityManager->flush();
 
