@@ -6,6 +6,7 @@ use Paknahad\JsonApiBundle\Exception\ValidationException;
 use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
@@ -16,6 +17,9 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 
 class Controller extends AbstractController
 {
+    /**
+     * @var JsonApi
+     */
     private $jsonApi;
     /**
      * @var ValidatorInterface
@@ -34,11 +38,13 @@ class Controller extends AbstractController
     }
 
     /**
-     * @param mixed $object
+     * @param mixed                        $object
+     * @param Constraint|Constraint[]|null $constraints
+     * @param string[]|null                $groups
      */
-    protected function validate($object): void
+    protected function validate($object, $constraints = null, $groups = null): void
     {
-        $errors = $this->validator->validate($object);
+        $errors = $this->validator->validate($object, $constraints, $groups);
         if ($errors->count() > 0) {
             throw new ValidationException($errors);
         }
