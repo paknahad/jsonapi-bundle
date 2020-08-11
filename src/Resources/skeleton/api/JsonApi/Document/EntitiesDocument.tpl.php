@@ -2,8 +2,7 @@
 
 namespace <?= $namespace ?>;
 
-use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractCollectionDocument;
-use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
+use Paknahad\JsonApiBundle\Document\AbstractCollectionDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 
 /**
@@ -11,22 +10,6 @@ use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
  */
 class <?= $entity_class_name_plural ?>Document extends AbstractCollectionDocument
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsonApi(): ?JsonApiObject
-    {
-        return new JsonApiObject('1.0');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMeta(): array
-    {
-        return [];
-    }
-
     /**
      * {@inheritdoc}
      */

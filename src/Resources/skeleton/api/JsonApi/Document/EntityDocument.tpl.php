@@ -2,8 +2,7 @@
 
 namespace <?= $namespace ?>;
 
-use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractSingleResourceDocument;
-use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
+use Paknahad\JsonApiBundle\Document\AbstractSingleResourceDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
 
@@ -12,22 +11,6 @@ use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
  */
 class <?= $entity_class_name ?>Document extends AbstractSingleResourceDocument
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getJsonApi(): ?JsonApiObject
-    {
-        return new JsonApiObject('1.0');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMeta(): array
-    {
-        return [];
-    }
-
     /**
      * {@inheritdoc}
      */
