@@ -19,15 +19,12 @@ use <?= $entity_full_class_name ?>;
     }
 ?>
 use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
-use Paknahad\JsonApiBundle\Hydrator\ValidatorTrait;
 <?php
     if (isset($useOneRelation)) {
         echo 'use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
 ';
     }
 ?>
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 <?php
     if (isset($useManyRelation)) {
         echo 'use WoohooLabs\Yin\JsonApi\Hydrator\Relationship\ToManyRelationship;
@@ -39,34 +36,19 @@ use WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface;
 ';
     }
 ?>
-use WoohooLabs\Yin\JsonApi\Request\JsonApiRequestInterface;
 
 /**
  * Abstract <?= $entity_class_name ?> Hydrator.
  */
 abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {
-    use ValidatorTrait;
 
     /**
      * {@inheritdoc}
      */
-    protected function validateClientGeneratedId(
-        string $clientGeneratedId,
-        JsonApiRequestInterface $request,
-        ExceptionFactoryInterface $exceptionFactory
-    ): void {
-        if (!empty($clientGeneratedId)) {
-            throw $exceptionFactory->createClientGeneratedIdNotSupportedException($request, $clientGeneratedId);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function generateId(): string
+    protected function getClass(): string
     {
-        return '';
+        return <?= $entity_class_name ?>::class;
     }
 
     /**
@@ -75,32 +57,6 @@ abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrato
     protected function getAcceptedTypes(): array
     {
         return ['<?= $entity_type_var_plural ?>'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAttributeHydrator($<?= $entity_var_name ?>): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function validateRequest(JsonApiRequestInterface $request): void
-    {
-        $this->validateFields($this->objectManager->getClassMetadata(<?= $entity_class_name ?>::class), $request);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setId($<?= $entity_var_name ?>, string $id): void
-    {
-        if ($id && (string) $<?= $entity_var_name ?>->getId() !== $id) {
-            throw new NotFoundHttpException('both ids in url & body must be the same');
-        }
     }
 
     /**
