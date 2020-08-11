@@ -12,9 +12,7 @@ use <?= $repository_full_class_name ?>;
 use Paknahad\JsonApiBundle\Controller\Controller;
 use Paknahad\JsonApiBundle\Helper\ResourceCollection;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 
 /**
  * @Route("<?= $route_path ?>")
@@ -39,11 +37,11 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/", name="<?= $route_name ?>_new", methods="POST")
      */
-    public function new(DefaultExceptionFactory $exceptionFactory): ResponseInterface
+    public function new(): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager, $exceptionFactory), new <?= $entity_class_name ?>());
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $create_hydrator_class_name ?>($entityManager, $this->jsonApi()->getExceptionFactory()), new <?= $entity_class_name ?>());
 
         $this->validate($<?= $entity_var_name ?>);
 
@@ -72,11 +70,11 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_edit", methods="PATCH")
      */
-    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>, DefaultExceptionFactory $exceptionFactory): ResponseInterface
+    public function edit(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager, $exceptionFactory), $<?= $entity_var_name ?>);
+        $<?= $entity_var_name ?> = $this->jsonApi()->hydrate(new <?= $update_hydrator_class_name ?>($entityManager, $this->jsonApi()->getExceptionFactory()), $<?= $entity_var_name ?>);
 
         $this->validate($<?= $entity_var_name ?>);
 
@@ -92,7 +90,7 @@ class <?= $class_name ?> extends Controller
     /**
      * @Route("/{<?= $entity_identifier ?>}", name="<?= $route_name ?>_delete", methods="DELETE")
      */
-    public function delete(Request $request, <?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
+    public function delete(<?= $entity_class_name ?> $<?= $entity_var_name ?>): ResponseInterface
     {
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($<?= $entity_var_name?>);

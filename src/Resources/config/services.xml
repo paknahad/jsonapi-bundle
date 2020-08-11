@@ -67,6 +67,7 @@
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
         <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory" />
+        <service id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface" alias="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory"/>
 
         <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
             <argument type="service" id="request_stack"/>
