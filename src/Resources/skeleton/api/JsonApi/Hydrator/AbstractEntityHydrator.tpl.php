@@ -42,7 +42,6 @@ use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
  */
 abstract class Abstract<?= $entity_class_name ?>Hydrator extends AbstractHydrator
 {
-
     /**
      * {@inheritdoc}
      */
