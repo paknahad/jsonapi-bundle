@@ -4,7 +4,7 @@ namespace Paknahad\JsonApiBundle\EventSubscriber;
 
 use Paknahad\JsonApiBundle\Document\ValidationErrorDocument;
 use Paknahad\JsonApiBundle\Exception\ValidationException;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -12,32 +12,42 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Throwable;
-use WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory;
 use WoohooLabs\Yin\JsonApi\Exception\JsonApiExceptionInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
-use WoohooLabs\Yin\JsonApi\Response\Responder;
 use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
+use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocumentInterface;
 use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
 use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 use WoohooLabs\Yin\JsonApi\Schema\Link\Link;
-use WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer;
 
 class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 {
+    /**
+     * @var string
+     */
     private $environment;
-
+    /**
+     * @var JsonApi
+     */
     private $jsonApi;
-
+    /**
+     * @var bool
+     */
     private $debug;
+    /**
+     * @var HttpFoundationFactoryInterface
+     */
+    private $httpFoundationFactory;
 
-    public function __construct($environment, JsonApi $jsonApi, $debug)
+    public function __construct(string $environment, bool $debug, JsonApi $jsonApi, HttpFoundationFactoryInterface $httpFoundationFactory)
     {
         $this->environment = $environment;
         $this->jsonApi = $jsonApi;
         $this->debug = $debug;
+        $this->httpFoundationFactory = $httpFoundationFactory;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
@@ -46,28 +56,17 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event)
     {
-        $exceptionFactory = new DefaultExceptionFactory();
-
         $exception = $event->getThrowable();
-
-        $httpFoundationFactory = new HttpFoundationFactory();
-
-        $responder = new Responder(
-            $this->jsonApi->request,
-            $this->jsonApi->response,
-            $exceptionFactory,
-            new JsonSerializer()
-        );
 
         $additionalMeta = $this->getAdditionalMeta($exception);
 
-        $response = $responder->genericError(
+        $response = $this->jsonApi->respond()->genericError(
             $this->toErrorDocument($exception, $event->getRequest()->getRequestUri()),
             null,
             $additionalMeta
         );
 
-        $event->setResponse($httpFoundationFactory->createResponse($response));
+        $event->setResponse($this->httpFoundationFactory->createResponse($response));
     }
 
     protected function getExceptionMeta(Throwable $exception): array
@@ -90,7 +89,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         ];
     }
 
-    protected function toErrorDocument(Throwable $exception, string $url)
+    protected function toErrorDocument(Throwable $exception, string $url): ErrorDocumentInterface
     {
         if ($exception instanceof JsonApiExceptionInterface) {
             return $exception->getErrorDocument();

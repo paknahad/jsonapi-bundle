@@ -9,18 +9,22 @@
 
         <service id="jsonapi.error.handler.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiErrorHandlerEvent" lazy="true">
             <tag name="event_subscriber" />
-            <argument type="service" id="WoohooLabs\Yin\JsonApi\JsonApi" />
+            <argument key="$jsonApi" type="service" id="WoohooLabs\Yin\JsonApi\JsonApi" />
             <argument key="$environment">%kernel.environment%</argument>
             <argument key="$debug">%kernel.debug%</argument>
+            <argument key="$httpFoundationFactory" type="service"
+                      id="sensio_framework_extra.psr7.http_foundation_factory"/>
         </service>
 
-        <service id="jsonapi.jsonApi.factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
+        <service id="paknahad_json_api.factory.json_api_factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
             <argument type="service" id="sensio_framework_extra.psr7.http_message_factory" />
             <argument type="service" id="request_stack" />
+            <argument type="service" id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface"/>
+            <argument type="service" id="woohoo_labs.yin.json_api.serializer.json_serializer"/>
         </service>
 
         <service id="WoohooLabs\Yin\JsonApi\JsonApi" class="WoohooLabs\Yin\JsonApi\JsonApi">
-            <factory service="jsonapi.jsonApi.factory" method="create" />
+            <factory service="paknahad_json_api.factory.json_api_factory" method="create" />
         </service>
 
         <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator">
@@ -66,8 +70,12 @@
 
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
         <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
+
         <service id="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface" alias="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory"/>
+
+        <service id="woohoo_labs.yin.json_api.serializer.json_serializer" class="WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer"/>
+        <service id="WoohooLabs\Yin\JsonApi\Serializer\SerializerInterface" alias="woohoo_labs.yin.json_api.serializer.json_serializer"/>
 
         <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
             <argument type="service" id="request_stack"/>
