@@ -96,6 +96,6 @@ class <?= $class_name ?> extends Controller
         $entityManager->remove($<?= $entity_var_name?>);
         $entityManager->flush();
 
-        return $this->jsonApi()->respond()->genericSuccess(204);
+        return $this->jsonApi()->respond()->noContent();
     }
 }
