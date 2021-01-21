@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.1.0||^8.0.0",
         "ext-json": "*",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/psr-http-message-bridge": "^2.0",
