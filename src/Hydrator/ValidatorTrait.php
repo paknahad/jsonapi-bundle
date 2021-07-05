@@ -73,15 +73,19 @@ trait ValidatorTrait
     }
 
     /**
-     * Validate all fields.
+     * Validate resource fields.
      *
      * @throws InvalidAttributeException
      */
-    protected function validateFields(ClassMetadata $metadata, JsonApiRequestInterface $request, bool $validExistence = true): void
+    protected function validateFields(ClassMetadata $metadata, JsonApiRequestInterface $request, bool $validExistence = true, array $fields = null): void
     {
         $this->validator = Validation::createValidator();
 
         foreach ($request->getResourceAttributes() as $field => $value) {
+            if (null !== $fields && !\in_array($field, $fields)) {
+                continue;
+            }
+
             if ($validExistence && !$metadata->hasField($field)) {
                 throw new ValidatorException('This attribute does not exist');
             }
@@ -92,7 +96,7 @@ trait ValidatorTrait
                 /** @var ConstraintViolationListInterface $validation */
                 $validation = $this->{$validator}($value);
                 if ($validation->count() > 0) {
-                    throw new InvalidAttributeException($field, $value, $validation->get(0)->getMessage(), 422);
+                    throw new InvalidAttributeException($field, $value);
                 }
             }
         }
