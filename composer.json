@@ -18,6 +18,7 @@
         "symfony/proxy-manager-bridge": "^4.4|^5.0|^6.0",
         "symfony/psr-http-message-bridge": "^2.0",
         "symfony/validator": "^4.4|^5.0|^6.0",
+        "doctrine/inflector": "^2.0",
         "woohoolabs/yin": "^4.3",
         "nyholm/psr7": "^1.4"
     },
