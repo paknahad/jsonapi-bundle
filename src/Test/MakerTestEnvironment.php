@@ -39,7 +39,7 @@ final class MakerTestEnvironment
         $this->flexPath = $this->cachePath.'/flex_project'.$targetVersion;
 
         $directoryName = $targetVersion ?: 'current';
-        if (str_ends_with($directoryName, '.*')) {
+        if (substr($directoryName, -2, 2) === '.*') {
             $directoryName = substr($directoryName, 0, -2);
         }
 
