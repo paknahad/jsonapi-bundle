@@ -1,5 +1,5 @@
 [![Latest Stable Version](https://poser.pugx.org/paknahad/jsonapi-bundle/version)](https://packagist.org/packages/paknahad/jsonapi-bundle)
-[![Build Status](https://travis-ci.org/paknahad/jsonapi-bundle.svg?branch=master)](https://travis-ci.org/paknahad/jsonapi-bundle)
+![test workflow](https://github.com/paknahad/jsonapi-bundle/actions/workflows/ci.yaml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
 [![Total Downloads](https://poser.pugx.org/paknahad/jsonapi-bundle/downloads)](https://packagist.org/packages/paknahad/jsonapi-bundle)
 
