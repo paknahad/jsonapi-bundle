@@ -25,13 +25,13 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
-        $this->assertContains(
+        $this->assertStringContainsString(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/'.$id.'"},"data":{"type":"authors","id":"'.$id.'","links":{"self":"\/authors\/'.$id.'"},"attributes":{"name":"'.$author.'"}}}',
             $client->getResponse()->getContent()
         );
     }
 
-    /** @dataProvider provide‌Book */
+    /** @dataProvider provideBook */
     public function testNewBookAction($book, $authorId)
     {
         static $id;
@@ -67,7 +67,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
-        $this->assertContains(
+        $this->assertStringContainsString(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/books\/'.$id.'"},"data":{"type":"books","id":"'.$id.'","links":{"self":"\/books\/'.$id.'"},"attributes":{"title":"'.$book.'"}}}',
             $client->getResponse()->getContent()
         );
@@ -87,7 +87,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
-        $this->assertContains(
+        $this->assertStringContainsString(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"}}}',
             $client->getResponse()->getContent()
         );
@@ -103,7 +103,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         );
         $this->assertTrue($client->getResponse()->isSuccessful());
         $this->assertIsValidJsonApi($client->getResponse()->getContent());
-        $this->assertContains(
+        $this->assertStringContainsString(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors\/2"},"data":{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"},"relationships":{"books":{"data":[{"type":"books","id":"3"}]}}},"included":[{"type":"books","id":"3","links":{"self":"\/books\/3"},"attributes":{"title":"Brave New World"}}]}',
             $client->getResponse()->getContent()
         );
@@ -115,7 +115,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         $client->insulate();
         $client->request('GET', '/authors/');
         $this->assertTrue($client->getResponse()->isSuccessful());
-        $this->assertContains(
+        $this->assertStringContainsString(
             '{"jsonapi":{"version":"1.0"},"links":{"self":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","first":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","last":"\/authors?page%5Bnumber%5D=1&page%5Bsize%5D=100","prev":null,"next":null},"data":[{"type":"authors","id":"1","links":{"self":"\/authors\/1"},"attributes":{"name":"George Orwell"}},{"type":"authors","id":"2","links":{"self":"\/authors\/2"},"attributes":{"name":"Mr Aldous Huxley"}}]}',
             $client->getResponse()->getContent()
         );
@@ -138,7 +138,7 @@ class GeneratedApiCRUDTest extends JsonApiTestCase
         yield['Aldous Huxley'];
     }
 
-    public function provide‌Book()
+    public function provideBook()
     {
         yield['Nineteen Eighty-Four', 1];
         yield['Animal Farm', 1];

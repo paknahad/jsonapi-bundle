@@ -2,9 +2,9 @@
 
 namespace Paknahad\JsonApiBundle\Test\Constraint;
 
-use Opis\JsonSchema\Schema;
 use Opis\JsonSchema\ValidationResult;
 use Opis\JsonSchema\Validator;
+use const PHP_EOL;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
@@ -21,16 +21,16 @@ class IsValidJsonApi extends Constraint
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
-     * @param string $json JSON
+     * @param string $other JSON
      */
-    protected function matches($json): bool
+    protected function matches($other): bool
     {
-        $data = json_decode($json);
-        $schema = Schema::fromJsonString(file_get_contents(__DIR__.'/../../Resources/schema/jsonapi-schema.json'));
-
         $validator = new Validator();
 
-        $this->result = $validator->schemaValidation($data, $schema);
+        $this->result = $validator->validate(
+            json_decode($other),
+            file_get_contents(__DIR__.'/../../Resources/schema/jsonapi-schema.json')
+        );
 
         return $this->result->isValid();
     }
@@ -40,9 +40,7 @@ class IsValidJsonApi extends Constraint
      */
     public function toString(): string
     {
-        $error = $this->result->getFirstError();
-
-        return 'Invalid JsonApi. Error: '.$error->keyword().PHP_EOL;
+        return 'Invalid JsonApi. Error: '.$this->result->error()->keyword().PHP_EOL;
     }
 
     /**
@@ -55,10 +53,10 @@ class IsValidJsonApi extends Constraint
      */
     protected function failureDescription($other): string
     {
-        foreach ($this->result->getFirstError()->subErrors() as $item) {
-            var_dump($item);
+        foreach ($this->result->error()->subErrors() as $item) {
+            var_dump($item->message());
         }
 
-        return json_encode($this->result->getFirstError()->keywordArgs(), JSON_PRETTY_PRINT).PHP_EOL;
+        return $this->result->error()->message().PHP_EOL;
     }
 }

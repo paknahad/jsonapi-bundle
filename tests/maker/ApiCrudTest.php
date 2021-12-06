@@ -1,135 +1,90 @@
 <?php
 
-namespace Symfony\Bundle\JsonApiBundle\Tests\Maker;
+namespace Paknahad\JsonApiBundle\Tests\maker;
 
-use Paknahad\JsonApiBundle\JsonApiBundle;
+use Paknahad\JsonApiBundle\Maker\ApiCrud;
 use Paknahad\JsonApiBundle\Test\MakerTestCase;
-use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
-use Symfony\Bundle\MakerBundle\DependencyInjection\CompilerPass\MakeCommandRegistrationPass;
-use Symfony\Bundle\MakerBundle\MakerBundle;
-use Symfony\Bundle\MakerBundle\MakerInterface;
+use Paknahad\JsonApiBundle\Test\MakerTestRunner;
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Routing\RouteCollectionBuilder;
 
 class ApiCrudTest extends MakerTestCase
 {
-    /**
-     * @var Kernel
-     */
-    private $kernel;
-
-    /**
-     * @group functional_group1
-     * @dataProvider getCommandTests
-     */
-    public function testCommands(MakerTestDetails $makerTestDetails)
+    protected function getMakerClass(): string
     {
-        $this->executeMakerCommand($makerTestDetails);
+        return ApiCrud::class;
     }
 
-    public function getCommandTests()
+    private function createMakeCrudTest(): MakerTestDetails
     {
-        yield 'crud_author' => [
-            MakerTestDetails::createTest(
-                    $this->getMakerInstance('make_api'),
-                    [
-                        // entity class name
-                        'Author'
-                    ]
-                )
-                ->setFixtureFilesPath(__DIR__.'/../fixtures/ApiCrud')
-                ->assert(function (string $output, string $directory) {
-                    $this->assertContains('created: src/Controller/AuthorController.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/Author/AuthorDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/Author/AuthorsDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Transformer/AuthorResourceTransformer.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Author/AbstractAuthorHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Author/CreateAuthorHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Author/UpdateAuthorHydrator.php', $output);
-                    $this->assertContains('created: collections/postman.json', $output);
-                    $this->assertContains('created: collections/swagger.yaml', $output);
-                })
+        return $this->createMakerTest()
+            // workaround for segfault in PHP 7.1 CI :/
+            ->setRequiredPhpVersion(70200);
+    }
+
+    public function getTestDetails()
+    {
+        yield 'crud_author' => [$this->createMakeCrudTest()
+            ->run(function (MakerTestRunner $runner) {
+                $runner->copy(
+                    'ApiCrud/',
+                    ''
+                );
+
+                $output = $runner->runMaker([
+                    // entity class name
+                    'Author',
+                ]);
+
+                $this->assertStringContainsString('created: src/Controller/AuthorController.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Document/Author/AuthorDocument.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Document/Author/AuthorsDocument.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Transformer/AuthorResourceTransformer.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Author/AbstractAuthorHydrator.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Author/CreateAuthorHydrator.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Author/UpdateAuthorHydrator.php', $output);
+                $this->assertStringContainsString('created: collections/postman.json', $output);
+                $this->assertStringContainsString('created: collections/swagger.yaml', $output);
+            }),
         ];
+        yield 'crud_book_and_author' => [$this->createMakeCrudTest()
+            ->run(function (MakerTestRunner $runner) {
+                $runner->copy(
+                    'ApiCrud/',
+                    ''
+                );
 
-        yield 'crud_book' => [
-            MakerTestDetails::createTest(
-                    $this->getMakerInstance('make_api'),
-                    [
-                        // entity class name
-                        'Book'
-                    ]
-                )
-                ->setFixtureFilesPath(__DIR__.'/../fixtures/ApiCrud')
-                // need for crud web tests
-                ->configureDatabase()
-                ->assert(function (string $output, string $directory) {
-                    $this->assertContains('created: src/Controller/BookController.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/Book/BookDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Document/Book/BooksDocument.php', $output);
-                    $this->assertContains('created: src/JsonApi/Transformer/BookResourceTransformer.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Book/AbstractBookHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Book/CreateBookHydrator.php', $output);
-                    $this->assertContains('created: src/JsonApi/Hydrator/Book/UpdateBookHydrator.php', $output);
-                    $this->assertContains('updated: collections/postman.json', $output);
-                    $this->assertContains('updated: collections/swagger.yaml', $output);
-                })
-        ];
-    }
+                $runner->runMaker([
+                    // entity class name
+                    'Author',
+                ]);
+                $output = $runner->runMaker([
+                    // entity class name
+                    'Book',
+                ]);
 
-    private function getMakerInstance(string $serviceName): MakerInterface
-    {
-        if (null === $this->kernel) {
-            $this->kernel = new FunctionalTestKernel('dev', true);
-            $this->kernel->boot();
-        }
+                $this->assertStringContainsString('created: src/Controller/BookController.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Document/Book/BookDocument.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Document/Book/BooksDocument.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Transformer/BookResourceTransformer.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Book/AbstractBookHydrator.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Book/CreateBookHydrator.php', $output);
+                $this->assertStringContainsString('created: src/JsonApi/Hydrator/Book/UpdateBookHydrator.php', $output);
+                $this->assertStringContainsString('updated: collections/postman.json', $output);
+                $this->assertStringContainsString('updated: collections/swagger.yaml', $output);
 
-        // a cheap way to guess the service id
-        $serviceId = $serviceId ?? sprintf('maker.maker.%s', $serviceName);
-
-        return $this->kernel->getContainer()->get($serviceId);
-    }
-}
-
-class FunctionalTestKernel extends Kernel implements CompilerPassInterface
-{
-    use MicroKernelTrait;
-
-    public function registerBundles()
-    {
-        return [
-            new FrameworkBundle(),
-            new SensioFrameworkExtraBundle(),
-            new JsonApiBundle(),
-            new MakerBundle()
+                $this->runCrudTest($runner, 'GeneratedApiCRUDTest.php');
+            }),
         ];
     }
 
-    protected function configureRoutes(RouteCollectionBuilder $routes)
+    private function runCrudTest(MakerTestRunner $runner, string $filename)
     {
-    }
+        $runner->copy(
+            'ApiCrud/tests/'.$filename,
+            'tests/GeneratedApiCRUDTest.php'
+        );
 
-    protected function configureContainer(ContainerBuilder $c, LoaderInterface $loader)
-    {
-        $c->setParameter('kernel.secret', 123);
-    }
-
-    public function getRootDir()
-    {
-        return sys_get_temp_dir().'/'.uniqid('api_maker_', true);
-    }
-
-    public function process(ContainerBuilder $container)
-    {
-        // makes all makers public to help the tests
-        foreach ($container->findTaggedServiceIds(MakeCommandRegistrationPass::MAKER_TAG) as $id => $tags) {
-            $defn = $container->getDefinition($id);
-            $defn->setPublic(true);
-        }
+        $runner->configureDatabase();
+        $runner->runTests();
     }
 }
