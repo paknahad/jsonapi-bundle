@@ -15,8 +15,8 @@ class SwaggerCollectionGenerator extends CollectionGeneratorAbstract
     /** @var Attributes */
     private $fields;
 
-    const SWAGGER_PATH = 'collections/swagger.yaml';
-    const SWAGGER_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/swagger.yaml';
+    public const SWAGGER_PATH = 'collections/swagger.yaml';
+    public const SWAGGER_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/swagger.yaml';
 
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {

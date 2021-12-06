@@ -10,11 +10,11 @@ abstract class CollectionGeneratorAbstract
     protected $fileManager;
     protected $rootDirectory;
 
-    const LIST_ACTION = 'list';
-    const ADD_ACTION = 'add';
-    const EDIT_ACTION = 'edit';
-    const DELETE_ACTION = 'delete';
-    const VIEW_ACTION = 'view';
+    public const LIST_ACTION = 'list';
+    public const ADD_ACTION = 'add';
+    public const EDIT_ACTION = 'edit';
+    public const DELETE_ACTION = 'delete';
+    public const VIEW_ACTION = 'view';
 
     private static $actions = [
         self::LIST_ACTION => ['title' => '%s List', 'method' => 'GET'],
