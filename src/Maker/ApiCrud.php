@@ -3,9 +3,9 @@
 namespace Paknahad\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
-use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Inflector\LanguageInflectorFactory;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\Persistence\Mapping\ClassMetadata;
 use Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
 use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;

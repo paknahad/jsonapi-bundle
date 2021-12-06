@@ -25,7 +25,7 @@ trait ValidatorTrait
     /**
      * @param ToOneRelationship|ToManyRelationship $relation
      *
-     * @throws \Exception | ValidatorException
+     * @throws \Exception|ValidatorException
      */
     protected function validateRelationType($relation, array $validTypes): void
     {

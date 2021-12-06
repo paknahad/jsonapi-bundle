@@ -2,6 +2,8 @@
 
 namespace Paknahad\JsonApiBundle;
 
+use const DATE_ATOM;
+
 class Transformer
 {
     public static function Hydrator(string $type, string $fieldName = '$attribute'): string
@@ -28,7 +30,7 @@ class Transformer
             case 'datetime_immutable':
             case 'datetimetz':
             case 'datetimetz_immutable':
-                return sprintf('$%s->%s()->format(DATE_ATOM)', $entityName, $fieldAttributes['getter']);
+                return sprintf('$%s->%s()->format(\DATE_ATOM)', $entityName, $fieldAttributes['getter']);
         }
 
         return sprintf('$%s->%s()', $entityName, $fieldAttributes['getter']);

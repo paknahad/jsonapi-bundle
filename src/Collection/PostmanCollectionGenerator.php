@@ -3,6 +3,7 @@
 namespace Paknahad\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use const JSON_PRETTY_PRINT;
 use Paknahad\JsonApiBundle\JsonApiStr;
 
 class PostmanCollectionGenerator extends CollectionGeneratorAbstract
