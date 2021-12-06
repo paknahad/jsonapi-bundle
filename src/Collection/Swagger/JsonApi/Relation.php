@@ -7,7 +7,7 @@ use Paknahad\JsonApiBundle\JsonApiStr;
 
 class Relation extends AttributeAbstract
 {
-    const RELATIONS_SUFFIX = '_relation';
+    public const RELATIONS_SUFFIX = '_relation';
 
     public function toArray()
     {

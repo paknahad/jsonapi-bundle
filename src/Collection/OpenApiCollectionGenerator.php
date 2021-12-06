@@ -15,8 +15,8 @@ class OpenApiCollectionGenerator extends CollectionGeneratorAbstract
     /** @var Attributes */
     private $fields;
 
-    const OPEN_API_PATH = 'collections/open_api.yaml';
-    const OPEN_API_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/open_api.yaml';
+    public const OPEN_API_PATH = 'collections/open_api.yaml';
+    public const OPEN_API_TEMPLATE_PATH = __DIR__.'/../Resources/skeleton/open_api.yaml';
 
     public function generateCollection(ClassMetadataInfo $classMetadata, string $entityName, string $route): string
     {

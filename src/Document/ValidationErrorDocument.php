@@ -12,7 +12,7 @@ use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
 
 class ValidationErrorDocument extends ErrorDocument
 {
-    const STATUS_CODE = 422;
+    public const STATUS_CODE = 422;
 
     public function __construct(ConstraintViolationListInterface $errors)
     {

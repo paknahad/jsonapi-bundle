@@ -8,7 +8,7 @@ use Paknahad\JsonApiBundle\JsonApiStr;
 
 class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 {
-    const POSTMAN_PATH = 'collections/postman.json';
+    public const POSTMAN_PATH = 'collections/postman.json';
 
     /**
      * Generate Postman Collection.
