@@ -13,26 +13,27 @@
     "require": {
         "php": "^7.1.0||^8.0.0",
         "ext-json": "*",
-        "sensio/framework-extra-bundle": "^5.5",
-        "symfony/psr-http-message-bridge": "^2.0",
-        "symfony/proxy-manager-bridge": "^5.0",
-        "symfony/orm-pack": "^1.0",
-        "symfony/validator": "^5.0",
-        "woohoolabs/yin": "^4.1",
-        "nyholm/psr7": "^1.2"
+        "sensio/framework-extra-bundle": "^6.2",
+        "symfony/orm-pack": "^2.1",
+        "symfony/proxy-manager-bridge": "^6.0",
+        "symfony/psr-http-message-bridge": "^2.1",
+        "symfony/validator": "^6.0",
+        "woohoolabs/yin": "^4.3",
+        "nyholm/psr7": "^1.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.16",
-        "phpstan/phpstan": "^0.12.0",
-        "phpstan/phpstan-phpunit": "^0.12.0",
-        "symfony/maker-bundle": "^1.14",
-        "symfony/phpunit-bridge": "^5.0",
+        "friendsofphp/php-cs-fixer": "*",
+        "opis/json-schema": "^2.2",
+        "phootwork/collection": "^3.1",
+        "phpstan/phpstan": "^1.2",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "roave/security-advisories": "dev-latest",
+        "symfony/maker-bundle": "^1.36",
+        "symfony/phpunit-bridge": "^6.0",
         "symfony/process": "^5.0",
-        "symfony/security-core": "^5.0",
-        "symfony/translation": "^5.0",
-        "phootwork/collection" : "~2",
-        "opis/json-schema": "^1.0",
-        "symfony/yaml": "^5.0"
+        "symfony/security-core": "^6.0",
+        "symfony/translation": "^6.0",
+        "symfony/yaml": "^6.0"
     },
     "config": {
         "preferred-install": {

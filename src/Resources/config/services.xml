@@ -13,11 +13,11 @@
             <argument key="$environment">%kernel.environment%</argument>
             <argument key="$debug">%kernel.debug%</argument>
             <argument key="$httpFoundationFactory" type="service"
-                      id="sensio_framework_extra.psr7.http_foundation_factory"/>
+                      id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
         </service>
 
         <service id="paknahad_json_api.factory.json_api_factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
-            <argument type="service" id="sensio_framework_extra.psr7.http_message_factory" />
+            <argument type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface"/>
             <argument type="service" id="woohoo_labs.yin.json_api.serializer.json_serializer"/>
@@ -71,6 +71,8 @@
         <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
         <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
 
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory" />
         <service id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface" alias="WoohooLabs\Yin\JsonApi\Exception\DefaultExceptionFactory"/>
 

@@ -2,18 +2,16 @@
 
 namespace Paknahad\JsonApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Paknahad\JsonApiBundle\Exception\ValidationException;
-use Paknahad\JsonApiBundle\Transformer;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use WoohooLabs\Yin\JsonApi\JsonApi;
-use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;
-use WoohooLabs\Yin\JsonApi\Schema\Error\Error;
-use WoohooLabs\Yin\JsonApi\Schema\Error\ErrorSource;
-use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;
+use WoohooLabs\Yin\JsonApi\Schema\Document\ResourceDocumentInterface;
 
 class Controller extends AbstractController
 {
@@ -22,14 +20,24 @@ class Controller extends AbstractController
      */
     private $jsonApi;
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+    /**
      * @var ValidatorInterface
      */
     private $validator;
+    /**
+     * @var HttpFoundationFactory
+     */
+    private $httpFoundationFactory;
 
-    public function __construct(JsonApi $jsonApi, ValidatorInterface $validator)
+    public function __construct(JsonApi $jsonApi, EntityManagerInterface $entityManager, ValidatorInterface $validator, HttpFoundationFactory $httpFoundationFactory)
     {
         $this->jsonApi = $jsonApi;
+        $this->entityManager = $entityManager;
         $this->validator = $validator;
+        $this->httpFoundationFactory = $httpFoundationFactory;
     }
 
     protected function jsonApi(): JsonApi
@@ -50,33 +58,22 @@ class Controller extends AbstractController
         }
     }
 
-    /**
-     * @deprecated This function is deprecated. Use validate() instead.
-     */
-    protected function validationErrorResponse(ConstraintViolationListInterface $errors): ResponseInterface
+    protected function respondOk(ResourceDocumentInterface $document, $object, array $additionalMeta = []): Response
     {
-        $errorDocument = new ErrorDocument();
-        $errorDocument->setJsonApi(new JsonApiObject('1.0'));
-
-        foreach ($errors as $fieldError) {
-            $error = Error::create();
-            $pointer = '/data/attributes/'.$fieldError->getPropertyPath();
-
-            $errorSource = new ErrorSource(
-                $pointer,
-                Transformer::validationValueToString($fieldError->getInvalidValue())
-            );
-
-            $error->setSource($errorSource)
-                ->setDetail($fieldError->getMessage())
-                ->setStatus('');
-
-            $errorDocument->addError($error);
-        }
-
-        return $this->jsonApi()->respond()->genericError(
-            $errorDocument,
-            422
+        return $this->respond(
+            $this->jsonApi()->respond()->ok($document, $object)
         );
+    }
+
+    protected function respondNoContent(): Response
+    {
+        return $this->respond(
+            $this->jsonApi()->respond()->noContent()
+        );
+    }
+
+    protected function respond(ResponseInterface $response): Response
+    {
+        return $this->httpFoundationFactory->createResponse($response);
     }
 }
