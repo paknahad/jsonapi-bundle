@@ -74,7 +74,7 @@ class JsonApiErrorHandlerEvent implements EventSubscriberInterface
         $trace = [];
         foreach ($exception->getTrace() as $item) {
             $trace[] = [
-                'file' => $item['file'] ?? $item['class'],
+                'file' => $item['file'] ?? $item['class'] ?? 'undefined',
                 'line' => $item['line'] ?? 'undefined',
                 'function' => $item['function'] ?? 'undefined',
             ];
