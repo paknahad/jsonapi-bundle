@@ -43,6 +43,7 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
     ```
     for example, Book and Author entity is as follows:
     ```php
+    use Doctrine\ORM\Mapping as ORM;
     class Book
     {
         /**
@@ -70,6 +71,8 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
         ... 
     ```
     ```php
+    use Doctrine\ORM\Mapping as ORM;
+    use Symfony\Component\Validator\Constraints as Assert;
     class Author
     {
         /**
@@ -148,7 +151,9 @@ http://example.com/books?filter[title]=%php%&filter[authors.name]=hamid%
 #### Setting a default filter on the IndexAction
 By using ```$resourceCollection->getQuery()``` you can get access on the query object.
 use "r" alias for referring to the current entity. in this example the "r" refers to the "ProjectEntity"
+
 ```php
+use Symfony\Component\Routing\Annotation\Route;
 class ProjectController extends Controller
 {
     /**
@@ -169,7 +174,7 @@ class ProjectController extends Controller
 ```
 
 #### Other Finders
-Currently the following Finders are available via other bundles:
+Currently, the following Finders are available via other bundles:
 
 - [mnugter/jsonapi-rql-finder-bundle][7] - [RQL][8] based Finder
 
@@ -180,13 +185,40 @@ A Finder can be registered via a service tag in the services definition. The tag
 added to the service for the Finder to be resigered.
 
 Example:
-```
+```xml
 <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
     <tag name="paknahad.json_api.finder" />
 </service>
 ```
 
-Each Finder must implement the `Paknahad\JsonApiBundle\Helper\Filter\FinderInterface` interface.
+Each Finder must implement the `Paknahad\JsonApiBundle\Helper\Filter\FinderInterface` interface. Take a look at
+`\Paknahad\JsonApiBundle\Helper\Filter\Finder` for an implementation example.
+
+If you need more control over the finders, you can instead use `\Paknahad\JsonApiBundle\Helper\Filter\FinderSupportsInterface`
+interface and implement conditional logic inside `supports()` method:
+```php
+use Paknahad\JsonApiBundle\Helper\Filter\FinderSupportsInterface;
+use Paknahad\JsonApiBundle\Helper\FieldManager;
+use Symfony\Component\HttpFoundation\Request;
+
+class CustomFinder implements FinderSupportsInterface
+{
+    public function supports(Request $request, FieldManager $fieldManager): bool
+    {
+        // based on some request data
+        if ($request->query->has('some-flag')) {
+            return true;
+        }
+
+        // based on document field manager
+        if ($fieldManager->getRootEntity() === Author::class) {
+            return true;
+        }
+
+        return false;
+    }
+}
+```
 
 ### Validation
 

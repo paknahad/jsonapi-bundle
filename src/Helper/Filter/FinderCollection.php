@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class FinderCollection
 {
     /**
-     * @var FinderInterface[]
+     * @var iterable<FinderInterface>
      */
     private $handlers;
 
@@ -24,12 +24,13 @@ class FinderCollection
         $this->handlers = $handlers;
     }
 
-    /**
-     * @throws \Doctrine\ORM\EntityNotFoundException
-     */
     public function handleQuery(QueryBuilder $query, Request $request, FieldManager $fieldManager): void
     {
         foreach ($this->handlers as $handler) {
+            if ($handler instanceof FinderSupportsInterface && !$handler->supports($request, $fieldManager)) {
+                continue;
+            }
+
             $handler->setRequest($request);
             $handler->setQuery($query);
             $handler->setFieldManager($fieldManager);
