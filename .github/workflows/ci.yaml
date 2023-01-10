@@ -1,10 +1,12 @@
 name: "CI"
 
 on:
-  pull_request:
   push:
     branches:
-      - 'main'
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
   schedule:
     -   cron: '0 0 * * 0'
 
@@ -82,15 +84,15 @@ jobs:
           - '8.0'
         symfony-version:
           - '4.4.*'
-          - '5.3.*'
-          - '5.4.x-dev'
-          - '6.0.x-dev'
+          - '5.4.x'
+          - '6.0.x'
+          - '6.3.x-dev'
         dependency-versions: ['highest']
         allow-dev-deps-in-apps: ['0']
         include:
           # testing lowest php version with highest 5.x stable
           - php-version: '7.4'
-            symfony-version: '5.3.*'
+            symfony-version: '5.4.*'
             dependency-versions: 'lowest'
 
     steps:

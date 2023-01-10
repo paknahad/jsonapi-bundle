@@ -6,3 +6,6 @@
 /tests/tmp/*
 /.php_cs.cache
 /.phpunit.result.cache
+/tests/fixtures/php-cs-fixer/vendor/
+/tests/fixtures/php-cs-fixer/composer.lock
+/.php-cs-fixer.cache
