@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Devleand\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Symfony\Bundle\MakerBundle\FileManager;

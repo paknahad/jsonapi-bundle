@@ -1,10 +1,10 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger;
+namespace Devleand\JsonApiBundle\Collection\Swagger;
 
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Request;
-use Paknahad\JsonApiBundle\Collection\Swagger\JsonApi\Response;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\Collection\Swagger\JsonApi\Request;
+use Devleand\JsonApiBundle\Collection\Swagger\JsonApi\Response;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 class Paths
 {

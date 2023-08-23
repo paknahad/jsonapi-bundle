@@ -1,11 +1,11 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Hydrator;
+namespace Devleand\JsonApiBundle\Hydrator;
 
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use Paknahad\JsonApiBundle\Exception\InvalidAttributeException;
-use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+use Devleand\JsonApiBundle\Exception\InvalidAttributeException;
+use Devleand\JsonApiBundle\Exception\InvalidRelationshipValueException;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolationListInterface;

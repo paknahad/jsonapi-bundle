@@ -7,7 +7,7 @@
     <services>
         <defaults autowire="true" autoconfigure="true" public="false" />
 
-        <service id="jsonapi.error.handler.event" class="Paknahad\JsonApiBundle\EventSubscriber\JsonApiErrorHandlerEvent" lazy="true">
+        <service id="jsonapi.error.handler.event" class="Devleand\JsonApiBundle\EventSubscriber\JsonApiErrorHandlerEvent" lazy="true">
             <tag name="event_subscriber" />
             <argument key="$jsonApi" type="service" id="WoohooLabs\Yin\JsonApi\JsonApi" />
             <argument key="$environment">%kernel.environment%</argument>
@@ -16,7 +16,7 @@
                       id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
         </service>
 
-        <service id="paknahad_json_api.factory.json_api_factory" class="Paknahad\JsonApiBundle\Factory\JsonApiFactory">
+        <service id="devleand_json_api.factory.json_api_factory" class="Devleand\JsonApiBundle\Factory\JsonApiFactory">
             <argument type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
             <argument type="service" id="request_stack" />
             <argument type="service" id="WoohooLabs\Yin\JsonApi\Exception\ExceptionFactoryInterface"/>
@@ -24,20 +24,20 @@
         </service>
 
         <service id="WoohooLabs\Yin\JsonApi\JsonApi" class="WoohooLabs\Yin\JsonApi\JsonApi">
-            <factory service="paknahad_json_api.factory.json_api_factory" method="create" />
+            <factory service="devleand_json_api.factory.json_api_factory" method="create" />
         </service>
 
-        <service id="jsonapi.postman_collection_generator" class="Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator">
+        <service id="jsonapi.postman_collection_generator" class="Devleand\JsonApiBundle\Collection\PostmanCollectionGenerator">
             <argument type="service" id="maker.file_manager" />
             <argument>%kernel.project_dir%</argument>
         </service>
 
-        <service id="jsonapi.swagger_collection_generator" class="Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator">
+        <service id="jsonapi.swagger_collection_generator" class="Devleand\JsonApiBundle\Collection\SwaggerCollectionGenerator">
             <argument type="service" id="maker.file_manager" />
             <argument>%kernel.project_dir%</argument>
         </service>
 
-        <service id="jsonapi.open_api_collection_generator" class="Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator">
+        <service id="jsonapi.open_api_collection_generator" class="Devleand\JsonApiBundle\Collection\OpenApiCollectionGenerator">
             <argument type="service" id="maker.file_manager" />
             <argument>%kernel.project_dir%</argument>
         </service>
@@ -46,7 +46,7 @@
             <factory class="Doctrine\Inflector\InflectorFactory" method="create"/>
         </service>
 
-        <service id="maker.maker.make_api" class="Paknahad\JsonApiBundle\Maker\ApiCrud">
+        <service id="maker.maker.make_api" class="Devleand\JsonApiBundle\Maker\ApiCrud">
             <tag name="maker.command" />
             <argument/>
             <argument/>
@@ -57,19 +57,19 @@
             <argument type="service" id="Doctrine\Inflector\LanguageInflectorFactory" />
         </service>
 
-        <service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
-            <tag name="paknahad.json_api.finder" />
-            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Sorter" />
+        <service class="Devleand\JsonApiBundle\Helper\Filter\Finder" id="devleand_json_api.helper_filter.finder">
+            <tag name="devleand.json_api.finder" />
+            <argument type="service" id="Devleand\JsonApiBundle\Helper\Sorter" />
         </service>
 
-        <service id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection">
-            <argument type="tagged" tag="paknahad.json_api.finder" />
+        <service id="Devleand\JsonApiBundle\Helper\Filter\FinderCollection">
+            <argument type="tagged" tag="devleand.json_api.finder" />
         </service>
 
-        <service id="Paknahad\JsonApiBundle\Helper\Paginator" />
+        <service id="Devleand\JsonApiBundle\Helper\Paginator" />
 
-        <service id="Paknahad\JsonApiBundle\Helper\Sorter" />
-        <service id="Paknahad\JsonApiBundle\Helper\FieldManager" />
+        <service id="Devleand\JsonApiBundle\Helper\Sorter" />
+        <service id="Devleand\JsonApiBundle\Helper\FieldManager" />
 
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
@@ -79,11 +79,11 @@
         <service id="woohoo_labs.yin.json_api.serializer.json_serializer" class="WoohooLabs\Yin\JsonApi\Serializer\JsonSerializer"/>
         <service id="WoohooLabs\Yin\JsonApi\Serializer\SerializerInterface" alias="woohoo_labs.yin.json_api.serializer.json_serializer"/>
 
-        <service id="Paknahad\JsonApiBundle\Helper\ResourceCollection" class="Paknahad\JsonApiBundle\Helper\ResourceCollection">
+        <service id="Devleand\JsonApiBundle\Helper\ResourceCollection" class="Devleand\JsonApiBundle\Helper\ResourceCollection">
             <argument type="service" id="request_stack"/>
-            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Filter\FinderCollection" />
-            <argument type="service" id="Paknahad\JsonApiBundle\Helper\Paginator" />
-            <argument type="service" id="Paknahad\JsonApiBundle\Helper\FieldManager" />
+            <argument type="service" id="Devleand\JsonApiBundle\Helper\Filter\FinderCollection" />
+            <argument type="service" id="Devleand\JsonApiBundle\Helper\Paginator" />
+            <argument type="service" id="Devleand\JsonApiBundle\Helper\FieldManager" />
         </service>
 
     </services>

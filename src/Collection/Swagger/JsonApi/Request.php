@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\CollectionGeneratorAbstract;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\Collection\CollectionGeneratorAbstract;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 class Request extends DataAbstract
 {

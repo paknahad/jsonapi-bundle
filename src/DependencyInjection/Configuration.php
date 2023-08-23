@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\DependencyInjection;
+namespace Devleand\JsonApiBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

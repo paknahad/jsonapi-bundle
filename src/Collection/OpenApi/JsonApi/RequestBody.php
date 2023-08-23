@@ -1,8 +1,8 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\CollectionGeneratorAbstract;
+use Devleand\JsonApiBundle\Collection\CollectionGeneratorAbstract;
 
 class RequestBody extends DataAbstract
 {

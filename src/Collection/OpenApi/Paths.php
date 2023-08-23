@@ -1,11 +1,11 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi;
 
-use Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi\Parameters;
-use Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi\RequestBody;
-use Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi\Response;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\Collection\OpenApi\JsonApi\Parameters;
+use Devleand\JsonApiBundle\Collection\OpenApi\JsonApi\RequestBody;
+use Devleand\JsonApiBundle\Collection\OpenApi\JsonApi\Response;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 class Paths
 {

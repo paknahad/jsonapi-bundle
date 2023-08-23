@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Document;
+namespace Devleand\JsonApiBundle\Document;
 
 use WoohooLabs\Yin\JsonApi\Schema\Document\AbstractSingleResourceDocument as BaseDocument;
 use WoohooLabs\Yin\JsonApi\Schema\JsonApiObject;

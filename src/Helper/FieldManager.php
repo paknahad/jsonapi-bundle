@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Devleand\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityNotFoundException;

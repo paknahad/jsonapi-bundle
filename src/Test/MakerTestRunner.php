@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Devleand\JsonApiBundle\Test;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Symfony\Bundle\MakerBundle\Test\MakerTestProcess;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Tests\maker;
+namespace Devleand\JsonApiBundle\Tests\maker;
 
-use Paknahad\JsonApiBundle\Maker\ApiCrud;
-use Paknahad\JsonApiBundle\Test\MakerTestCase;
-use Paknahad\JsonApiBundle\Test\MakerTestRunner;
+use Devleand\JsonApiBundle\Maker\ApiCrud;
+use Devleand\JsonApiBundle\Test\MakerTestCase;
+use Devleand\JsonApiBundle\Test\MakerTestRunner;
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
 
 class ApiCrudTest extends MakerTestCase

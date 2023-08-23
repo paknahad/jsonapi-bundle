@@ -1,10 +1,10 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi\Attribute;
-use Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi\Relation;
+use Devleand\JsonApiBundle\Collection\OpenApi\JsonApi\Attribute;
+use Devleand\JsonApiBundle\Collection\OpenApi\JsonApi\Relation;
 use phootwork\collection\Map;
 
 class Attributes

@@ -18,10 +18,10 @@ use <?= $entity_full_class_name ?>;
 ';
     }
 ?>
-use Paknahad\JsonApiBundle\Hydrator\AbstractHydrator;
+use Devleand\JsonApiBundle\Hydrator\AbstractHydrator;
 <?php
     if (isset($useOneRelation)) {
-        echo 'use Paknahad\JsonApiBundle\Exception\InvalidRelationshipValueException;
+        echo 'use Devleand\JsonApiBundle\Exception\InvalidRelationshipValueException;
 ';
     }
 ?>

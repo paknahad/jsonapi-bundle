@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\OpenApi\Attributes;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\Collection\OpenApi\Attributes;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 abstract class DataAbstract
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Helper\Filter;
+namespace Devleand\JsonApiBundle\Helper\Filter;
 
-use Paknahad\JsonApiBundle\Helper\FieldManager;
+use Devleand\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 interface FinderSupportsInterface extends FinderInterface

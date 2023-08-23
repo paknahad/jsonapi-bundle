@@ -9,8 +9,8 @@ use <?= $create_hydrator_full_class_name ?>;
 use <?= $update_hydrator_full_class_name ?>;
 use <?= $transformer_full_class_name ?>;
 use <?= $repository_full_class_name ?>;
-use Paknahad\JsonApiBundle\Controller\Controller;
-use Paknahad\JsonApiBundle\Helper\ResourceCollection;
+use Devleand\JsonApiBundle\Controller\Controller;
+use Devleand\JsonApiBundle\Helper\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 

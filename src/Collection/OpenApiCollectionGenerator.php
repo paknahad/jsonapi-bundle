@@ -1,11 +1,11 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Devleand\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\Collection\OpenApi\Attributes;
-use Paknahad\JsonApiBundle\Collection\OpenApi\OpenApi;
-use Paknahad\JsonApiBundle\Collection\OpenApi\Paths;
+use Devleand\JsonApiBundle\Collection\OpenApi\Attributes;
+use Devleand\JsonApiBundle\Collection\OpenApi\OpenApi;
+use Devleand\JsonApiBundle\Collection\OpenApi\Paths;
 use Symfony\Component\Yaml\Yaml;
 
 class OpenApiCollectionGenerator extends CollectionGeneratorAbstract

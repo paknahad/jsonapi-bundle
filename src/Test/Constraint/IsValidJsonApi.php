@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test\Constraint;
+namespace Devleand\JsonApiBundle\Test\Constraint;
 
 use Opis\JsonSchema\ValidationResult;
 use Opis\JsonSchema\Validator;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Devleand\JsonApiBundle\Test;
 
-use Paknahad\JsonApiBundle\Test\Constraint\IsValidJsonApi;
+use Devleand\JsonApiBundle\Test\Constraint\IsValidJsonApi;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class JsonApiTestCase extends WebTestCase

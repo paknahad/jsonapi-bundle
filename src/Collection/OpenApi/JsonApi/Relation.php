@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi\JsonApi;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 class Relation extends AttributeAbstract
 {

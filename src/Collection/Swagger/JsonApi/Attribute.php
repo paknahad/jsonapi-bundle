@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\Swagger\JsonApi;
 
 class Attribute extends AttributeAbstract
 {

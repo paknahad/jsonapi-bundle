@@ -1,10 +1,10 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Devleand\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use const JSON_PRETTY_PRINT;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 class PostmanCollectionGenerator extends CollectionGeneratorAbstract
 {

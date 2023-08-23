@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Devleand\JsonApiBundle\Test;
 
 use Symfony\Bundle\MakerBundle\Test\MakerTestDetails;
 use Symfony\Bundle\MakerBundle\Test\MakerTestProcess;
@@ -236,14 +236,14 @@ final class MakerTestEnvironment
             [
                 'filename' => 'config/bundles.php',
                 'find' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],",
-                'replace' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],\n    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
+                'replace' => "Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],\n    Devleand\JsonApiBundle\JsonApiBundle::class => ['all' => true],",
             ],
             [
                 // ugly way to autoload Maker & any other vendor libs needed in the command
                 'filename' => 'composer.json',
                 'find' => '"App\\\Tests\\\": "tests/"',
                 'replace' => sprintf(
-                    '"App\\\Tests\\\": "tests/",'."\n".'            "Paknahad\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
+                    '"App\\\Tests\\\": "tests/",'."\n".'            "Devleand\\\JsonApiBundle\\\": "%s/src/",'."\n".'            "PhpParser\\\": "%s/vendor/nikic/php-parser/lib/PhpParser/"',
                     // escape \ for Windows
                     $rootPath,
                     $rootPath

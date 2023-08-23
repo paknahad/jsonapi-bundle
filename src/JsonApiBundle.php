@@ -1,8 +1,8 @@
 <?php
 
-namespace Paknahad\JsonApiBundle;
+namespace Devleand\JsonApiBundle;
 
-use Paknahad\JsonApiBundle\DependencyInjection\JsonApiExtension;
+use Devleand\JsonApiBundle\DependencyInjection\JsonApiExtension;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

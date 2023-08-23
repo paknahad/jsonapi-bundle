@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Hydrator;
+namespace Devleand\JsonApiBundle\Hydrator;
 
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

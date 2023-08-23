@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger;
+namespace Devleand\JsonApiBundle\Collection\Swagger;
 
 use phootwork\collection\ArrayList;
 use phootwork\collection\CollectionUtils;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Devleand\JsonApiBundle\Test;
 
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Paknahad\JsonApiBundle\JsonApiBundle;
+use Devleand\JsonApiBundle\JsonApiBundle;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;

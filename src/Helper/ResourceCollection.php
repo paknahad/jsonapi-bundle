@@ -1,12 +1,12 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Helper;
+namespace Devleand\JsonApiBundle\Helper;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use IteratorAggregate;
-use Paknahad\JsonApiBundle\Helper\Filter\FinderCollection;
+use Devleand\JsonApiBundle\Helper\Filter\FinderCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use WoohooLabs\Yin\JsonApi\Schema\Pagination\PageBasedPaginationLinkProviderTrait;
@@ -35,7 +35,7 @@ class ResourceCollection implements IteratorAggregate, PaginationLinkProviderInt
     protected $request;
 
     /**
-     * @var \Paknahad\JsonApiBundle\Helper\Filter\FinderCollection
+     * @var \Devleand\JsonApiBundle\Helper\Filter\FinderCollection
      */
     protected $finderCollection;
 

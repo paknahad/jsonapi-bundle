@@ -1,8 +1,8 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Document;
+namespace Devleand\JsonApiBundle\Document;
 
-use Paknahad\JsonApiBundle\Transformer;
+use Devleand\JsonApiBundle\Transformer;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use WoohooLabs\Yin\JsonApi\Schema\Document\ErrorDocument;

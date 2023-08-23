@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\OpenApi\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\OpenApi\JsonApi;
 
 use phootwork\collection\CollectionUtils;
 

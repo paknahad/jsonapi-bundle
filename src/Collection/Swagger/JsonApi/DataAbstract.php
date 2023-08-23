@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection\Swagger\JsonApi;
+namespace Devleand\JsonApiBundle\Collection\Swagger\JsonApi;
 
-use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\Collection\Swagger\Attributes;
+use Devleand\JsonApiBundle\JsonApiStr;
 
 abstract class DataAbstract
 {

@@ -22,7 +22,7 @@ class Update<?= $entity_class_name ?>Hydrator extends Abstract<?= $entity_class_
             ?>
 
             '<?= $field['name'] ?>' => function (<?= $entity_class_name ?> $<?= $entity_var_name ?>, $attribute, $data, $attributeName) {
-                $<?= $entity_var_name ?>-><?= $field['setter'] ?>(<?=\Paknahad\JsonApiBundle\Transformer::Hydrator($field['type'])?>);
+                $<?= $entity_var_name ?>-><?= $field['setter'] ?>(<?= \Devleand\JsonApiBundle\Transformer::Hydrator($field['type'])?>);
             },<?php
         }
         ?>

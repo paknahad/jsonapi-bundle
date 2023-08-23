@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use Paknahad\JsonApiBundle\Test\JsonApiTestCase;
+use Devleand\JsonApiBundle\Test\JsonApiTestCase;
 
 class GeneratedApiCRUDTest extends JsonApiTestCase
 {

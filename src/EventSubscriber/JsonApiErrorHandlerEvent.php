@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\EventSubscriber;
+namespace Devleand\JsonApiBundle\EventSubscriber;
 
-use Paknahad\JsonApiBundle\Document\ValidationErrorDocument;
-use Paknahad\JsonApiBundle\Exception\ValidationException;
+use Devleand\JsonApiBundle\Document\ValidationErrorDocument;
+use Devleand\JsonApiBundle\Exception\ValidationException;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;

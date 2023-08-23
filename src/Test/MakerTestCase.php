@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Test;
+namespace Devleand\JsonApiBundle\Test;
 
 use Composer\Semver\Semver;
 use PHPUnit\Framework\TestCase;

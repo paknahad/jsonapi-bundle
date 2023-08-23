@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle;
+namespace Devleand\JsonApiBundle;
 
 use const DATE_ATOM;
 

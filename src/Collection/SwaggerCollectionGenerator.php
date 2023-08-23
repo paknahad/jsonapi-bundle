@@ -1,11 +1,11 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Collection;
+namespace Devleand\JsonApiBundle\Collection;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Paknahad\JsonApiBundle\Collection\Swagger\Attributes;
-use Paknahad\JsonApiBundle\Collection\Swagger\Paths;
-use Paknahad\JsonApiBundle\Collection\Swagger\Swagger;
+use Devleand\JsonApiBundle\Collection\Swagger\Attributes;
+use Devleand\JsonApiBundle\Collection\Swagger\Paths;
+use Devleand\JsonApiBundle\Collection\Swagger\Swagger;
 use Symfony\Component\Yaml\Yaml;
 
 class SwaggerCollectionGenerator extends CollectionGeneratorAbstract

@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle;
+namespace Devleand\JsonApiBundle;
 
 use Doctrine\Inflector\InflectorFactory;
 use Symfony\Bundle\MakerBundle\Str;

@@ -1,14 +1,14 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Maker;
+namespace Devleand\JsonApiBundle\Maker;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Inflector\LanguageInflectorFactory;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\Persistence\Mapping\ClassMetadata;
-use Paknahad\JsonApiBundle\Collection\OpenApiCollectionGenerator;
-use Paknahad\JsonApiBundle\Collection\PostmanCollectionGenerator;
-use Paknahad\JsonApiBundle\Collection\SwaggerCollectionGenerator;
+use Devleand\JsonApiBundle\Collection\OpenApiCollectionGenerator;
+use Devleand\JsonApiBundle\Collection\PostmanCollectionGenerator;
+use Devleand\JsonApiBundle\Collection\SwaggerCollectionGenerator;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Controller;
+namespace Devleand\JsonApiBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Paknahad\JsonApiBundle\Exception\ValidationException;
+use Devleand\JsonApiBundle\Exception\ValidationException;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

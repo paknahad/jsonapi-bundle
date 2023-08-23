@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Factory;
+namespace Devleand\JsonApiBundle\Factory;
 
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\RequestStack;

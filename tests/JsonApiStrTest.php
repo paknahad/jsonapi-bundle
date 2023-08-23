@@ -2,7 +2,7 @@
 
 namespace Symfony\Bundle\MakerBundle\Tests;
 
-use Paknahad\JsonApiBundle\JsonApiStr;
+use Devleand\JsonApiBundle\JsonApiStr;
 use PHPUnit\Framework\TestCase;
 
 class JsonApiStrTest extends TestCase

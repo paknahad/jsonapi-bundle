@@ -1,8 +1,3 @@
-[![Latest Stable Version](https://poser.pugx.org/paknahad/jsonapi-bundle/version)](https://packagist.org/packages/paknahad/jsonapi-bundle)
-![test workflow](https://github.com/paknahad/jsonapi-bundle/actions/workflows/ci.yaml/badge.svg)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://choosealicense.com/licenses/mit/)
-[![Total Downloads](https://poser.pugx.org/paknahad/jsonapi-bundle/downloads)](https://packagist.org/packages/paknahad/jsonapi-bundle)
-
 JsonApiBundle For Symfony
 =========================
 
@@ -23,16 +18,16 @@ JsonApiBundle is a [Symfony][1] bundle. It is the fastest way to generate API ba
 
 3. Install the bundle
     ```
-    composer require paknahad/jsonapi-bundle
+    composer require devleand/jsonapi-bundle
     ```
     For Symfony 4 use:
     ```
-    composer require paknahad/jsonapi-bundle:^3.1
+    composer require devleand/jsonapi-bundle:^3.1
     ```
 
 4. Add below line to ``config/bundles.php``
     ```
-    Paknahad\JsonApiBundle\JsonApiBundle::class => ['all' => true],
+    Devleand\JsonApiBundle\JsonApiBundle::class => ['all' => true],
     ```
 
 ## Usage
@@ -181,24 +176,25 @@ Currently, the following Finders are available via other bundles:
 - [paknahad-jsonapi-querifier-bundle][10] - [Querifier][11] based Finder
 
 #### Creating a custom Finder
-A Finder can be registered via a service tag in the services definition. The tag `paknahad.json_api.finder` must be
+A Finder can be registered via a service tag in the services definition. The tag `devleand.json_api.finder` must be
 added to the service for the Finder to be resigered.
 
 Example:
 ```xml
-<service class="Paknahad\JsonApiBundle\Helper\Filter\Finder" id="paknahad_json_api.helper_filter.finder">
-    <tag name="paknahad.json_api.finder" />
+<service class="Devleand\JsonApiBundle\Helper\Filter\Finder" id="devleand_json_api.helper_filter.finder">
+    <tag name="devleand.json_api.finder" />
 </service>
 ```
 
-Each Finder must implement the `Paknahad\JsonApiBundle\Helper\Filter\FinderInterface` interface. Take a look at
-`\Paknahad\JsonApiBundle\Helper\Filter\Finder` for an implementation example.
+Each Finder must implement the `Devleand\JsonApiBundle\Helper\Filter\FinderInterface` interface. Take a look at
+`\Devleand\JsonApiBundle\Helper\Filter\Finder` for an implementation example.
 
-If you need more control over the finders, you can instead use `\Paknahad\JsonApiBundle\Helper\Filter\FinderSupportsInterface`
+If you need more control over the finders, you can instead use `\Devleand\JsonApiBundle\Helper\Filter\FinderSupportsInterface`
 interface and implement conditional logic inside `supports()` method:
+
 ```php
-use Paknahad\JsonApiBundle\Helper\Filter\FinderSupportsInterface;
-use Paknahad\JsonApiBundle\Helper\FieldManager;
+use Devleand\JsonApiBundle\Helper\Filter\FinderSupportsInterface;
+use Devleand\JsonApiBundle\Helper\FieldManager;
 use Symfony\Component\HttpFoundation\Request;
 
 class CustomFinder implements FinderSupportsInterface

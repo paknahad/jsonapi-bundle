@@ -1,10 +1,10 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Helper\Filter;
+namespace Devleand\JsonApiBundle\Helper\Filter;
 
 use Doctrine\ORM\QueryBuilder;
-use Paknahad\JsonApiBundle\Helper\FieldManager;
-use Paknahad\JsonApiBundle\Helper\Sorter;
+use Devleand\JsonApiBundle\Helper\FieldManager;
+use Devleand\JsonApiBundle\Helper\Sorter;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

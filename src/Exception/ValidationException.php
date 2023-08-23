@@ -1,6 +1,6 @@
 <?php
 
-namespace Paknahad\JsonApiBundle\Exception;
+namespace Devleand\JsonApiBundle\Exception;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\RuntimeException;

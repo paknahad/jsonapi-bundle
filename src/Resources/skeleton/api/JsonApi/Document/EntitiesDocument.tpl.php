@@ -2,7 +2,7 @@
 
 namespace <?= $namespace ?>;
 
-use Paknahad\JsonApiBundle\Document\AbstractCollectionDocument;
+use Devleand\JsonApiBundle\Document\AbstractCollectionDocument;
 use WoohooLabs\Yin\JsonApi\Schema\Link\DocumentLinks;
 
 /**
