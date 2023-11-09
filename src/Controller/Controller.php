@@ -61,7 +61,7 @@ class Controller extends AbstractController
     protected function respondOk(ResourceDocumentInterface $document, $object, array $additionalMeta = []): Response
     {
         return $this->respond(
-            $this->jsonApi()->respond()->ok($document, $object)
+            $this->jsonApi()->respond()->ok($document, $object, $additionalMeta)
         );
     }
 
